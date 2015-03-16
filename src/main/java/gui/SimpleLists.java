@@ -3,6 +3,7 @@ package gui;
 import javax.swing.*;
 import javax.xml.parsers.ParserConfigurationException;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
 
 import com.github.nikit.cpp.player.PlayList;
@@ -10,20 +11,27 @@ import com.github.nikit.cpp.player.Song;
 
 import vk.CurlXPath;
 import vk.CurlXPathException;
+import vkButtonedMp3Player.CustomPlayer;
 
 import java.awt.BorderLayout;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.io.File;
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.*;
 
 public class SimpleLists extends JPanel {
 	
 	// TODO сделать множество групп
 	private static final String GROUP_NAME = "rockmetal80";
+	private static final String FOLDER = "/tmp";
 	
 	private static Logger LOGGER = Logger.getLogger(SimpleLists.class);
 	private static final long serialVersionUID = 1L;
 	private JList list;
+	private CustomPlayer player = new CustomPlayer();
 
 
 	public SimpleLists() throws ParserConfigurationException,
@@ -54,7 +62,24 @@ public class SimpleLists extends JPanel {
 			public void mouseClicked(MouseEvent e) {
 				if (e.getClickCount() == 2) {
 					int index = list.locationToIndex(e.getPoint());
-					LOGGER.debug("Double clicked on item " + index + " " + dblm.getElementAt(index));
+					Song s = (Song) dblm.getElementAt(index);
+					LOGGER.debug("Double clicked on item " + index + " " + s);
+					try {
+						String filename = s.toString()+".mp3";
+						File dest = new File(FOLDER, filename);
+						LOGGER.debug("Downloading to " + dest);
+						FileUtils.copyURLToFile(new  URL(s.getUrl()), dest);
+						LOGGER.debug("Downloading complete ");
+						
+						player.setPath(dest.getAbsolutePath());
+						player.play();
+
+					} catch (MalformedURLException e1) {
+						LOGGER.error("MalformedURLException", e1);
+					} catch (IOException e1) {
+						LOGGER.error("IOException", e1);
+					}
+
 				}
 			}
 		});
