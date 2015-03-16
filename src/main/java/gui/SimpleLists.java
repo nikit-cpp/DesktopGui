@@ -39,12 +39,13 @@ public class SimpleLists extends JFrame {
 		for (int i = 0; i < result.size(); i++) {
 			big.add(result.getSongs().get(i));
 		}
-		JList<Vector<String>> bigList = new JList(big);
-
+		JList bigList = new JList(big);
+		contents.setSize(400, 400);
+		
 		contents.add(new JScrollPane(bigList));
 
 		setContentPane(contents);
-		setSize(300, 200);
+		setSize(500, 500);
 		setVisible(true);
 	}
 
