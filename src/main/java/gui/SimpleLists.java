@@ -66,6 +66,7 @@ public class SimpleLists extends JPanel {
 					LOGGER.debug("Double clicked on item " + index + " " + s);
 					try {
 						String filename = s.toString()+".mp3";
+						filename = sanitizePath(filename);
 						File dest = new File(FOLDER, filename);
 						LOGGER.debug("Downloading to " + dest);
 						FileUtils.copyURLToFile(new  URL(s.getUrl()), dest);
@@ -85,6 +86,17 @@ public class SimpleLists extends JPanel {
 		});
 
 		add(pane, BorderLayout.CENTER); // CENTER раскукоживает
+	}
+	
+	private String sanitizePath(String rawPath) {
+		StringBuilder filename = new StringBuilder();
+
+		for (char c : rawPath.toCharArray()) {
+		  if (c=='.' || c== ' ' || c== '-' || Character.isJavaIdentifierPart(c)) {
+		    filename.append(c);
+		  }
+		}
+		return filename.toString();
 	}
 
 	public static void main(String[] args) throws ParserConfigurationException,
