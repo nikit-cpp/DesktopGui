@@ -3,33 +3,52 @@ package gui;
 //SimpleLists.java
 //Простейший способ создания списков
 import javax.swing.*;
+import javax.xml.parsers.ParserConfigurationException;
+
+import com.github.nikit.cpp.player.PlayList;
+import com.github.nikit.cpp.player.Song;
+
+import vk.CurlXPath;
+import vk.CurlXPathException;
 
 import java.util.*;
 
 public class SimpleLists extends JFrame {
+	
+	private static final String GROUP_NAME = "rockmetal80";
+	
 	private static final long serialVersionUID = 1L;
 
-	public SimpleLists() {
+	public SimpleLists() throws ParserConfigurationException, CurlXPathException {
 		super("SimpleLists");
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
-		// создаем списки
+
 		JPanel contents = new JPanel();
-		// динамически наполним вектор
-		Vector<String> big = new Vector<String>();
-		for (int i = 0; i < 50; i++) {
-			big.add("# " + i);
+		
+		CurlXPath cxp = new CurlXPath();
+		Collection<PlayList> cpl = cxp.getPlayListsFromGroup(GROUP_NAME);
+		PlayList result = new PlayList();
+		for(PlayList pl: cpl){
+			List<Song> songs = pl.getSongs();
+			for(Song s: songs) {
+				result.addSong(s);
+			}
+		}
+		
+		Vector big = new Vector();
+		for (int i = 0; i < result.size(); i++) {
+			big.add(result.getSongs().get(i));
 		}
 		JList<Vector<String>> bigList = new JList(big);
-		//bigList.setPrototypeCellValue("12345");
-		// добавим списки в панель
+
 		contents.add(new JScrollPane(bigList));
-		// выведем окно на экран
+
 		setContentPane(contents);
 		setSize(300, 200);
 		setVisible(true);
 	}
 
-	public static void main(String[] args) {
+	public static void main(String[] args) throws ParserConfigurationException, CurlXPathException {
 		new SimpleLists();
 	}
 }
