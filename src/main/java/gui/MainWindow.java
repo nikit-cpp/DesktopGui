@@ -11,11 +11,13 @@ import com.github.nikit.cpp.player.PlayList;
 import com.github.nikit.cpp.player.Song;
 import com.google.common.eventbus.AsyncEventBus;
 import com.google.common.eventbus.EventBus;
+
 import events.DownloadEvent;
 import service.DownloadService;
+import service.PlayService;
 import vk.CurlXPath;
 import vk.CurlXPathException;
-import vkButtonedMp3Player.CustomPlayer;
+
 import java.awt.BorderLayout;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
@@ -30,7 +32,6 @@ public class MainWindow extends JPanel {
 
 	private static Config config;
 	private static CurlXPath cxp;
-	private static CustomPlayer player;
 	private static EventBus eventBus;
 	
 	private static Logger LOGGER = Logger.getLogger(MainWindow.class);
@@ -86,13 +87,14 @@ public class MainWindow extends JPanel {
 		ApplicationContext context = new ClassPathXmlApplicationContext(SPRING_CONFIG);
 
 		cxp = new CurlXPath();
-		player = new CustomPlayer();
 	    config = (Config)context.getBean("config");
 		ExecutorService executor = Executors.newFixedThreadPool(THREADS);
 	    eventBus = new AsyncEventBus(executor);
 	    DownloadService downloadService = (DownloadService) context.getBean("downloader");
+	    downloadService.setEventBus(eventBus); // TODO refactor java.util.Executors io spring.xml http://stackoverflow.com/questions/8416655/best-way-to-refactor-this-in-spring/8416805#8416805
+	    PlayService pls = new PlayService();
 	    eventBus.register(downloadService);
-
+	    eventBus.register(pls);
 		
 		// GUI stuff
 		JFrame frame = new JFrame("List Model Example");
