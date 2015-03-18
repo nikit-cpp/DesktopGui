@@ -37,6 +37,7 @@ public class DownloadService {
 			FileUtils.copyURLToFile(new URL(url), dest);
 			LOGGER.debug("Downloading complete ");
 			
+			LOGGER.debug("Sending PlayEvent ");
 			eventBus.post(new PlayEvent(dest.getAbsolutePath()));
 		} catch (MalformedURLException e1) {
 			LOGGER.error("MalformedURLException", e1);
