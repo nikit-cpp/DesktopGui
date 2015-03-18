@@ -1,16 +1,20 @@
 package service;
 
 
-import org.apache.log4j.Logger;
+import net.engio.mbassy.listener.Handler;
+import net.engio.mbassy.listener.Invoke;
+import net.engio.mbassy.listener.Listener;
 
-import com.google.common.eventbus.Subscribe;
+import org.apache.log4j.Logger;
 
 import events.DownloadEvent;
 
+@Listener
 public class PlayerService {
 	private static Logger LOGGER = Logger.getLogger(PlayerService.class);
 
-	  @Subscribe public void recordCustomerChange(DownloadEvent e) {
+    @Handler//(delivery = Invoke.Asynchronously)
+	  public void recordCustomerChange(DownloadEvent e) {
 		  LOGGER.debug("Message from PlayerService");
 	  }
 

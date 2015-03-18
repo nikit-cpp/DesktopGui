@@ -3,6 +3,8 @@ package gui;
 import javax.swing.*;
 import javax.xml.parsers.ParserConfigurationException;
 
+import net.engio.mbassy.bus.MBassador;
+
 import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
 import org.springframework.context.ApplicationContext;
@@ -10,7 +12,6 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import com.github.nikit.cpp.player.PlayList;
 import com.github.nikit.cpp.player.Song;
-import com.google.common.eventbus.EventBus;
 
 import events.DownloadEvent;
 import service.PlayerService;
@@ -49,9 +50,9 @@ public class MainWindow extends JPanel {
 
 	    config = (Config)context.getBean("config");
 	    
-	    final EventBus eventBus = new EventBus();
-	    PlayerService purchaseSubscriber = new PlayerService();
-	    eventBus.register(purchaseSubscriber);
+	    final MBassador<DownloadEvent> eventBus = new MBassador<DownloadEvent>();
+	    PlayerService pls = new PlayerService();
+	    eventBus.subscribe(pls);
 		
 		Collection<PlayList> cpl = new ArrayList<PlayList>();
 		for (String groupName : config.getGroupNames()){
