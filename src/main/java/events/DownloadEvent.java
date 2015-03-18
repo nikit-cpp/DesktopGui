@@ -2,17 +2,19 @@ package events;
 
 import org.apache.log4j.Logger;
 
+import com.github.nikit.cpp.player.Song;
+
 public class DownloadEvent {
 	private static Logger LOGGER = Logger.getLogger(DownloadEvent.class);
 	
-	private String url;
+	private Song url;
 	
-	public DownloadEvent(String url){
-		LOGGER.debug("DownloadEvent instantiated for " + url);
-		this.url = url;
+	public DownloadEvent(Song s){
+		LOGGER.debug("DownloadEvent instantiated for " + s);
+		this.url = s;
 	}
 
-	public String getUrl() {
+	public Song getSong() {
 		return url;
 	}
 }

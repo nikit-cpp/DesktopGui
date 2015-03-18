@@ -78,25 +78,9 @@ public class MainWindow extends JPanel {
 				if (e.getClickCount() == 2) {
 					int index = list.locationToIndex(e.getPoint());
 					Song s = (Song) dblm.getElementAt(index);
-					eventBus.post(new DownloadEvent(s.getUrl()));
+					eventBus.post(new DownloadEvent(s));
 
 					LOGGER.debug("Double clicked on item " + index + " " + s);
-					try {
-						String filename = s.toString()+".mp3";
-						filename = IOHelper.toFileSystemSafeName(filename);
-						File dest = new File(config.getCacheFolder(), filename);
-						LOGGER.debug("Downloading to " + dest);
-						FileUtils.copyURLToFile(new  URL(s.getUrl()), dest);
-						LOGGER.debug("Downloading complete ");
-						
-						player.setPath(dest.getAbsolutePath());
-						player.play();
-
-					} catch (MalformedURLException e1) {
-						LOGGER.error("MalformedURLException", e1);
-					} catch (IOException e1) {
-						LOGGER.error("IOException", e1);
-					}
 
 				}
 			}
@@ -114,7 +98,7 @@ public class MainWindow extends JPanel {
 	    config = (Config)context.getBean("config");
 		ExecutorService executor = Executors.newFixedThreadPool(THREADS);
 	    eventBus = new AsyncEventBus(executor);
-	    DownloadService purchaseSubscriber = new DownloadService();
+	    DownloadService purchaseSubscriber = (DownloadService) context.getBean("downloader");
 	    eventBus.register(purchaseSubscriber);
 
 		
