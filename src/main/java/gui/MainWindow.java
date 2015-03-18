@@ -10,6 +10,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import com.github.nikit.cpp.player.PlayList;
 import com.github.nikit.cpp.player.Song;
+import com.google.common.eventbus.AsyncEventBus;
 import com.google.common.eventbus.EventBus;
 
 import events.DownloadEvent;
@@ -27,10 +28,14 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.*;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class MainWindow extends JPanel {
 	
 	private static final String SPRING_CONFIG = "spring-config.xml";
+	private static int THREADS = 4; 
+
 	
 	private static Config config;
 	
@@ -48,8 +53,10 @@ public class MainWindow extends JPanel {
 	              new ClassPathXmlApplicationContext(SPRING_CONFIG);
 
 	    config = (Config)context.getBean("config");
-	    
-	    final EventBus eventBus = new EventBus();
+
+		ExecutorService executor = Executors.newFixedThreadPool(THREADS);
+
+	    final AsyncEventBus eventBus = new AsyncEventBus(executor);
 	    DownloadService purchaseSubscriber = new DownloadService();
 	    eventBus.register(purchaseSubscriber);
 		
