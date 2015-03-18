@@ -5,6 +5,8 @@ import javax.xml.parsers.ParserConfigurationException;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import com.github.nikit.cpp.player.PlayList;
 import com.github.nikit.cpp.player.Song;
@@ -24,9 +26,9 @@ import java.util.*;
 
 public class MainWindow extends JPanel {
 	
-	// TODO сделать множество групп
-	private static final String GROUP_NAME = "rockmetal80";
-	private static final String FOLDER = "/tmp";
+	private static final String SPRING_CONFIG = "spring-config.xml";
+	
+	private static Config config;
 	
 	private static Logger LOGGER = Logger.getLogger(MainWindow.class);
 	private static final long serialVersionUID = 1L;
@@ -38,7 +40,11 @@ public class MainWindow extends JPanel {
 			CurlXPathException {
 
 		CurlXPath cxp = new CurlXPath();
-		Collection<PlayList> cpl = cxp.getPlayListsFromGroup(GROUP_NAME);
+		
+		Collection<PlayList> cpl = new ArrayList<PlayList>();
+		for (String groupName : config.getGroupNames()){
+			cpl.addAll(cxp.getPlayListsFromGroup(groupName));
+		}
 
 		setLayout(new BorderLayout());
 		final PlayListListModel dblm = new PlayListListModel(cpl);
@@ -67,7 +73,7 @@ public class MainWindow extends JPanel {
 					try {
 						String filename = s.toString()+".mp3";
 						filename = sanitizePath(filename);
-						File dest = new File(FOLDER, filename);
+						File dest = new File(config.getCacheFolder(), filename);
 						LOGGER.debug("Downloading to " + dest);
 						FileUtils.copyURLToFile(new  URL(s.getUrl()), dest);
 						LOGGER.debug("Downloading complete ");
@@ -101,6 +107,10 @@ public class MainWindow extends JPanel {
 
 	public static void main(String[] args) throws ParserConfigurationException,
 			CurlXPathException {
+		ApplicationContext context = 
+	              new ClassPathXmlApplicationContext(SPRING_CONFIG);
+
+	    config = (Config)context.getBean("config");
 		JFrame frame = new JFrame("List Model Example");
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setContentPane(new MainWindow());
