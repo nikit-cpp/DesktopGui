@@ -76,9 +76,10 @@ public class MainWindow extends JPanel {
 
 			public void mouseClicked(MouseEvent e) {
 				if (e.getClickCount() == 2) {
-					eventBus.post(new DownloadEvent());
 					int index = list.locationToIndex(e.getPoint());
 					Song s = (Song) dblm.getElementAt(index);
+					eventBus.post(new DownloadEvent(s.getUrl()));
+
 					LOGGER.debug("Double clicked on item " + index + " " + s);
 					try {
 						String filename = s.toString()+".mp3";

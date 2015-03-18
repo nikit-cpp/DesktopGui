@@ -10,8 +10,8 @@ import events.DownloadEvent;
 public class DownloadService {
 	private static Logger LOGGER = Logger.getLogger(DownloadService.class);
 
-	  @Subscribe public void recordCustomerChange(DownloadEvent e) {
-		  LOGGER.debug("Message from PlayerService");
+	  @Subscribe public void download(DownloadEvent e) {
+		  LOGGER.debug("Dolwnloading " + e.getUrl());
 	  }
 
 }
