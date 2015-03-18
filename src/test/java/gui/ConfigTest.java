@@ -30,6 +30,7 @@ public class ConfigTest {
 	       Config jc= (Config)context.getBean("config");
 
 	       Set<String> expected = new HashSet<String>();
+	       expected.add("ololo");
 	       expected.add("rockmetal80");
 	       Assert.assertEquals(expected, jc.getGroupNames());
 	       
