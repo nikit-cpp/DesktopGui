@@ -5,18 +5,12 @@ import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
-
-import javazoom.jl.player.Player;
-
 import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
-
 import utils.IOHelper;
 import vkButtonedMp3Player.CustomPlayer;
-
 import com.github.nikit.cpp.player.Song;
 import com.google.common.eventbus.Subscribe;
-
 import events.DownloadEvent;
 import gui.Config;
 
