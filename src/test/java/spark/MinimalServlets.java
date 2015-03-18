@@ -18,6 +18,8 @@ package spark;
 //========================================================================
 //
 
+// http://stackoverflow.com/questions/14179746/unit-test-a-servlet-with-an-embedded-jetty/14181904#14181904
+// http://git.eclipse.org/c/jetty/org.eclipse.jetty.project.git/tree/examples/embedded/src/main/java/org/eclipse/jetty/embedded/MinimalServlets.java
 
 import java.io.IOException;
 
