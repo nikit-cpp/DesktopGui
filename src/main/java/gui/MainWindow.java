@@ -14,7 +14,7 @@ import com.github.nikit.cpp.player.PlayList;
 import com.github.nikit.cpp.player.Song;
 
 import events.DownloadEvent;
-import service.PlayerService;
+import service.DownloadListener;
 import utils.IOHelper;
 import vk.CurlXPath;
 import vk.CurlXPathException;
@@ -51,7 +51,7 @@ public class MainWindow extends JPanel {
 	    config = (Config)context.getBean("config");
 	    
 	    final MBassador<DownloadEvent> eventBus = new MBassador<DownloadEvent>();
-	    PlayerService pls = new PlayerService();
+	    DownloadListener pls = new DownloadListener();
 	    eventBus.subscribe(pls);
 		
 		Collection<PlayList> cpl = new ArrayList<PlayList>();
@@ -80,7 +80,7 @@ public class MainWindow extends JPanel {
 
 			public void mouseClicked(MouseEvent e) {
 				if (e.getClickCount() == 2) {
-					eventBus.post(new DownloadEvent());
+					eventBus.publish(new DownloadEvent());
 					int index = list.locationToIndex(e.getPoint());
 					Song s = (Song) dblm.getElementAt(index);
 					LOGGER.debug("Double clicked on item " + index + " " + s);
