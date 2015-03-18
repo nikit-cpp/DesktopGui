@@ -22,26 +22,26 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.*;
 
-public class SimpleLists extends JPanel {
+public class MainWindow extends JPanel {
 	
 	// TODO сделать множество групп
 	private static final String GROUP_NAME = "rockmetal80";
 	private static final String FOLDER = "/tmp";
 	
-	private static Logger LOGGER = Logger.getLogger(SimpleLists.class);
+	private static Logger LOGGER = Logger.getLogger(MainWindow.class);
 	private static final long serialVersionUID = 1L;
 	private JList list;
 	private CustomPlayer player = new CustomPlayer();
 
 
-	public SimpleLists() throws ParserConfigurationException,
+	public MainWindow() throws ParserConfigurationException,
 			CurlXPathException {
 
 		CurlXPath cxp = new CurlXPath();
 		Collection<PlayList> cpl = cxp.getPlayListsFromGroup(GROUP_NAME);
 
 		setLayout(new BorderLayout());
-		final DatabaseListModel dblm = new DatabaseListModel(cpl);
+		final PlayListListModel dblm = new PlayListListModel(cpl);
 		list = new JList(dblm);
 		JScrollPane pane = new JScrollPane(list);
 
@@ -103,18 +103,18 @@ public class SimpleLists extends JPanel {
 			CurlXPathException {
 		JFrame frame = new JFrame("List Model Example");
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		frame.setContentPane(new SimpleLists());
+		frame.setContentPane(new MainWindow());
 		frame.setSize(500, 500);
 		frame.setVisible(true);
 	}
 }
 
 
-class DatabaseListModel extends AbstractListModel {
+class PlayListListModel extends AbstractListModel {
 	// здесь будем хранить данные
 	private ArrayList data = new ArrayList();
 
-	public DatabaseListModel(Collection<PlayList> pls){
+	public PlayListListModel(Collection<PlayList> pls){
 		setDataSource(pls);
 	}
 	private void setDataSource(Collection<PlayList> pls) {
