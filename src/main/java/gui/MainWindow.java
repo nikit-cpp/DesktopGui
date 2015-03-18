@@ -10,7 +10,10 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import com.github.nikit.cpp.player.PlayList;
 import com.github.nikit.cpp.player.Song;
+import com.google.common.eventbus.EventBus;
 
+import events.DownloadEvent;
+import service.PlayerService;
 import utils.IOHelper;
 import vk.CurlXPath;
 import vk.CurlXPathException;
@@ -41,6 +44,14 @@ public class MainWindow extends JPanel {
 			CurlXPathException {
 
 		CurlXPath cxp = new CurlXPath();
+		ApplicationContext context = 
+	              new ClassPathXmlApplicationContext(SPRING_CONFIG);
+
+	    config = (Config)context.getBean("config");
+	    
+	    final EventBus eventBus = new EventBus();
+	    PlayerService purchaseSubscriber = new PlayerService();
+	    eventBus.register(purchaseSubscriber);
 		
 		Collection<PlayList> cpl = new ArrayList<PlayList>();
 		for (String groupName : config.getGroupNames()){
@@ -68,6 +79,7 @@ public class MainWindow extends JPanel {
 
 			public void mouseClicked(MouseEvent e) {
 				if (e.getClickCount() == 2) {
+					eventBus.post(new DownloadEvent());
 					int index = list.locationToIndex(e.getPoint());
 					Song s = (Song) dblm.getElementAt(index);
 					LOGGER.debug("Double clicked on item " + index + " " + s);
@@ -97,10 +109,6 @@ public class MainWindow extends JPanel {
 	
 	public static void main(String[] args) throws ParserConfigurationException,
 			CurlXPathException {
-		ApplicationContext context = 
-	              new ClassPathXmlApplicationContext(SPRING_CONFIG);
-
-	    config = (Config)context.getBean("config");
 		JFrame frame = new JFrame("List Model Example");
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setContentPane(new MainWindow());
