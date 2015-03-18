@@ -98,8 +98,8 @@ public class MainWindow extends JPanel {
 	    config = (Config)context.getBean("config");
 		ExecutorService executor = Executors.newFixedThreadPool(THREADS);
 	    eventBus = new AsyncEventBus(executor);
-	    DownloadService purchaseSubscriber = (DownloadService) context.getBean("downloader");
-	    eventBus.register(purchaseSubscriber);
+	    DownloadService downloadService = (DownloadService) context.getBean("downloader");
+	    eventBus.register(downloadService);
 
 		
 		// GUI stuff
