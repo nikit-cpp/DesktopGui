@@ -22,5 +22,9 @@
 			<ref bean="config" />
 		</property>
 	</bean>
+	
+	<bean id ="vkPlaylistBuilder" class = "vk.VkPlayListBuilder" scope = "singleton" >
+	    <constructor-arg value="https://api.vk.com"/>
+	</bean>
 
 </beans>
