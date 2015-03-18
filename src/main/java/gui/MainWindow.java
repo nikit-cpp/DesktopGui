@@ -3,44 +3,45 @@ package gui;
 import javax.swing.*;
 import javax.xml.parsers.ParserConfigurationException;
 
-import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import com.github.nikit.cpp.player.PlayList;
 import com.github.nikit.cpp.player.Song;
+import com.google.common.eventbus.AsyncEventBus;
+import com.google.common.eventbus.EventBus;
 
-import utils.IOHelper;
+import events.DownloadEvent;
+import service.DownloadService;
+import service.PlayService;
 import vk.CurlXPath;
 import vk.CurlXPathException;
-import vkButtonedMp3Player.CustomPlayer;
 
 import java.awt.BorderLayout;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import java.io.File;
-import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.*;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class MainWindow extends JPanel {
 	
 	private static final String SPRING_CONFIG = "spring-config.xml";
-	
+	private static int THREADS = 4; 
+
 	private static Config config;
+	private static CurlXPath cxp;
+	private static EventBus eventBus;
 	
 	private static Logger LOGGER = Logger.getLogger(MainWindow.class);
 	private static final long serialVersionUID = 1L;
 	private JList list;
-	private CustomPlayer player = new CustomPlayer();
 
 
 	public MainWindow() throws ParserConfigurationException,
 			CurlXPathException {
 
-		CurlXPath cxp = new CurlXPath();
 		
 		Collection<PlayList> cpl = new ArrayList<PlayList>();
 		for (String groupName : config.getGroupNames()){
@@ -48,8 +49,8 @@ public class MainWindow extends JPanel {
 		}
 
 		setLayout(new BorderLayout());
-		final PlayListListModel dblm = new PlayListListModel(cpl);
-		list = new JList(dblm);
+		final PlayListListModel playListModel = new PlayListListModel(cpl);
+		list = new JList(playListModel);
 		JScrollPane pane = new JScrollPane(list);
 
 		list.addMouseListener(new MouseListener() {
@@ -69,24 +70,10 @@ public class MainWindow extends JPanel {
 			public void mouseClicked(MouseEvent e) {
 				if (e.getClickCount() == 2) {
 					int index = list.locationToIndex(e.getPoint());
-					Song s = (Song) dblm.getElementAt(index);
-					LOGGER.debug("Double clicked on item " + index + " " + s);
-					try {
-						String filename = s.toString()+".mp3";
-						filename = IOHelper.toFileSystemSafeName(filename);
-						File dest = new File(config.getCacheFolder(), filename);
-						LOGGER.debug("Downloading to " + dest);
-						FileUtils.copyURLToFile(new  URL(s.getUrl()), dest);
-						LOGGER.debug("Downloading complete ");
-						
-						player.setPath(dest.getAbsolutePath());
-						player.play();
+					Song s = (Song) playListModel.getElementAt(index);
+					eventBus.post(new DownloadEvent(s));
 
-					} catch (MalformedURLException e1) {
-						LOGGER.error("MalformedURLException", e1);
-					} catch (IOException e1) {
-						LOGGER.error("IOException", e1);
-					}
+					LOGGER.debug("Double clicked on item " + index + " " + s);
 
 				}
 			}
@@ -95,12 +82,21 @@ public class MainWindow extends JPanel {
 		add(pane, BorderLayout.CENTER); // CENTER раскукоживает
 	}
 	
-	public static void main(String[] args) throws ParserConfigurationException,
-			CurlXPathException {
-		ApplicationContext context = 
-	              new ClassPathXmlApplicationContext(SPRING_CONFIG);
+	public static void main(String[] args) throws ParserConfigurationException, CurlXPathException {
+		// Non-GUI work
+		ApplicationContext context = new ClassPathXmlApplicationContext(SPRING_CONFIG);
 
+		cxp = new CurlXPath();
 	    config = (Config)context.getBean("config");
+		ExecutorService executor = Executors.newFixedThreadPool(THREADS);
+	    eventBus = new AsyncEventBus(executor);
+	    DownloadService downloadService = (DownloadService) context.getBean("downloader");
+	    downloadService.setEventBus(eventBus); // TODO refactor java.util.Executors io spring.xml http://stackoverflow.com/questions/8416655/best-way-to-refactor-this-in-spring/8416805#8416805
+	    PlayService pls = new PlayService();
+	    eventBus.register(downloadService);
+	    eventBus.register(pls);
+		
+		// GUI stuff
 		JFrame frame = new JFrame("List Model Example");
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setContentPane(new MainWindow());
