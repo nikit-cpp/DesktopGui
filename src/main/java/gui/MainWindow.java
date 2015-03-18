@@ -36,29 +36,19 @@ public class MainWindow extends JPanel {
 	private static final String SPRING_CONFIG = "spring-config.xml";
 	private static int THREADS = 4; 
 
-	
 	private static Config config;
+	private static CurlXPath cxp;
+	private static CustomPlayer player;
+	private static EventBus eventBus;
 	
 	private static Logger LOGGER = Logger.getLogger(MainWindow.class);
 	private static final long serialVersionUID = 1L;
 	private JList list;
-	private CustomPlayer player = new CustomPlayer();
 
 
 	public MainWindow() throws ParserConfigurationException,
 			CurlXPathException {
 
-		CurlXPath cxp = new CurlXPath();
-		ApplicationContext context = 
-	              new ClassPathXmlApplicationContext(SPRING_CONFIG);
-
-	    config = (Config)context.getBean("config");
-
-		ExecutorService executor = Executors.newFixedThreadPool(THREADS);
-
-	    final AsyncEventBus eventBus = new AsyncEventBus(executor);
-	    DownloadService purchaseSubscriber = new DownloadService();
-	    eventBus.register(purchaseSubscriber);
 		
 		Collection<PlayList> cpl = new ArrayList<PlayList>();
 		for (String groupName : config.getGroupNames()){
@@ -114,8 +104,20 @@ public class MainWindow extends JPanel {
 		add(pane, BorderLayout.CENTER); // CENTER раскукоживает
 	}
 	
-	public static void main(String[] args) throws ParserConfigurationException,
-			CurlXPathException {
+	public static void main(String[] args) throws ParserConfigurationException, CurlXPathException {
+		// Non-GUI work
+		ApplicationContext context = new ClassPathXmlApplicationContext(SPRING_CONFIG);
+
+		cxp = new CurlXPath();
+		player = new CustomPlayer();
+	    config = (Config)context.getBean("config");
+		ExecutorService executor = Executors.newFixedThreadPool(THREADS);
+	    eventBus = new AsyncEventBus(executor);
+	    DownloadService purchaseSubscriber = new DownloadService();
+	    eventBus.register(purchaseSubscriber);
+
+		
+		// GUI stuff
 		JFrame frame = new JFrame("List Model Example");
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setContentPane(new MainWindow());
