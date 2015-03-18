@@ -3,7 +3,6 @@ package gui;
 import javax.swing.*;
 import javax.xml.parsers.ParserConfigurationException;
 
-import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
@@ -12,21 +11,14 @@ import com.github.nikit.cpp.player.PlayList;
 import com.github.nikit.cpp.player.Song;
 import com.google.common.eventbus.AsyncEventBus;
 import com.google.common.eventbus.EventBus;
-
 import events.DownloadEvent;
 import service.DownloadService;
-import utils.IOHelper;
 import vk.CurlXPath;
 import vk.CurlXPathException;
 import vkButtonedMp3Player.CustomPlayer;
-
 import java.awt.BorderLayout;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import java.io.File;
-import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -56,8 +48,8 @@ public class MainWindow extends JPanel {
 		}
 
 		setLayout(new BorderLayout());
-		final PlayListListModel dblm = new PlayListListModel(cpl);
-		list = new JList(dblm);
+		final PlayListListModel playListModel = new PlayListListModel(cpl);
+		list = new JList(playListModel);
 		JScrollPane pane = new JScrollPane(list);
 
 		list.addMouseListener(new MouseListener() {
@@ -77,7 +69,7 @@ public class MainWindow extends JPanel {
 			public void mouseClicked(MouseEvent e) {
 				if (e.getClickCount() == 2) {
 					int index = list.locationToIndex(e.getPoint());
-					Song s = (Song) dblm.getElementAt(index);
+					Song s = (Song) playListModel.getElementAt(index);
 					eventBus.post(new DownloadEvent(s));
 
 					LOGGER.debug("Double clicked on item " + index + " " + s);
