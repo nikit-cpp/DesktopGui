@@ -13,7 +13,7 @@ import com.github.nikit.cpp.player.Song;
 import com.google.common.eventbus.EventBus;
 
 import events.DownloadEvent;
-import service.PlayerService;
+import service.DownloadService;
 import utils.IOHelper;
 import vk.CurlXPath;
 import vk.CurlXPathException;
@@ -50,7 +50,7 @@ public class MainWindow extends JPanel {
 	    config = (Config)context.getBean("config");
 	    
 	    final EventBus eventBus = new EventBus();
-	    PlayerService purchaseSubscriber = new PlayerService();
+	    DownloadService purchaseSubscriber = new DownloadService();
 	    eventBus.register(purchaseSubscriber);
 		
 		Collection<PlayList> cpl = new ArrayList<PlayList>();

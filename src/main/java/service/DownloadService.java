@@ -7,8 +7,8 @@ import com.google.common.eventbus.Subscribe;
 
 import events.DownloadEvent;
 
-public class PlayerService {
-	private static Logger LOGGER = Logger.getLogger(PlayerService.class);
+public class DownloadService {
+	private static Logger LOGGER = Logger.getLogger(DownloadService.class);
 
 	  @Subscribe public void recordCustomerChange(DownloadEvent e) {
 		  LOGGER.debug("Message from PlayerService");
