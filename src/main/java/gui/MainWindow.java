@@ -11,6 +11,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 import com.github.nikit.cpp.player.PlayList;
 import com.github.nikit.cpp.player.Song;
 
+import utils.IOHelper;
 import vk.CurlXPath;
 import vk.CurlXPathException;
 import vkButtonedMp3Player.CustomPlayer;
@@ -72,7 +73,7 @@ public class MainWindow extends JPanel {
 					LOGGER.debug("Double clicked on item " + index + " " + s);
 					try {
 						String filename = s.toString()+".mp3";
-						filename = sanitizePath(filename);
+						filename = IOHelper.toFileSystemSafeName(filename);
 						File dest = new File(config.getCacheFolder(), filename);
 						LOGGER.debug("Downloading to " + dest);
 						FileUtils.copyURLToFile(new  URL(s.getUrl()), dest);
@@ -94,17 +95,6 @@ public class MainWindow extends JPanel {
 		add(pane, BorderLayout.CENTER); // CENTER раскукоживает
 	}
 	
-	private String sanitizePath(String rawPath) {
-		StringBuilder filename = new StringBuilder();
-
-		for (char c : rawPath.toCharArray()) {
-		  if (c=='.' || c== ' ' || c== '-' || Character.isJavaIdentifierPart(c)) {
-		    filename.append(c);
-		  }
-		}
-		return filename.toString();
-	}
-
 	public static void main(String[] args) throws ParserConfigurationException,
 			CurlXPathException {
 		ApplicationContext context = 
