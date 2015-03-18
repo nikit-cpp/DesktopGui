@@ -15,8 +15,8 @@ import com.google.common.eventbus.EventBus;
 import events.DownloadEvent;
 import service.DownloadService;
 import service.PlayService;
-import vk.CurlXPath;
-import vk.CurlXPathException;
+import vk.VkPlayListBuilder;
+import vk.VkPlayListBuilderException;
 
 import java.awt.BorderLayout;
 import java.awt.event.MouseEvent;
@@ -31,7 +31,7 @@ public class MainWindow extends JPanel {
 	private static int THREADS = 4; 
 
 	private static Config config;
-	private static CurlXPath cxp;
+	private static VkPlayListBuilder cxp;
 	private static EventBus eventBus;
 	
 	private static Logger LOGGER = Logger.getLogger(MainWindow.class);
@@ -40,7 +40,7 @@ public class MainWindow extends JPanel {
 
 
 	public MainWindow() throws ParserConfigurationException,
-			CurlXPathException {
+	VkPlayListBuilderException {
 
 		
 		Collection<PlayList> cpl = new ArrayList<PlayList>();
@@ -82,11 +82,11 @@ public class MainWindow extends JPanel {
 		add(pane, BorderLayout.CENTER); // CENTER раскукоживает
 	}
 	
-	public static void main(String[] args) throws ParserConfigurationException, CurlXPathException {
+	public static void main(String[] args) throws ParserConfigurationException, VkPlayListBuilderException {
 		// Non-GUI work
 		ApplicationContext context = new ClassPathXmlApplicationContext(SPRING_CONFIG);
 
-		cxp = new CurlXPath();
+		cxp = (VkPlayListBuilder)context.getBean("vkPlaylistBuilder");
 	    config = (Config)context.getBean("config");
 		ExecutorService executor = Executors.newFixedThreadPool(THREADS);
 	    eventBus = new AsyncEventBus(executor);
