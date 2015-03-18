@@ -27,6 +27,7 @@ public class SparkMain {
 			String parameterValue = req.queryParams("owner_id");
 			
 			if (methodName.equals("wall.get.xml") && parameterValue.equals("-11081630")) {
+				res.type("text/xml");
 				return FileUtils.readFileToString(new File("src/test/resources/responce.txt"), "UTF8");
 			}
 			
