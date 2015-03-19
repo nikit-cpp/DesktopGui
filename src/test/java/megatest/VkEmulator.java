@@ -57,14 +57,18 @@ public class VkEmulator {
 			response.setContentType(type);
 			response.setStatus(HttpServletResponse.SC_OK);
 
-			if(requestUri.equals("/method/wall.get.xml") && queryString.equals("owner_id=-11081630")) {
-				response.getWriter().write(FileUtils.readFileToString(new File(
-						"src/test/resources/wall.get.xml")));
-				
-			}else if (requestUri.equals("/method/groups.getById.xml") && queryString.equals("group_ids=rockmetal80")) {
+			if (requestUri.equals("/method/groups.getById.xml") && queryString.equals("group_ids=rockmetal80")) {
 				response.getWriter().write(FileUtils.readFileToString(new File(
 						"src/test/resources/groups.getById.xml")));
-			}else{
+				LOGGER.debug("will be groups.getById.xml");
+			}
+			else if(requestUri.equals("/method/wall.get.xml") && queryString.equals("owner_id=-64183")) {
+				response.getWriter().write(FileUtils.readFileToString(new File(
+						"src/test/resources/wall.get.xml")));
+				LOGGER.debug("will be wall.get.xml");
+			}
+
+			else{
 				response.getWriter().println("some error in Megatest");
 			}
 		}

@@ -9,7 +9,6 @@
 		<property name="groupNames">
 			<set>
 				<value>rockmetal80</value>
-				<value>legends_of_rock</value>
 			</set>
 		</property>
 		<property name="cacheFolder">
