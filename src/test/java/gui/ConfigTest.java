@@ -25,7 +25,7 @@ public class ConfigTest {
 	@Test
 	public void testGetInjected() {
 	      ApplicationContext context = 
-	              new ClassPathXmlApplicationContext("spring-config-test.xml");
+	              new ClassPathXmlApplicationContext("spring-config.xml");
 
 	       Config jc= (Config)context.getBean("config");
 
