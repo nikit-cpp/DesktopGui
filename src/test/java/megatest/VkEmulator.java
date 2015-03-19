@@ -70,6 +70,7 @@ public class VkEmulator {
 
 			else{
 				response.getWriter().println("some error in Megatest");
+				LOGGER.debug("unexpected request " + request.getRequestURL() + "?" + request.getQueryString() +", may be error in src/test/resources/spring-config.xml");
 			}
 		}
 	}
