@@ -41,7 +41,8 @@ public class MainWindow extends JPanel {
 
 	public MainWindow() throws ParserConfigurationException,
 	VkPlayListBuilderException {
-
+		
+		initialize();
 		
 		Collection<PlayList> cpl = new ArrayList<PlayList>();
 		for (String groupName : config.getGroupNames()){
@@ -83,6 +84,16 @@ public class MainWindow extends JPanel {
 	}
 	
 	public static void main(String[] args) throws ParserConfigurationException, VkPlayListBuilderException {
+		
+		// GUI stuff
+		JFrame frame = new JFrame("List Model Example");
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frame.setContentPane(new MainWindow());
+		frame.setSize(500, 500);
+		frame.setVisible(true);
+	}
+	
+	private void initialize(){
 		// Non-GUI work
 		ApplicationContext context = new ClassPathXmlApplicationContext(SPRING_CONFIG);
 
@@ -95,13 +106,7 @@ public class MainWindow extends JPanel {
 	    PlayService pls = new PlayService();
 	    eventBus.register(downloadService);
 	    eventBus.register(pls);
-		
-		// GUI stuff
-		JFrame frame = new JFrame("List Model Example");
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		frame.setContentPane(new MainWindow());
-		frame.setSize(500, 500);
-		frame.setVisible(true);
+
 	}
 }
 

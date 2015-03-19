@@ -31,7 +31,7 @@ public class MegaTest {
 		handler.addServletWithMapping(HelloServlet.class, "/*");
 		server.start();
 
-		server.join();
+		//server.join();
 		LOGGER.debug("Goodbye, America!");
 	}
 
