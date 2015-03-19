@@ -37,12 +37,6 @@ public class FirstGUITest {
 
 	@Before
 	public void setUp() throws IOException {
-		/*application(MainWindow.class).start();
-		robot = BasicRobot.robotWithCurrentAwtHierarchy();
-		frame=new FrameFixture(MainWindow.getFrame());*/
-		// window.show(); // shows the frame to test
-		
-		
         MainWindow frame = GuiActionRunner.execute(new GuiQuery<MainWindow>() {
             protected MainWindow executeInEDT() throws ParserConfigurationException, VkPlayListBuilderException {
                 MainWindow.main(new String[0]);
@@ -54,12 +48,16 @@ public class FirstGUITest {
 
 	@After
 	public void tearDown() {
-		
+		 window.cleanUp();
 	}
 
 	@Test
 	public void test() throws IOException, InterruptedException {
-		LOGGER.debug("Thread = ");
+		LOGGER.debug("Log4J stub for show thread");
+		
+		window.scrollPane().verticalScrollBar().scrollBlockDown(60);
+		
+		//LOGGER.debug("Close the window");
 		//Thread.currentThread().join();
 	}
 }
