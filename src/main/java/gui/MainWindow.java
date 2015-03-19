@@ -82,15 +82,19 @@ public class MainWindow extends JPanel {
 
 		add(pane, BorderLayout.CENTER); // CENTER раскукоживает
 	}
-	
+	private static JFrame frame;
 	public static void main(String[] args) throws ParserConfigurationException, VkPlayListBuilderException {
 		
 		// GUI stuff
-		JFrame frame = new JFrame("List Model Example");
+		frame = new JFrame("List Model Example");
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setContentPane(new MainWindow());
 		frame.setSize(500, 500);
 		frame.setVisible(true);
+	}
+	
+	public static JFrame getFrame(){
+		return frame;
 	}
 	
 	private void initialize(){

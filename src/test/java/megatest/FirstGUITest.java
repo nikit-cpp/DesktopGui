@@ -24,35 +24,34 @@ import static org.fest.swing.testing.FestSwingTestCaseTemplate.*;
 import vk.VkPlayListBuilderException;
 
 public class FirstGUITest {
-	 
-	  private JPanelFixture window;
-	  private Robot robot;
-	  
-	  private static Logger LOGGER = Logger.getLogger(FirstGUITest.class);
-	 
-	  @BeforeClass public static void setUpOnce() {
-	    //FailOnThreadViolationRepaintManager.install();
-	  }
-	 
-	  @Before public void setUp() throws IOException {
-		  application(MainWindow.class).start();
-		  robot = BasicRobot.robotWithCurrentAwtHierarchy();
-	    window = new JPanelFixture(robot, "List Model Example");
-	    //window.show(); // shows the frame to test
-	  }
-	 
-	  @After public void tearDown() {
-		  robot.cleanUp();
-	  }
-	 
-	  /*@Test public void shouldCopyTextInLabelWhenClickingButton() {
-	    window.textBox("textToCopy").enterText("Some random text");
-	    window.button("copyButton").click();
-	    window.label("copiedText").requireText("Some random text");
-	  }*/
-	  
-	  @Test public void test() throws IOException, InterruptedException {
-		  LOGGER.debug("Thread chech");;
-		    Thread.currentThread().join();
-		  }
+
+	private Robot robot;
+
+	private static Logger LOGGER = Logger.getLogger(FirstGUITest.class);
+
+	@BeforeClass
+	public static void setUpOnce() {
+		FailOnThreadViolationRepaintManager.install();
 	}
+
+	FrameFixture frame;
+	@Before
+	public void setUp() throws IOException {
+		application(MainWindow.class).start();
+		robot = BasicRobot.robotWithCurrentAwtHierarchy();
+		frame=new FrameFixture(MainWindow.getFrame());
+		// window.show(); // shows the frame to test
+	}
+
+	@After
+	public void tearDown() {
+		robot.cleanUp();
+	}
+
+	@Test
+	public void test() throws IOException, InterruptedException {
+		LOGGER.debug("Thread = ");
+		frame.maximize();
+		//Thread.currentThread().join();
+	}
+}
