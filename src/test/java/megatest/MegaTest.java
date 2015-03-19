@@ -5,17 +5,21 @@ package megatest;
 
 import java.io.File;
 import java.io.IOException;
+
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.log4j.Logger;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.servlet.ServletHandler;
 import org.junit.Test;
 
 public class MegaTest {
+	
+	static Logger LOGGER = Logger.getLogger(MegaTest.class);
 	
 	@Test
 	public void test() throws Exception {
@@ -28,6 +32,7 @@ public class MegaTest {
 		server.start();
 
 		server.join();
+		LOGGER.debug("Goodbye, America!");
 	}
 
 	@SuppressWarnings("serial")
@@ -41,8 +46,8 @@ public class MegaTest {
 			String requestUri = request.getRequestURI();
 			String queryString = request.getQueryString();
 			
-			System.out.println("requestUri=" + requestUri);
-			System.out.println("queryString=" + queryString);
+			LOGGER.debug("requestUri is " + requestUri);
+			LOGGER.debug("queryString is" + queryString);
 			
 			response.setContentType(type);
 			response.setStatus(HttpServletResponse.SC_OK);
