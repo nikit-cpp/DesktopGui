@@ -1,4 +1,4 @@
-package spark;
+package megatest;
 
 // http://stackoverflow.com/questions/14179746/unit-test-a-servlet-with-an-embedded-jetty/14181904#14181904
 // http://git.eclipse.org/c/jetty/org.eclipse.jetty.project.git/tree/examples/embedded/src/main/java/org/eclipse/jetty/embedded/MinimalServlets.java
@@ -12,9 +12,12 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.servlet.ServletHandler;
+import org.junit.Test;
 
-public class MinimalServlets {
-	public static void main(String[] args) throws Exception {
+public class MegaTest {
+	
+	@Test
+	public void test() throws Exception {
 		Server server = new Server(8080);
 
 		ServletHandler handler = new ServletHandler();
