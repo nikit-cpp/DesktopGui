@@ -15,6 +15,7 @@ import org.fest.swing.edt.GuiQuery;
 import org.fest.swing.fixture.FrameFixture;
 import org.fest.swing.fixture.JPanelFixture;
 import org.junit.After;
+import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -27,10 +28,19 @@ public class FirstGUITest {
 
 
 	private static Logger LOGGER = Logger.getLogger(FirstGUITest.class);
-
+	private static VkEmulator vk;
+	
+	
 	@BeforeClass
-	public static void setUpOnce() {
+	public static void setUpOnce() throws Exception {
 		FailOnThreadViolationRepaintManager.install();
+		vk = new VkEmulator();
+		vk.start();
+	}
+	
+	@AfterClass
+	public static void kill() throws Exception{
+		vk.stop();
 	}
 
 	private FrameFixture window;

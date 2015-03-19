@@ -17,13 +17,15 @@ import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.servlet.ServletHandler;
 import org.junit.Test;
 
-public class MegaTest {
+public class VkEmulator {
 	
-	static Logger LOGGER = Logger.getLogger(MegaTest.class);
+	static Logger LOGGER = Logger.getLogger(VkEmulator.class);
+	private static int port = 8079;
+	private Server server;
 	
-	@Test
-	public void test() throws Exception {
-		Server server = new Server(8080);
+	//@Test
+	public void start() throws Exception {
+		server = new Server(port);
 
 		ServletHandler handler = new ServletHandler();
 		server.setHandler(handler);
@@ -33,6 +35,7 @@ public class MegaTest {
 
 		//server.join();
 		LOGGER.debug("Goodbye, America!");
+		LOGGER.debug("VkEmulator started");
 	}
 
 	@SuppressWarnings("serial")
@@ -59,5 +62,10 @@ public class MegaTest {
 				response.getWriter().println("some error in Megatest");
 			}
 		}
+	}
+
+	public void stop() throws Exception {
+		server.stop();
+		LOGGER.debug("VkEmulator stopped");
 	}
 }
