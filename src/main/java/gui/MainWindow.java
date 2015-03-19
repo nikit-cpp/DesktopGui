@@ -25,7 +25,7 @@ import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-public class MainWindow extends JPanel {
+public class MainWindow extends JFrame {
 	
 	private static final String SPRING_CONFIG = "spring-config.xml";
 	private static int THREADS = 4; 
@@ -37,22 +37,27 @@ public class MainWindow extends JPanel {
 	private static Logger LOGGER = Logger.getLogger(MainWindow.class);
 	private static final long serialVersionUID = 1L;
 	private JList list;
+	private JPanel contents;
 
 
 	public MainWindow() throws ParserConfigurationException,
 	VkPlayListBuilderException {
 		
-		initialize();
+		initNonGui();
+		
+		setTitle("List Model Example");
+		setSize(500, 500);
+		setDefaultCloseOperation(EXIT_ON_CLOSE);
+
 		
 		Collection<PlayList> cpl = new ArrayList<PlayList>();
 		for (String groupName : config.getGroupNames()){
 			cpl.addAll(cxp.getPlayListsFromGroup(groupName));
 		}
-
-		setLayout(new BorderLayout());
+		
 		final PlayListListModel playListModel = new PlayListListModel(cpl);
 		list = new JList(playListModel);
-		JScrollPane pane = new JScrollPane(list);
+		//
 
 		list.addMouseListener(new MouseListener() {
 
@@ -80,24 +85,26 @@ public class MainWindow extends JPanel {
 			}
 		});
 
-		add(pane, BorderLayout.CENTER); // CENTER раскукоживает
+		//add(pane, BorderLayout.CENTER); // CENTER раскукоживает
+		instance = this;
+		contents = new JPanel();
+		contents.setLayout(new BorderLayout());
+
+		getContentPane().add(contents);
+		contents.add( new JScrollPane(list) );
 	}
-	private static JFrame frame;
 	public static void main(String[] args) throws ParserConfigurationException, VkPlayListBuilderException {
 		
-		// GUI stuff
-		frame = new JFrame("List Model Example");
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		frame.setContentPane(new MainWindow());
-		frame.setSize(500, 500);
-		frame.setVisible(true);
+		MainWindow mainFrame = new MainWindow();
+		mainFrame.setVisible( true );
 	}
 	
-	public static JFrame getFrame(){
-		return frame;
+	static MainWindow instance = null;
+	public static MainWindow getInstance(){
+		return instance ;
 	}
 	
-	private void initialize(){
+	private void initNonGui(){
 		// Non-GUI work
 		ApplicationContext context = new ClassPathXmlApplicationContext(SPRING_CONFIG);
 
