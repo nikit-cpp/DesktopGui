@@ -50,7 +50,7 @@ public class VkEmulator {
 			String queryString = request.getQueryString();
 			
 			LOGGER.debug("requestUri is " + requestUri);
-			LOGGER.debug("queryString is" + queryString);
+			LOGGER.debug("queryString is " + queryString);
 			
 			response.setContentType(type);
 			response.setStatus(HttpServletResponse.SC_OK);

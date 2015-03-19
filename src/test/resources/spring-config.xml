@@ -24,7 +24,7 @@
 	</bean>
 	
 	<bean id ="vkPlaylistBuilder" class = "vk.VkPlayListBuilder" scope = "singleton" >
-	    <constructor-arg value="https://api.vk.com"/>
+	    <constructor-arg value="http://0.0.0.0:8079"/>
 	</bean>
 
 
