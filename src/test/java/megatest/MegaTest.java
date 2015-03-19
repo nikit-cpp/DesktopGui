@@ -5,7 +5,6 @@ package megatest;
 
 import java.io.File;
 import java.io.IOException;
-
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -14,7 +13,6 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.io.FileUtils;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.servlet.ServletHandler;
-import org.eclipse.jetty.servlet.ServletHolder;
 import org.junit.Test;
 
 public class MegaTest {
@@ -26,8 +24,7 @@ public class MegaTest {
 		ServletHandler handler = new ServletHandler();
 		server.setHandler(handler);
 
-		ServletHolder sh = new ServletHolder(new HelloServlet("text/xml", FileUtils.readFileToString(new File("src/test/resources/responce.txt"))));
-		handler.addServletWithMapping(sh, "/*");
+		handler.addServletWithMapping(HelloServlet.class, "/*");
 		server.start();
 
 		server.join();
@@ -36,18 +33,26 @@ public class MegaTest {
 	@SuppressWarnings("serial")
 	public static class HelloServlet extends HttpServlet {
 		
-		private String content;
-		private String type;
+		private String type = "text/xml";
 		
-		public HelloServlet(String content, String type) {
-			this.content = content;
-			this.type = type;
-		}
 		@Override
 		protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-			response.setContentType(content);
+			
+			String requestUri = request.getRequestURI();
+			String queryString = request.getQueryString();
+			
+			System.out.println("requestUri=" + requestUri);
+			System.out.println("queryString=" + queryString);
+			
+			response.setContentType(type);
 			response.setStatus(HttpServletResponse.SC_OK);
-			response.getWriter().write(type);
+
+			if(requestUri.equals("/method/wall.get.xml") && queryString.equals("owner_id=-11081630")) {
+				response.getWriter().write(FileUtils.readFileToString(new File(
+						"src/test/resources/responce.txt")));
+			}else{
+				response.getWriter().println("some error in Megatest");
+			}
 		}
 	}
 }
