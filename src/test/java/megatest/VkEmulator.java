@@ -39,6 +39,8 @@ public class VkEmulator {
 	}
 
 	@SuppressWarnings("serial")
+	// curl https://api.vk.com/method/wall.get.xml?owner_id=-11081630 > ./src/test/resources/wall.get.xml
+	// 
 	public static class HelloServlet extends HttpServlet {
 		
 		private String type = "text/xml";
@@ -58,6 +60,7 @@ public class VkEmulator {
 			if(requestUri.equals("/method/wall.get.xml") && queryString.equals("owner_id=-11081630")) {
 				response.getWriter().write(FileUtils.readFileToString(new File(
 						"src/test/resources/wall.get.xml")));
+				
 			}else if (requestUri.equals("/method/groups.getById.xml") && queryString.equals("group_ids=rockmetal80")) {
 				response.getWriter().write(FileUtils.readFileToString(new File(
 						"src/test/resources/groups.getById.xml")));
