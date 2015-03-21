@@ -65,9 +65,10 @@ public class FirstGUITest {
 	public void test() throws IOException, InterruptedException {
 		LOGGER.debug("Log4J stub for show thread");
 		
-		window.scrollPane().verticalScrollBar().scrollBlockDown(60);
+		//window.scrollPane().verticalScrollBar().scrollBlockDown(60);
+		window.panel("null.contentPane").list().doubleClickItem(0);
 		
-		//LOGGER.debug("Close the window");
-		//Thread.currentThread().join();
+		LOGGER.debug("Press Enter for exit from test");
+		System.in.read();
 	}
 }
