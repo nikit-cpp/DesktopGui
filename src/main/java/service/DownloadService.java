@@ -15,9 +15,9 @@ import com.github.nikit.cpp.player.Song;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 
+import config.Config;
 import events.DownloadEvent;
 import events.PlayEvent;
-import gui.Config;
 
 public class DownloadService {
 	private static Logger LOGGER = Logger.getLogger(DownloadService.class);

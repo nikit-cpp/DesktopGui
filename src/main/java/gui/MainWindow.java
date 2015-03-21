@@ -12,6 +12,7 @@ import com.github.nikit.cpp.player.Song;
 import com.google.common.eventbus.AsyncEventBus;
 import com.google.common.eventbus.EventBus;
 
+import config.Config;
 import events.DownloadEvent;
 import service.DownloadService;
 import service.PlayService;

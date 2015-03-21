@@ -1,4 +1,4 @@
-package gui;
+package config;
 
 import java.util.Set;
 
