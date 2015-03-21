@@ -15,7 +15,7 @@ import com.google.common.eventbus.EventBus;
 import config.Config;
 import events.DownloadEvent;
 import service.DownloadService;
-import service.PlayService;
+import service.PlayerService;
 import vk.VkPlayListBuilder;
 import vk.VkPlayListBuilderException;
 
@@ -115,7 +115,7 @@ public class MainWindow extends JFrame {
 	    eventBus = new AsyncEventBus(executor);
 	    DownloadService downloadService = (DownloadService) context.getBean("downloader");
 	    downloadService.setEventBus(eventBus); // TODO refactor java.util.Executors io spring.xml http://stackoverflow.com/questions/8416655/best-way-to-refactor-this-in-spring/8416805#8416805
-	    PlayService pls = new PlayService();
+	    PlayerService pls = (PlayerService) context.getBean("playerService");
 	    eventBus.register(downloadService);
 	    eventBus.register(pls);
 

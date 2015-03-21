@@ -25,6 +25,10 @@
 	<bean id ="vkPlaylistBuilder" class = "vk.VkPlayListBuilder" scope = "singleton" >
 	    <constructor-arg value="http://0.0.0.0:8079"/>
 	</bean>
+	
+	 <bean id="player" class="org.mockito.Mockito" factory-method="mock">
+		<constructor-arg value="com.jayway.example.SomeDependency" />
+	 </bean> 
 
 
 </beans>

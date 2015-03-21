@@ -24,7 +24,6 @@ import org.mockito.Mockito;
 import static org.fest.swing.launcher.ApplicationLauncher.application;
 import static org.fest.swing.testing.FestSwingTestCaseTemplate.*;
 import vk.VkPlayListBuilderException;
-import vkButtonedMp3Player.CustomPlayer;
 
 public class FirstGUITest {
 
@@ -67,12 +66,12 @@ public class FirstGUITest {
 	public void test() throws IOException, InterruptedException {
 		LOGGER.debug("Log4J stub for show thread");
 		
-		CustomPlayer mockedPlayer = Mockito.mock(CustomPlayer.class);
+		//CustomPlayer mockedPlayer = Mockito.mock(CustomPlayer.class);
 		
-		//window.scrollPane().verticalScrollBar().scrollBlockDown(60);
-		window.panel("null.contentPane").list().doubleClickItem(0);
+		window.scrollPane().verticalScrollBar().scrollBlockDown(60);
+		//window.panel("null.contentPane").list().doubleClickItem(0);
 		
-		LOGGER.debug("Press Enter for exit from test");
-		System.in.read();
+		//LOGGER.debug("Press Enter for exit from test");
+		//System.in.read();
 	}
 }
