@@ -29,7 +29,6 @@ import java.util.concurrent.Executors;
 public class MainWindow extends JFrame {
 	
 	private static final String SPRING_CONFIG = "spring-config.xml";
-	private static int THREADS = 4; 
 
 	private static Config config;
 	private static VkPlayListBuilder cxp;
@@ -111,10 +110,8 @@ public class MainWindow extends JFrame {
 
 		cxp = (VkPlayListBuilder)context.getBean("vkPlaylistBuilder");
 	    config = (Config)context.getBean("config");
-		ExecutorService executor = Executors.newFixedThreadPool(THREADS);
-	    eventBus = new AsyncEventBus(executor);
+	    eventBus = (EventBus) context.getBean("eventBus");
 	    DownloadService downloadService = (DownloadService) context.getBean("downloader");
-	    downloadService.setEventBus(eventBus); // TODO refactor java.util.Executors io spring.xml http://stackoverflow.com/questions/8416655/best-way-to-refactor-this-in-spring/8416805#8416805
 	    PlayerService pls = (PlayerService) context.getBean("playerService");
 	    eventBus.register(downloadService);
 	    eventBus.register(pls);

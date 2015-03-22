@@ -16,10 +16,23 @@
 			<value>/tmp</value>
 		</property>
 	</bean>
+	
+	<bean id="executor" class="java.util.concurrent.Executors" 
+        factory-method="newFixedThreadPool" 
+        destroy-method="shutdownNow">
+    	<constructor-arg value="4"/>
+	</bean>
+	
+	<bean id="eventBus" class="com.google.common.eventbus.AsyncEventBus">
+    	<constructor-arg ref="executor"/>
+	</bean>
 		
 	<bean id ="downloader" class = "service.DownloadService" scope = "singleton" >
 	    <property name="config">
 			<ref bean="config" />
+		</property>
+		<property name="eventBus">
+			<ref bean="eventBus" />
 		</property>
 	</bean>
 	

@@ -59,4 +59,8 @@ public class DownloadService {
 		this.eventBus = eventBus;
 	}
 
+	public EventBus getEventBus() {
+		return eventBus;
+	}
+
 }
