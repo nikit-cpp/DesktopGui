@@ -69,7 +69,7 @@ public class FirstGUITest {
 		//CustomPlayer mockedPlayer = Mockito.mock(CustomPlayer.class);
 		
 		window.scrollPane().verticalScrollBar().scrollBlockDown(60);
-		//window.panel("null.contentPane").list().doubleClickItem(0);
+		window.panel("null.contentPane").list().doubleClickItem(0);
 		
 		//LOGGER.debug("Press Enter for exit from test");
 		//System.in.read();

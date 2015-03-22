@@ -37,7 +37,9 @@
 		</property>
 	</bean>
 	
-	<bean id ="customPlayer" class = "player.CustomPlayer" scope = "singleton" />	
+	<bean id ="customPlayer" class = "org.mockito.Mockito" factory-method="mock" >
+	    <constructor-arg value="player.CustomPlayer" />
+	</bean>	
 	 
 
 </beans>
