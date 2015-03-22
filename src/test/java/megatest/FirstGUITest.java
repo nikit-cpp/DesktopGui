@@ -71,7 +71,7 @@ public class FirstGUITest {
 		window.scrollPane().verticalScrollBar().scrollBlockDown(60);
 		window.panel("null.contentPane").list().doubleClickItem(0);
 		
-		//LOGGER.debug("Press Enter for exit from test");
-		//System.in.read();
+		LOGGER.debug("Press Enter for exit from test");
+		System.in.read();
 	}
 }
