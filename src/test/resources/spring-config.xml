@@ -26,9 +26,18 @@
 	    <constructor-arg value="http://0.0.0.0:8079"/>
 	</bean>
 	
+	<!-- 
 	 <bean id="player" class="org.mockito.Mockito" factory-method="mock">
 		<constructor-arg value="com.jayway.example.SomeDependency" />
 	 </bean> 
-
+ -->
+	 <bean id ="playerService" class = "service.PlayerService" scope = "singleton" >
+	    <property name="player">
+			<ref bean="customPlayer" />
+		</property>
+	</bean>
+	
+	<bean id ="customPlayer" class = "player.CustomPlayer" scope = "singleton" />	
+	 
 
 </beans>
