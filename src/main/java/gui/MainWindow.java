@@ -31,7 +31,7 @@ public class MainWindow extends JFrame {
 	private static final String SPRING_CONFIG = "spring-config.xml";
 
 	private static Config config;
-	private static VkPlayListBuilder cxp;
+	private static VkPlayListBuilder playlistBuilder;
 	private static EventBus eventBus;
 	
 	private static Logger LOGGER = Logger.getLogger(MainWindow.class);
@@ -52,7 +52,7 @@ public class MainWindow extends JFrame {
 		
 		Collection<PlayList> cpl = new ArrayList<PlayList>();
 		for (String groupName : config.getGroupNames()){
-			cpl.addAll(cxp.getPlayListsFromGroup(groupName));
+			cpl.addAll(playlistBuilder.getPlayListsFromGroup(groupName));
 		}
 		
 		final PlayListListModel playListModel = new PlayListListModel(cpl);
@@ -108,7 +108,7 @@ public class MainWindow extends JFrame {
 		// Non-GUI work
 		ApplicationContext context = new ClassPathXmlApplicationContext(SPRING_CONFIG);
 
-		cxp = (VkPlayListBuilder)context.getBean("vkPlaylistBuilder");
+		playlistBuilder = (VkPlayListBuilder)context.getBean("vkPlaylistBuilder");
 	    config = (Config)context.getBean("config");
 	    eventBus = (EventBus) context.getBean("eventBus");
 	    DownloadService downloadService = (DownloadService) context.getBean("downloader");
