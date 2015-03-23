@@ -12,7 +12,7 @@
 			</set>
 		</property>
 		<property name="cacheFolder">
-			<value>/tmp</value>
+			<value>target</value>
 		</property>
 	</bean>
 	

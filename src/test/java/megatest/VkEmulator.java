@@ -13,7 +13,10 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
+import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.Server;
+import org.eclipse.jetty.server.handler.HandlerList;
+import org.eclipse.jetty.server.handler.ResourceHandler;
 import org.eclipse.jetty.servlet.ServletHandler;
 import org.junit.Test;
 
@@ -23,17 +26,26 @@ public class VkEmulator {
 	private static int port = 8079;
 	private Server server;
 	
-	//@Test
+	@Test
 	public void start() throws Exception {
 		server = new Server(port);
 
-		ServletHandler handler = new ServletHandler();
-		server.setHandler(handler);
+		ServletHandler servletHandler = new ServletHandler();
+		
+        ResourceHandler resource_handler = new ResourceHandler();
+        resource_handler.setDirectoriesListed(true);
+        resource_handler.setResourceBase(".");
+ 
+        HandlerList handlers = new HandlerList();
+        // Порядок важен
+        handlers.setHandlers(new Handler[] { resource_handler, servletHandler });
+		
+		server.setHandler(handlers);
 
-		handler.addServletWithMapping(HelloServlet.class, "/*");
+		servletHandler.addServletWithMapping(HelloServlet.class, "/*");
 		server.start();
 
-		//server.join();
+		server.join();
 		LOGGER.debug("Goodbye, America!");
 		LOGGER.debug("VkEmulator started");
 	}
@@ -69,7 +81,7 @@ public class VkEmulator {
 			}
 
 			else{
-				response.getWriter().println("some error in Megatest");
+				response.getWriter().println("some error in Megatest, check log4j's log");
 				LOGGER.debug("unexpected request " + request.getRequestURL() + "?" + request.getQueryString() +", may be error in src/test/resources/spring-config.xml");
 			}
 		}
