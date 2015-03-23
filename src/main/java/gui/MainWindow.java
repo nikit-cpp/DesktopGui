@@ -68,9 +68,11 @@ public class MainWindow extends JFrame {
 				data.add(s);
 			}
 		}
+		
+		PlayList playList = new PlayList(data);
 
 		
-		final PlayListListModel playListModel = new PlayListListModel(data);
+		final PlayListListModel playListModel = new PlayListListModel(playList);
 		list = new JList<Song>(playListModel);
 
 		list.addMouseListener(new MouseListener() {
@@ -187,16 +189,16 @@ class PlayListListModel extends AbstractListModel<Song> {
 	// здесь будем хранить данные
 	private List<Song> data = new ArrayList<Song>();
 
-	public PlayListListModel(List<Song> songs){
-		setDataSource(songs);
+	public PlayListListModel(PlayList playList){
+		setDataSource(playList);
 	}
-	private void setDataSource(List<Song> songs) {
+	private void setDataSource(PlayList playList) {
 		try {
 			// получаем данные
 			data.clear();
 			
 			synchronized (data) {
-				data = songs;
+				data = playList.getSongs();
 			}
 			// оповещаем виды (если они есть)
 			fireIntervalAdded(this, 0, data.size());
