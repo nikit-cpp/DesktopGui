@@ -23,7 +23,7 @@
     	<constructor-arg value="4"/>
 	</bean>
 	
-	<bean id="eventBus" class="com.google.common.eventbus.AsyncEventBus">
+	<bean id="eventBus" class="com.google.common.eventbus.AsyncEventBus" scope = "singleton">
     	<constructor-arg ref="executor"/>
 	</bean>
 		
@@ -46,6 +46,8 @@
 		</property>
 	</bean>
 	
-	<bean id ="customPlayer" class = "player.CustomPlayer" scope = "singleton" />	
+	<bean id ="customPlayer" class = "player.CustomPlayer" scope = "singleton">
+	    <constructor-arg ref="eventBus"/>
+	</bean>	
 
 </beans>

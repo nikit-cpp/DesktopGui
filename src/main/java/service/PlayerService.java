@@ -2,6 +2,7 @@ package service;
 
 import org.apache.log4j.Logger;
 
+import player.PlayFinished;
 import player.Player;
 
 import com.google.common.eventbus.Subscribe;
@@ -19,7 +20,11 @@ public class PlayerService {
 	synchronized public void play(PlayEvent e){
 		player.prepareFor(e.getPath());
 		player.play();
-		LOGGER.debug("This message must be showed after song playing completed!");
+	}
+	
+	@Subscribe
+	synchronized public void play(PlayFinished e){
+		LOGGER.debug("Play finished");
 	}
 
 	public Player getPlayer() {

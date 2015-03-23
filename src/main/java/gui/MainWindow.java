@@ -9,6 +9,8 @@ import org.apache.log4j.Logger;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
+import player.PlayFinished;
+
 import com.github.nikit.cpp.player.PlayList;
 import com.github.nikit.cpp.player.Song;
 import com.google.common.eventbus.AsyncEventBus;
@@ -152,6 +154,17 @@ public class MainWindow extends JFrame {
 			}
 		});
 	}
+	
+	@Subscribe
+	synchronized public void play(PlayFinished e){
+		LOGGER.debug("Play finished");
+		EventQueue.invokeLater(new Runnable() {
+			public void run() {
+				statusLabel.setText("Stopped");
+			}
+		});
+	}
+
 	
 	@Subscribe
 	public void onDownload(DownloadEvent e) throws DownloadServiceException {
