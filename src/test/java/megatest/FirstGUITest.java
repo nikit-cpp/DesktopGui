@@ -18,6 +18,7 @@ import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.Mockito;
 
@@ -30,6 +31,10 @@ public class FirstGUITest {
 
 	private static Logger LOGGER = Logger.getLogger(FirstGUITest.class);
 	private static VkEmulator vk;
+	private FrameFixture window;
+	private MainWindow mainWindow;
+	
+
 	
 	
 	@BeforeClass
@@ -44,17 +49,17 @@ public class FirstGUITest {
 		vk.stop();
 	}
 
-	private FrameFixture window;
+	
 
 	@Before
 	public void setUp() throws IOException {
-        MainWindow frame = GuiActionRunner.execute(new GuiQuery<MainWindow>() {
+		mainWindow = GuiActionRunner.execute(new GuiQuery<MainWindow>() {
             protected MainWindow executeInEDT() throws ParserConfigurationException, VkPlayListBuilderException {
                 MainWindow.main(new String[0]);
                 return MainWindow.getInstance();  
             }
         });
-        window = new FrameFixture(frame);
+        window = new FrameFixture(mainWindow);
 	}
 
 	@After
@@ -62,6 +67,7 @@ public class FirstGUITest {
 		 window.cleanUp();
 	}
 
+	@Ignore
 	@Test
 	public void test() throws IOException, InterruptedException {
 		LOGGER.debug("Log4J stub for show thread");

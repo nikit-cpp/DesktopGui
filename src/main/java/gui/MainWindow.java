@@ -1,8 +1,10 @@
 package gui;
 
 import javax.swing.*;
+import javax.swing.border.BevelBorder;
 import javax.xml.parsers.ParserConfigurationException;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
@@ -11,17 +13,26 @@ import com.github.nikit.cpp.player.PlayList;
 import com.github.nikit.cpp.player.Song;
 import com.google.common.eventbus.AsyncEventBus;
 import com.google.common.eventbus.EventBus;
+import com.google.common.eventbus.Subscribe;
 
 import config.Config;
 import events.DownloadEvent;
+import events.PlayEvent;
 import service.DownloadService;
+import service.DownloadServiceException;
 import service.PlayerService;
+import utils.IOHelper;
 import vk.VkPlayListBuilder;
 import vk.VkPlayListBuilderException;
 
 import java.awt.BorderLayout;
+import java.awt.Dimension;
+import java.awt.EventQueue;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.io.File;
+import java.io.IOException;
+import java.net.URL;
 import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -38,12 +49,13 @@ public class MainWindow extends JFrame {
 	private static final long serialVersionUID = 1L;
 	private JList list;
 	private JPanel contents;
+	private JLabel statusLabel;
 
 
 	public MainWindow() throws ParserConfigurationException,
 	VkPlayListBuilderException {
-		
 		initNonGui();
+		eventBus.register(this);
 		
 		setTitle("List Model Example");
 		setSize(500, 500);
@@ -92,6 +104,16 @@ public class MainWindow extends JFrame {
 
 		getContentPane().add(contents);
 		contents.add( new JScrollPane(list) );
+		
+		// create the status bar panel and shove it down the bottom of the frame
+		JPanel statusPanel = new JPanel();
+		statusPanel.setBorder(new BevelBorder(BevelBorder.LOWERED));
+		add(statusPanel, BorderLayout.SOUTH);
+		statusPanel.setPreferredSize(new Dimension(getWidth(), 16));
+		statusPanel.setLayout(new BoxLayout(statusPanel, BoxLayout.X_AXIS));
+		statusLabel = new JLabel("Ready");
+		statusLabel.setHorizontalAlignment(SwingConstants.LEFT);
+		statusPanel.add(statusLabel);
 	}
 	public static void main(String[] args) throws ParserConfigurationException, VkPlayListBuilderException {
 		
@@ -116,6 +138,32 @@ public class MainWindow extends JFrame {
 	    eventBus.register(downloadService);
 	    eventBus.register(pls);
 
+	}
+	
+	@Subscribe
+	public void onPlay(PlayEvent e) throws DownloadServiceException {
+		final String s = e.getPath();
+		final String message = "Playing '" + s + "'";
+		LOGGER.debug(message);
+
+		EventQueue.invokeLater(new Runnable() {
+			public void run() {
+				statusLabel.setText(message);
+			}
+		});
+	}
+	
+	@Subscribe
+	public void onDownload(DownloadEvent e) throws DownloadServiceException {
+		final String s = e.getSong().toString();
+		final String message = "Downloading '" + s + "'";
+		LOGGER.debug(message);
+
+		EventQueue.invokeLater(new Runnable() {
+			public void run() {
+				statusLabel.setText(message);
+			}
+		});
 	}
 }
 
