@@ -30,13 +30,17 @@ public class DownloadService {
 	public void download(DownloadEvent e) throws DownloadServiceException {
 		Song s = e.getSong();
 		try {
-			String filename = s.toString()+DOT_EXT;
-			filename = IOHelper.toFileSystemSafeName(filename);
-			File dest = new File(config.getCacheFolder(), filename);
-			String url = s.getUrl();
-			LOGGER.debug("Downloading "+ url +" to " + dest);
-			FileUtils.copyURLToFile(new URL(url), dest);
-			LOGGER.debug("Downloading complete ");
+			File dest = s.getFile();
+			if(dest == null){
+				String filename = s.toString()+DOT_EXT;
+				filename = IOHelper.toFileSystemSafeName(filename);
+				dest = new File(config.getCacheFolder(), filename);
+				String url = s.getUrl();
+				LOGGER.debug("Downloading "+ url +" to " + dest);
+				FileUtils.copyURLToFile(new URL(url), dest);
+				LOGGER.debug("Downloading complete ");
+				s.setFile(dest);
+			}
 			
 			LOGGER.debug("Sending PlayEvent ");
 			eventBus.post(new PlayEvent(dest.getAbsolutePath()));
