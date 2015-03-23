@@ -91,7 +91,7 @@ public class FirstGUITest {
 		//window.scrollPane().verticalScrollBar().scrollBlockDown(60);
 		window.panel("null.contentPane").list().doubleClickItem(0);
 		
-		Thread.sleep(500);
+		Thread.sleep(1500);
 		
 		Assert.assertTrue(downloadTriggered);
 		Assert.assertTrue(playTriggered);
@@ -116,7 +116,7 @@ public class FirstGUITest {
 		downloadTriggered = false;
 		playTriggered = false;
 		
-		Thread.sleep(1500);
+		Thread.sleep(2500);
 		Assert.assertTrue(nextTriggered);
 		Assert.assertTrue(downloadTriggered);
 		Assert.assertTrue(playTriggered);

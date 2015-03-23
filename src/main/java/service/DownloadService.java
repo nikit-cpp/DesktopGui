@@ -29,7 +29,7 @@ public class DownloadService {
 	public void download(DownloadEvent e) throws DownloadServiceException {
 		Song s = e.getSong();
 		try {
-			File dest = s.getFile();
+			File dest = null;
 			String filename = s.toString()+DOT_EXT;
 			filename = IOHelper.toFileSystemSafeName(filename);
 			dest = new File(config.getCacheFolder(), filename);
