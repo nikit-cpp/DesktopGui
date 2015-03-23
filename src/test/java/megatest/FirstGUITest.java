@@ -93,7 +93,7 @@ public class FirstGUITest {
 		
 		Assert.assertTrue(downloadTriggered);
 		Assert.assertTrue(playTriggered);
-		window.close();
+		//window.close();
 		
 		//LOGGER.debug("Press Enter for exit from test");
 		//System.in.read();

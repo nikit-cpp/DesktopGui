@@ -1,4 +1,4 @@
-package gui;
+package config;
 import static org.junit.Assert.*;
 
 import java.util.HashSet;
@@ -35,7 +35,7 @@ public class ConfigTest {
 	       expected.add("rockmetal80");
 	       Assert.assertEquals(expected, jc.getGroupNames());
 	       
-	       Assert.assertEquals("/tmp", jc.getCacheFolder());
+	       Assert.assertEquals("target", jc.getCacheFolder());
 	}
 
 }
