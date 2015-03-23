@@ -26,7 +26,7 @@ public class VkEmulator {
 	private static int port = 8079;
 	private Server server;
 	
-	@Test
+	//@Test
 	public void start() throws Exception {
 		server = new Server(port);
 
@@ -45,7 +45,7 @@ public class VkEmulator {
 		servletHandler.addServletWithMapping(HelloServlet.class, "/*");
 		server.start();
 
-		server.join();
+		//server.join();
 		LOGGER.debug("Goodbye, America!");
 		LOGGER.debug("VkEmulator started");
 	}
