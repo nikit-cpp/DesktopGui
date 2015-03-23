@@ -39,6 +39,7 @@ public class MainWindow extends JFrame {
 	private static Config config;
 	private static VkPlayListBuilder playlistBuilder;
 	private static EventBus eventBus;
+	private static PlayerService playerService;
 	
 	private static Logger LOGGER = Logger.getLogger(MainWindow.class);
 	private static final long serialVersionUID = 1L;
@@ -61,16 +62,15 @@ public class MainWindow extends JFrame {
 		for (String groupName : config.getGroupNames()){
 			cpl.addAll(playlistBuilder.getPlayListsFromGroup(groupName));
 		}
-		
 		List<Song> data = new ArrayList<Song>();
 		for (PlayList pl: cpl) {
 			for (Song s : pl.getSongs()) {
 				data.add(s);
 			}
 		}
-		
 		PlayList playList = new PlayList(data);
 
+		playerService.setPlayList(playList);
 		
 		final PlayListListModel playListModel = new PlayListListModel(playList);
 		list = new JList<Song>(playListModel);
@@ -138,9 +138,9 @@ public class MainWindow extends JFrame {
 	    config = (Config)context.getBean("config");
 	    eventBus = (EventBus) context.getBean("eventBus");
 	    DownloadService downloadService = (DownloadService) context.getBean("downloader");
-	    PlayerService pls = (PlayerService) context.getBean("playerService");
+	    playerService = (PlayerService) context.getBean("playerService");
 	    eventBus.register(downloadService);
-	    eventBus.register(pls);
+	    eventBus.register(playerService);
 	}
 	
 	@Subscribe

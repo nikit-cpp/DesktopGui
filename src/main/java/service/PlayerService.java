@@ -29,7 +29,7 @@ public class PlayerService {
 	}
 
 	@Subscribe
-	synchronized public void play1(PlayEvent e){
+	synchronized public void playInitial(PlayEvent e){
 		Song song = e.getSong();
 		File dest = song.getFile();
 		if(dest == null){
