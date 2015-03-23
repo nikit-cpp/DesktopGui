@@ -77,9 +77,11 @@ public class FirstGUITest {
 	}
 
 	@After
-	public void tearDown() {
+	public void tearDown() throws InterruptedException {
 		 window.cleanUp();
 		 eventBus.unregister(this);
+		 mainWindow.getPlayerService().getPlayer().stop();
+		 Thread.sleep(200);
 	}
 
 	@Test
@@ -114,7 +116,7 @@ public class FirstGUITest {
 		downloadTriggered = false;
 		playTriggered = false;
 		
-		Thread.sleep(2000);
+		Thread.sleep(1500);
 		Assert.assertTrue(nextTriggered);
 		Assert.assertTrue(downloadTriggered);
 		Assert.assertTrue(playTriggered);

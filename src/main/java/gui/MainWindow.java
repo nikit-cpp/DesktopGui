@@ -181,6 +181,9 @@ public class MainWindow extends JFrame {
 	public static EventBus getEventBus() {
 		return eventBus;
 	}
+	public static PlayerService getPlayerService() {
+		return playerService;
+	}
 }
 
 
