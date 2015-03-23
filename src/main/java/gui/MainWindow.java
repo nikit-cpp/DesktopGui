@@ -62,7 +62,15 @@ public class MainWindow extends JFrame {
 			cpl.addAll(playlistBuilder.getPlayListsFromGroup(groupName));
 		}
 		
-		final PlayListListModel playListModel = new PlayListListModel(cpl);
+		List<Song> data = new ArrayList<Song>();
+		for (PlayList pl: cpl) {
+			for (Song s : pl.getSongs()) {
+				data.add(s);
+			}
+		}
+
+		
+		final PlayListListModel playListModel = new PlayListListModel(data);
 		list = new JList<Song>(playListModel);
 
 		list.addMouseListener(new MouseListener() {
@@ -177,24 +185,21 @@ public class MainWindow extends JFrame {
 class PlayListListModel extends AbstractListModel<Song> {
 	private static final long serialVersionUID = 1L;
 	// здесь будем хранить данные
-	private ArrayList<Song> data = new ArrayList<Song>();
+	private List<Song> data = new ArrayList<Song>();
 
-	public PlayListListModel(Collection<PlayList> pls){
-		setDataSource(pls);
+	public PlayListListModel(List<Song> songs){
+		setDataSource(songs);
 	}
-	private void setDataSource(Collection<PlayList> pls) {
+	private void setDataSource(List<Song> songs) {
 		try {
 			// получаем данные
 			data.clear();
-			for (PlayList pl: pls) {
-				synchronized (data) {
-					for (Song s : pl.getSongs()) {
-						data.add(s);
-					}
-				}
-				// оповещаем виды (если они есть)
-				fireIntervalAdded(this, 0, data.size());
+			
+			synchronized (data) {
+				data = songs;
 			}
+			// оповещаем виды (если они есть)
+			fireIntervalAdded(this, 0, data.size());
 			fireContentsChanged(this, 0, data.size());
 		} catch (Exception ex) {
 			throw new RuntimeException(ex);
