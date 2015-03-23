@@ -44,7 +44,7 @@ public class FirstGUITest {
 	private static VkEmulator vk;
 	private FrameFixture window;
 	private MainWindow mainWindow;
-	
+	private EventBus eventBus;
 
 	
 	
@@ -71,21 +71,20 @@ public class FirstGUITest {
             }
         });
         window = new FrameFixture(mainWindow);
+		eventBus = MainWindow.getEventBus();
+		eventBus.register(this);
 	}
 
 	@After
 	public void tearDown() {
 		 window.cleanUp();
+		 eventBus.unregister(this);
 	}
 
-	//@Ignore
 	@Test
-	public void test() throws IOException, InterruptedException {
+	public void testPlayFirstSong() throws IOException, InterruptedException {
 		LOGGER.debug("Log4J stub for show thread");
-		
-		EventBus eventBus = MainWindow.getEventBus();
-		eventBus.register(this);
-		
+				
 		//window.scrollPane().verticalScrollBar().scrollBlockDown(60);
 		window.panel("null.contentPane").list().doubleClickItem(0);
 		
