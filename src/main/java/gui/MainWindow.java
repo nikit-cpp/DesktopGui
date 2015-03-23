@@ -10,6 +10,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import player.PlayFinished;
+import player.PlayStarted;
 
 import com.github.nikit.cpp.player.PlayList;
 import com.github.nikit.cpp.player.Song;
@@ -42,7 +43,7 @@ import java.util.concurrent.Executors;
 public class MainWindow extends JFrame {
 	
 	private static final String SPRING_CONFIG = "spring-config.xml";
-
+	private static final String STOPPED = "Stopped";
 	private static Config config;
 	private static VkPlayListBuilder playlistBuilder;
 	private static EventBus eventBus;
@@ -113,7 +114,7 @@ public class MainWindow extends JFrame {
 		add(statusPanel, BorderLayout.SOUTH);
 		statusPanel.setPreferredSize(new Dimension(getWidth(), 16));
 		statusPanel.setLayout(new BoxLayout(statusPanel, BoxLayout.X_AXIS));
-		statusLabel = new JLabel("Ready");
+		statusLabel = new JLabel(STOPPED);
 		statusLabel.setHorizontalAlignment(SwingConstants.LEFT);
 		statusPanel.add(statusLabel);
 	}
@@ -143,7 +144,7 @@ public class MainWindow extends JFrame {
 	}
 	
 	@Subscribe
-	public void onPlay(PlayEvent e) throws DownloadServiceException {
+	public void onPlayStarted(PlayStarted e) throws DownloadServiceException {
 		final String s = e.getPath();
 		final String message = "Playing '" + s + "'";
 		LOGGER.debug(message);
@@ -156,11 +157,11 @@ public class MainWindow extends JFrame {
 	}
 	
 	@Subscribe
-	synchronized public void play(PlayFinished e){
+	public void onPlayFinished(PlayFinished e){
 		LOGGER.debug("Play finished");
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
-				statusLabel.setText("Stopped");
+				statusLabel.setText(STOPPED);
 			}
 		});
 	}
@@ -168,8 +169,7 @@ public class MainWindow extends JFrame {
 	
 	@Subscribe
 	public void onDownload(DownloadEvent e) throws DownloadServiceException {
-		final String s = e.getSong().toString();
-		final String message = "Downloading '" + s + "'";
+		final String message = "Downloading '" + e.getSong().getUrl() + "'";
 		LOGGER.debug(message);
 
 		EventQueue.invokeLater(new Runnable() {
@@ -177,6 +177,9 @@ public class MainWindow extends JFrame {
 				statusLabel.setText(message);
 			}
 		});
+	}
+	public static EventBus getEventBus() {
+		return eventBus;
 	}
 }
 

@@ -24,12 +24,13 @@ public class DownloadService {
 	
 	private Config config;
 	private EventBus eventBus;
+	private static final String DOT_EXT = ".mp3";
 
 	@Subscribe
 	public void download(DownloadEvent e) throws DownloadServiceException {
 		Song s = e.getSong();
 		try {
-			String filename = s.toString()+".mp3";
+			String filename = s.toString()+DOT_EXT;
 			filename = IOHelper.toFileSystemSafeName(filename);
 			File dest = new File(config.getCacheFolder(), filename);
 			String url = s.getUrl();
@@ -40,8 +41,9 @@ public class DownloadService {
 			LOGGER.debug("Sending PlayEvent ");
 			eventBus.post(new PlayEvent(dest.getAbsolutePath()));
 		} catch (IOException e1) {
-			LOGGER.error("Error", e1);
-			throw new DownloadServiceException("Error", e1);
+			String message = "Error on downloading";
+			LOGGER.error(message, e1);
+			throw new DownloadServiceException(message, e1);
 		}
 	  }
 

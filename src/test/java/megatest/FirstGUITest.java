@@ -1,9 +1,12 @@
 package megatest;
 
+import java.awt.EventQueue;
 import java.io.IOException;
 
 import javax.xml.parsers.ParserConfigurationException;
 
+import events.DownloadEvent;
+import events.PlayEvent;
 import gui.MainWindow;
 
 import org.apache.log4j.Logger;
@@ -16,14 +19,21 @@ import org.fest.swing.fixture.FrameFixture;
 import org.fest.swing.fixture.JPanelFixture;
 import org.junit.After;
 import org.junit.AfterClass;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.Mockito;
 
+import player.PlayFinished;
+
+import com.google.common.eventbus.EventBus;
+import com.google.common.eventbus.Subscribe;
+
 import static org.fest.swing.launcher.ApplicationLauncher.application;
 import static org.fest.swing.testing.FestSwingTestCaseTemplate.*;
+import service.DownloadServiceException;
 import vk.VkPlayListBuilderException;
 
 public class FirstGUITest {
@@ -67,18 +77,22 @@ public class FirstGUITest {
 		 window.cleanUp();
 	}
 
-	@Ignore
+	//@Ignore
 	@Test
 	public void test() throws IOException, InterruptedException {
 		LOGGER.debug("Log4J stub for show thread");
 		
-		//CustomPlayer mockedPlayer = Mockito.mock(CustomPlayer.class);
+		EventBus eventBus = MainWindow.getEventBus();
+		eventBus.register(this);
 		
 		//window.scrollPane().verticalScrollBar().scrollBlockDown(60);
 		window.panel("null.contentPane").list().doubleClickItem(0);
 		
 		Thread.sleep(2000);
-		//window.close();
+		
+		Assert.assertTrue(downloadTriggered);
+		Assert.assertTrue(playTriggered);
+		window.close();
 		
 		//LOGGER.debug("Press Enter for exit from test");
 		//System.in.read();
@@ -86,4 +100,26 @@ public class FirstGUITest {
 		//Thread.currentThread().join();
 		//LOGGER.debug("I ah here");
 	}
+	
+	private boolean downloadTriggered = false;
+	private boolean playTriggered = false;
+	
+	@Subscribe
+	public void onDownload(DownloadEvent e) throws DownloadServiceException {
+		final String s = e.getSong().toString();
+		final String message = "Downloading '" + s + "'";
+		LOGGER.debug(message);
+
+		downloadTriggered = true;
+	}
+	
+	@Subscribe
+	public void onPlay(PlayEvent e) throws DownloadServiceException {
+		final String s = e.getPath();
+		final String message = "Playing '" + s + "'";
+		LOGGER.debug(message);
+
+		playTriggered = true;
+	}
+
 }
