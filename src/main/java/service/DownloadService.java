@@ -3,7 +3,6 @@ package service;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.MalformedURLException;
 import java.net.URL;
 
 import org.apache.commons.io.FileUtils;
@@ -17,7 +16,7 @@ import com.google.common.eventbus.Subscribe;
 
 import config.Config;
 import events.DownloadEvent;
-import events.PlayEvent;
+import events.DownloadFinished;
 
 public class DownloadService {
 	private static Logger LOGGER = Logger.getLogger(DownloadService.class);
@@ -31,19 +30,17 @@ public class DownloadService {
 		Song s = e.getSong();
 		try {
 			File dest = s.getFile();
-			if(dest == null){
-				String filename = s.toString()+DOT_EXT;
-				filename = IOHelper.toFileSystemSafeName(filename);
-				dest = new File(config.getCacheFolder(), filename);
-				String url = s.getUrl();
-				LOGGER.debug("Downloading "+ url +" to " + dest);
-				FileUtils.copyURLToFile(new URL(url), dest);
-				LOGGER.debug("Downloading complete ");
-				s.setFile(dest);
-			}
+			String filename = s.toString()+DOT_EXT;
+			filename = IOHelper.toFileSystemSafeName(filename);
+			dest = new File(config.getCacheFolder(), filename);
+			String url = s.getUrl();
+			LOGGER.debug("Downloading "+ url +" to " + dest);
+			FileUtils.copyURLToFile(new URL(url), dest);
+			LOGGER.debug("Downloading complete ");
+			s.setFile(dest);
 			
 			LOGGER.debug("Sending PlayEvent ");
-			eventBus.post(new PlayEvent(dest.getAbsolutePath()));
+			eventBus.post(new DownloadFinished(s));
 		} catch (IOException e1) {
 			String message = "Error on downloading";
 			LOGGER.error(message, e1);

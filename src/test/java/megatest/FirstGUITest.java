@@ -28,6 +28,7 @@ import org.mockito.Mockito;
 
 import player.PlayFinished;
 
+import com.github.nikit.cpp.player.Song;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 
@@ -115,7 +116,7 @@ public class FirstGUITest {
 	
 	@Subscribe
 	public void onPlay(PlayEvent e) throws DownloadServiceException {
-		final String s = e.getPath();
+		final Song s = e.getSong();
 		final String message = "Playing '" + s + "'";
 		LOGGER.debug(message);
 

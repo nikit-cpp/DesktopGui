@@ -43,6 +43,9 @@
 	    <property name="player">
 			<ref bean="customPlayer" />
 		</property>
+		<property name="eventBus">
+			<ref bean="eventBus" />
+		</property>
 	</bean>
 	
 	<bean id ="customPlayer" class = "player.CustomPlayer" scope = "singleton">
