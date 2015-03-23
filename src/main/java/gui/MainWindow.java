@@ -4,7 +4,6 @@ import javax.swing.*;
 import javax.swing.border.BevelBorder;
 import javax.xml.parsers.ParserConfigurationException;
 
-import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
@@ -14,7 +13,6 @@ import player.PlayStarted;
 
 import com.github.nikit.cpp.player.PlayList;
 import com.github.nikit.cpp.player.Song;
-import com.google.common.eventbus.AsyncEventBus;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 
@@ -24,7 +22,6 @@ import events.PlayEvent;
 import service.DownloadService;
 import service.DownloadServiceException;
 import service.PlayerService;
-import utils.IOHelper;
 import vk.VkPlayListBuilder;
 import vk.VkPlayListBuilderException;
 
@@ -33,12 +30,7 @@ import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import java.io.File;
-import java.io.IOException;
-import java.net.URL;
 import java.util.*;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 public class MainWindow extends JFrame {
 	
@@ -50,7 +42,7 @@ public class MainWindow extends JFrame {
 	
 	private static Logger LOGGER = Logger.getLogger(MainWindow.class);
 	private static final long serialVersionUID = 1L;
-	private JList list;
+	private JList<Song> list;
 	private JPanel contents;
 	private JLabel statusLabel;
 
@@ -71,8 +63,7 @@ public class MainWindow extends JFrame {
 		}
 		
 		final PlayListListModel playListModel = new PlayListListModel(cpl);
-		list = new JList(playListModel);
-		//
+		list = new JList<Song>(playListModel);
 
 		list.addMouseListener(new MouseListener() {
 
@@ -183,9 +174,10 @@ public class MainWindow extends JFrame {
 }
 
 
-class PlayListListModel extends AbstractListModel {
+class PlayListListModel extends AbstractListModel<Song> {
+	private static final long serialVersionUID = 1L;
 	// здесь будем хранить данные
-	private ArrayList data = new ArrayList();
+	private ArrayList<Song> data = new ArrayList<Song>();
 
 	public PlayListListModel(Collection<PlayList> pls){
 		setDataSource(pls);
@@ -196,8 +188,7 @@ class PlayListListModel extends AbstractListModel {
 			data.clear();
 			for (PlayList pl: pls) {
 				synchronized (data) {
-					List<Song> songs = pl.getSongs();
-					for (Song s : songs) {
+					for (Song s : pl.getSongs()) {
 						data.add(s);
 					}
 				}
@@ -217,7 +208,7 @@ class PlayListListModel extends AbstractListModel {
 		}
 	}
 
-	public Object getElementAt(int idx) {
+	public Song getElementAt(int idx) {
 		synchronized (data) {
 			return data.get(idx);
 		}
