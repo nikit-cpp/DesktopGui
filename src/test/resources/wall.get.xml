@@ -74,7 +74,7 @@
       <artist>440Hz</artist>
       <title>1sec</title>
       <duration>-253</duration>
-      <url>http://127.0.0.1:8079src/test/resources/test-sounds/440Hz-1sec.mp3</url>
+      <url>http://127.0.0.1:8079/src/test/resources/test-sounds/440Hz-1sec.mp3</url>
       <performer>Enforcer</performer>
       <genre>7</genre>
      </audio>
@@ -142,7 +142,7 @@
       <artist>hdchirp_88k</artist>
       <title>/-3dBFS_lin</title>
       <duration>149</duration>
-      <url>http://127.0.0.1:8079src/test/resources/test-sounds/hdchirp_88k_-3dBFS_lin.mp3</url>
+      <url>http://127.0.0.1:8079/src/test/resources/test-sounds/hdchirp_88k_-3dBFS_lin.mp3</url>
       <performer>Sledgehammer Ledge</performer>
       <album>2</album>
       <genre>9</genre>
