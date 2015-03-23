@@ -88,7 +88,7 @@ public class FirstGUITest {
 		//window.scrollPane().verticalScrollBar().scrollBlockDown(60);
 		window.panel("null.contentPane").list().doubleClickItem(0);
 		
-		Thread.sleep(2000);
+		Thread.sleep(500);
 		
 		Assert.assertTrue(downloadTriggered);
 		Assert.assertTrue(playTriggered);
@@ -101,8 +101,30 @@ public class FirstGUITest {
 		//LOGGER.debug("I ah here");
 	}
 	
+	@Ignore
+	@Test
+	public void testPlaySecondSongAfterFirst() throws IOException, InterruptedException {
+		LOGGER.debug("Log4J stub for show thread");
+				
+		//window.scrollPane().verticalScrollBar().scrollBlockDown(60);
+		window.panel("null.contentPane").list().doubleClickItem(0);
+		
+		Assert.assertTrue(downloadTriggered);
+		Assert.assertTrue(playTriggered);
+		downloadTriggered = false;
+		playTriggered = false;
+		
+		Thread.sleep(2000);
+		
+		Assert.assertTrue(downloadTriggered);
+		Assert.assertTrue(playTriggered);
+		Assert.assertTrue(playFinished);
+	}
+
+	
 	private boolean downloadTriggered = false;
 	private boolean playTriggered = false;
+	private boolean playFinished = false;
 	
 	@Subscribe
 	public void onDownload(DownloadEvent e) throws DownloadServiceException {
@@ -121,5 +143,12 @@ public class FirstGUITest {
 
 		playTriggered = true;
 	}
+	
+	@Subscribe
+	public void onPlayFinished(PlayFinished e){
+		LOGGER.debug("Play finished");
+		playFinished = true;
+	}
+
 
 }
