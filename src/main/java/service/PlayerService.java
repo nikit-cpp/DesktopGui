@@ -1,9 +1,12 @@
 package service;
 
+import java.awt.EventQueue;
 import java.io.File;
+import java.util.UUID;
 
 import org.apache.log4j.Logger;
 
+import player.PlayFinished;
 import player.Player;
 
 import com.github.nikit.cpp.player.PlayList;
@@ -13,17 +16,21 @@ import com.google.common.eventbus.Subscribe;
 
 import events.DownloadEvent;
 import events.DownloadFinished;
+import events.NextSong;
 import events.PlayEvent;
 
 public class PlayerService {
 	
+	@SuppressWarnings("unused")
 	private static Logger LOGGER = Logger.getLogger(PlayerService.class);
 
 	private EventBus eventBus;
 	private Player player;
 	private PlayList playList;
+	private Song currentSong;
 		
 	private void play(Song song) {
+		currentSong = song;
 		player.prepareFor(song.getFile().getAbsolutePath());
 		player.play();
 	}
@@ -40,10 +47,26 @@ public class PlayerService {
 	}
 	
 	@Subscribe
-	public void playAfterFinished(DownloadFinished e) {
+	public void playAfterDownloadFinished(DownloadFinished e) {
 		Song song = e.getSong();
 		play(song);
 	}
+	
+	@Subscribe
+	public void onPlayFinished(PlayFinished e){
+		LOGGER.debug("Switching to next Song...");
+		
+		eventBus.post(new NextSong());
+	}
+	
+	@Subscribe
+	public void next(NextSong e){
+		Song nextSong = playList.getNextSong(currentSong);
+		if(nextSong!=null){
+			eventBus.post(new PlayEvent(nextSong));
+		}
+	}
+
 	
 	public Player getPlayer() {
 		return player;

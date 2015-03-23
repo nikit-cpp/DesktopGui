@@ -6,6 +6,7 @@ import java.io.IOException;
 import javax.xml.parsers.ParserConfigurationException;
 
 import events.DownloadEvent;
+import events.NextSong;
 import events.PlayEvent;
 import gui.MainWindow;
 
@@ -101,7 +102,6 @@ public class FirstGUITest {
 		//LOGGER.debug("I ah here");
 	}
 	
-	@Ignore
 	@Test
 	public void testPlaySecondSongAfterFirst() throws IOException, InterruptedException {
 		LOGGER.debug("Log4J stub for show thread");
@@ -115,7 +115,7 @@ public class FirstGUITest {
 		playTriggered = false;
 		
 		Thread.sleep(2000);
-		
+		Assert.assertTrue(nextTriggered);
 		Assert.assertTrue(downloadTriggered);
 		Assert.assertTrue(playTriggered);
 		Assert.assertTrue(playFinished);
@@ -125,6 +125,7 @@ public class FirstGUITest {
 	private boolean downloadTriggered = false;
 	private boolean playTriggered = false;
 	private boolean playFinished = false;
+	private boolean nextTriggered = false;
 	
 	@Subscribe
 	public void onDownload(DownloadEvent e) throws DownloadServiceException {
@@ -150,5 +151,8 @@ public class FirstGUITest {
 		playFinished = true;
 	}
 
-
+	@Subscribe
+	public void next(NextSong e){
+		nextTriggered = true;
+	}
 }
