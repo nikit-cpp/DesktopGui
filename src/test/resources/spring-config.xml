@@ -26,8 +26,7 @@
     	<constructor-arg ref="executor"/>
 	</bean>
 		
-	<bean id ="downloader" class = "org.mockito.Mockito" factory-method="mock" >
-	    <constructor-arg value="service.DownloadService" />
+	<bean id ="downloader" class = "service.DownloadService" scope = "singleton" >
 	    <property name="config">
 			<ref bean="config" />
 		</property>
@@ -46,9 +45,6 @@
 		</property>
 	</bean>
 	
-	<bean id ="customPlayer" class = "org.mockito.Mockito" factory-method="mock" >
-	    <constructor-arg value="player.CustomPlayer" />
-	</bean>	
-	 
+	<bean id ="customPlayer" class = "player.CustomPlayer" scope = "singleton" />		 
 
 </beans>

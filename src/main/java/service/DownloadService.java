@@ -26,7 +26,7 @@ public class DownloadService {
 	private EventBus eventBus;
 
 	@Subscribe
-	public void download(DownloadEvent e) {
+	public void download(DownloadEvent e) throws DownloadServiceException {
 		Song s = e.getSong();
 		try {
 			String filename = s.toString()+".mp3";
@@ -39,12 +39,10 @@ public class DownloadService {
 			
 			LOGGER.debug("Sending PlayEvent ");
 			eventBus.post(new PlayEvent(dest.getAbsolutePath()));
-		} catch (MalformedURLException e1) {
-			LOGGER.error("MalformedURLException", e1);
 		} catch (IOException e1) {
-			LOGGER.error("IOException", e1);
+			LOGGER.error("Error", e1);
+			throw new DownloadServiceException("Error", e1);
 		}
-	
 	  }
 
 	public Config getConfig() {

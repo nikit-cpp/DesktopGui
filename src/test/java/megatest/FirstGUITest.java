@@ -68,10 +68,16 @@ public class FirstGUITest {
 		
 		//CustomPlayer mockedPlayer = Mockito.mock(CustomPlayer.class);
 		
-		window.scrollPane().verticalScrollBar().scrollBlockDown(60);
+		//window.scrollPane().verticalScrollBar().scrollBlockDown(60);
 		window.panel("null.contentPane").list().doubleClickItem(0);
+		
+		Thread.sleep(2000);
+		//window.close();
 		
 		//LOGGER.debug("Press Enter for exit from test");
 		//System.in.read();
+		
+		//Thread.currentThread().join();
+		//LOGGER.debug("I ah here");
 	}
 }
