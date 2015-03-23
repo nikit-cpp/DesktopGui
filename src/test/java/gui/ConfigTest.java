@@ -11,6 +11,8 @@ import org.junit.Test;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
+import config.Config;
+
 
 public class ConfigTest {
 
@@ -25,12 +27,11 @@ public class ConfigTest {
 	@Test
 	public void testGetInjected() {
 	      ApplicationContext context = 
-	              new ClassPathXmlApplicationContext("spring-config-test.xml");
+	              new ClassPathXmlApplicationContext("spring-config.xml");
 
 	       Config jc= (Config)context.getBean("config");
 
 	       Set<String> expected = new HashSet<String>();
-	       expected.add("ololo");
 	       expected.add("rockmetal80");
 	       Assert.assertEquals(expected, jc.getGroupNames());
 	       
