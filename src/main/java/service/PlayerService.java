@@ -17,7 +17,8 @@ import com.google.common.eventbus.Subscribe;
 import events.DownloadEvent;
 import events.DownloadFinished;
 import events.NextSong;
-import events.PlayEvent;
+import events.OnDemandPlayEvent;
+import events.AutomaticPlayEvent;
 
 public class PlayerService {
 	
@@ -28,6 +29,8 @@ public class PlayerService {
 	private Player player;
 	private PlayList playList;
 	private Song currentSong;
+
+	private boolean stoppedByDemand = false;;
 		
 	private void play(Song song) {
 		currentSong = song;
@@ -36,7 +39,7 @@ public class PlayerService {
 	}
 
 	@Subscribe
-	synchronized public void playInitial(PlayEvent e){
+	synchronized public void automaticPlay(AutomaticPlayEvent e){
 		Song song = e.getSong();
 		File dest = song.getFile();
 		if(dest == null){
@@ -49,21 +52,30 @@ public class PlayerService {
 	@Subscribe
 	public void playAfterDownloadFinished(DownloadFinished e) {
 		Song song = e.getSong();
-		play(song);
+		eventBus.post(new AutomaticPlayEvent(song));
+	}
+	
+	@Subscribe
+	synchronized public void onDemandPlay(OnDemandPlayEvent e){
+		Song song = e.getSong();
+		stoppedByDemand = true;
+		eventBus.post(new AutomaticPlayEvent(song));
 	}
 	
 	@Subscribe
 	public void onPlayFinished(PlayFinished e){
 		LOGGER.debug("Switching to next Song...");
-		
-		eventBus.post(new NextSong());
+		if(!stoppedByDemand ){
+			stoppedByDemand = false;
+			eventBus.post(new NextSong());
+		}
 	}
 	
 	@Subscribe
 	public void next(NextSong e){
 		Song nextSong = playList.getNextSong(currentSong);
 		if(nextSong!=null){
-			eventBus.post(new PlayEvent(nextSong));
+			eventBus.post(new AutomaticPlayEvent(nextSong));
 		}
 	}
 

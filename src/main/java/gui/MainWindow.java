@@ -18,7 +18,8 @@ import com.google.common.eventbus.Subscribe;
 
 import config.Config;
 import events.DownloadEvent;
-import events.PlayEvent;
+import events.OnDemandPlayEvent;
+import events.AutomaticPlayEvent;
 import service.DownloadService;
 import service.DownloadServiceException;
 import service.PlayerService;
@@ -93,7 +94,7 @@ public class MainWindow extends JFrame {
 				if (e.getClickCount() == 2) {
 					int index = list.locationToIndex(e.getPoint());
 					Song s = (Song) playListModel.getElementAt(index);
-					eventBus.post(new PlayEvent(s));
+					eventBus.post(new OnDemandPlayEvent(s));
 
 					LOGGER.debug("Double clicked on item " + index + " " + s);
 
