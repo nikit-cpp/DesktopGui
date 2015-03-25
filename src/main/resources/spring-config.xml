@@ -50,7 +50,6 @@
 	</bean>
 	
 	<bean id ="customPlayer" class = "player.CustomPlayer" scope = "singleton">
-	    <constructor-arg ref="eventBus"/>
 	</bean>	
 
 </beans>

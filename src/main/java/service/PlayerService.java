@@ -1,12 +1,10 @@
 package service;
 
-import java.awt.EventQueue;
 import java.io.File;
-import java.util.UUID;
 
 import org.apache.log4j.Logger;
 
-import player.PlayFinished;
+import events.PlayFinished;
 import player.Player;
 
 import com.github.nikit.cpp.player.PlayList;
@@ -17,12 +15,11 @@ import com.google.common.eventbus.Subscribe;
 import events.DownloadEvent;
 import events.DownloadFinished;
 import events.NextSong;
-import events.OnDemandPlayEvent;
-import events.AutomaticPlayEvent;
+import events.PlayEvent;
+import events.PlayStopped;
 
 public class PlayerService {
-	
-	@SuppressWarnings("unused")
+
 	private static Logger LOGGER = Logger.getLogger(PlayerService.class);
 
 	private EventBus eventBus;
@@ -30,56 +27,52 @@ public class PlayerService {
 	private PlayList playList;
 	private Song currentSong;
 
-	private boolean stoppedByDemand = false;;
-		
 	private void play(Song song) {
-		currentSong = song;
-		player.prepareFor(song.getFile().getAbsolutePath());
-		player.play();
+		try {
+			File dest = song.getFile();
+			if (dest == null) {
+				eventBus.post(new DownloadEvent(song));
+			} else {
+				currentSong = song;
+				player.prepareFor(song.getFile().getAbsolutePath());
+				player.play();
+				eventBus.post(new PlayFinished());
+			}
+		} catch (Exception e) {
+			LOGGER.error("Error!!!", e);
+		}
 	}
 
 	@Subscribe
-	synchronized public void automaticPlay(AutomaticPlayEvent e){
+	public void play(PlayEvent e) {
 		Song song = e.getSong();
-		File dest = song.getFile();
-		if(dest == null){
-			eventBus.post(new DownloadEvent(song));
-		} else {
-			play(song);
-		}
+		play(song);
 	}
 	
 	@Subscribe
 	public void playAfterDownloadFinished(DownloadFinished e) {
 		Song song = e.getSong();
-		eventBus.post(new AutomaticPlayEvent(song));
+		eventBus.post(new PlayEvent(song));
 	}
-	
+
 	@Subscribe
-	synchronized public void onDemandPlay(OnDemandPlayEvent e){
-		Song song = e.getSong();
-		stoppedByDemand = true;
-		eventBus.post(new AutomaticPlayEvent(song));
+	public void onPlayStoppes(PlayStopped e) {
 	}
-	
+
 	@Subscribe
-	public void onPlayFinished(PlayFinished e){
-		LOGGER.debug("Switching to next Song...");
-		if(!stoppedByDemand ){
-			stoppedByDemand = false;
-			eventBus.post(new NextSong());
-		}
+	public void onPlayFinished(PlayFinished e) {
+		LOGGER.debug("PlayFinished, Switching to next Song...");
+		eventBus.post(new NextSong());
 	}
-	
+
 	@Subscribe
-	public void next(NextSong e){
+	public void next(NextSong e) {
 		Song nextSong = playList.getNextSong(currentSong);
-		if(nextSong!=null){
-			eventBus.post(new AutomaticPlayEvent(nextSong));
+		if (nextSong != null) {
+			play(nextSong);
 		}
 	}
 
-	
 	public Player getPlayer() {
 		return player;
 	}
