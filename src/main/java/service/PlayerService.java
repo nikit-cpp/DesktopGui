@@ -16,7 +16,6 @@ import events.DownloadEvent;
 import events.DownloadFinished;
 import events.NextSong;
 import events.PlayEvent;
-import events.PlayStopped;
 
 public class PlayerService {
 
@@ -29,15 +28,10 @@ public class PlayerService {
 
 	private void play(Song song) {
 		try {
-			File dest = song.getFile();
-			if (dest == null) {
-				eventBus.post(new DownloadEvent(song));
-			} else {
-				currentSong = song;
-				player.prepareFor(song.getFile().getAbsolutePath());
-				player.play();
-				eventBus.post(new PlayFinished());
-			}
+			currentSong = song;
+			player.prepareFor(song.getFile().getAbsolutePath());
+			player.play();
+			eventBus.post(new PlayFinished());
 		} catch (Exception e) {
 			LOGGER.error("Error!!!", e);
 		}
@@ -45,8 +39,20 @@ public class PlayerService {
 
 	@Subscribe
 	public void play(PlayEvent e) {
+		if(playEvent.isManually()){
+			manuallyStopped = true;
+		}
+
 		Song song = e.getSong();
-		play(song);
+		File dest = song.getFile();
+		if (dest == null) {
+			eventBus.post(new DownloadEvent(song));
+		} else {
+			play(song);
+			if(!manuallyStopped){
+				eventBus.post(new NextSong());
+			}
+		}
 	}
 	
 	@Subscribe
@@ -54,15 +60,12 @@ public class PlayerService {
 		Song song = e.getSong();
 		eventBus.post(new PlayEvent(song));
 	}
-
-	@Subscribe
-	public void onPlayStoppes(PlayStopped e) {
-	}
+	
+	boolean manuallyStopped;
 
 	@Subscribe
 	public void onPlayFinished(PlayFinished e) {
-		LOGGER.debug("PlayFinished, Switching to next Song...");
-		eventBus.post(new NextSong());
+		
 	}
 
 	@Subscribe
