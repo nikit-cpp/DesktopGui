@@ -15,6 +15,7 @@ import com.google.common.eventbus.Subscribe;
 import events.DownloadEvent;
 import events.DownloadFinished;
 import events.NextSong;
+import events.PlayDemandEvent;
 import events.PlayEvent;
 
 public class PlayerService {
@@ -31,27 +32,31 @@ public class PlayerService {
 			currentSong = song;
 			player.prepareFor(song.getFile().getAbsolutePath());
 			player.play();
-			eventBus.post(new PlayFinished());
 		} catch (Exception e) {
 			LOGGER.error("Error!!!", e);
 		}
 	}
-
+	
 	@Subscribe
-	public void play(PlayEvent e) {
-		if(playEvent.isManually()){
-			manuallyStopped = true;
-		}
-
+	public void playDemand(PlayDemandEvent e) {
 		Song song = e.getSong();
 		File dest = song.getFile();
 		if (dest == null) {
 			eventBus.post(new DownloadEvent(song));
 		} else {
 			play(song);
-			if(!manuallyStopped){
-				eventBus.post(new NextSong());
-			}
+		}
+	}
+
+	@Subscribe
+	public void play(PlayEvent e) {
+		Song song = e.getSong();
+		File dest = song.getFile();
+		if (dest == null) {
+			eventBus.post(new DownloadEvent(song));
+		} else {
+			play(song);
+			eventBus.post(new PlayFinished());
 		}
 	}
 	
@@ -61,18 +66,16 @@ public class PlayerService {
 		eventBus.post(new PlayEvent(song));
 	}
 	
-	boolean manuallyStopped;
-
 	@Subscribe
 	public void onPlayFinished(PlayFinished e) {
-		
+		eventBus.post(new NextSong());
 	}
 
 	@Subscribe
 	public void next(NextSong e) {
 		Song nextSong = playList.getNextSong(currentSong);
 		if (nextSong != null) {
-			play(nextSong);
+			eventBus.post(new PlayEvent(nextSong));
 		}
 	}
 
