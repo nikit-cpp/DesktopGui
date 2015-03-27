@@ -44,12 +44,14 @@ public class PlayerService {
 		LOGGER.debug("playDemand()");
 		Song song = e.getSong();
 		File dest = song.getFile();
+		mayNext = false;
+		LOGGER.debug("setting mayNext=" + mayNext);
+
 		if (dest == null) {
 			eventBus.post(new DownloadEvent(song));
 		} else {
 			play(song);
 			eventBus.post(new PlayFinished());
-			mayNext = false;
 		}
 	}
 
@@ -74,16 +76,20 @@ public class PlayerService {
 	
 	@Subscribe
 	public void onPlayFinished(PlayFinished e) {
-		if(mayNext)
+		LOGGER.debug("onPlayFinished() mayNext="+mayNext);
+		if(mayNext){
 			eventBus.post(new NextSong());
-		else
+		}else{
 			mayNext = true;
+			LOGGER.debug("setting mayNext="+mayNext);
+		}
 	}
 
 	@Subscribe
 	public void next(NextSong e) {
 		Song nextSong = playList.getNextSong(currentSong);
 		if (nextSong != null) {
+			LOGGER.debug("switching to next");
 			eventBus.post(new PlayEvent(nextSong));
 		}
 	}

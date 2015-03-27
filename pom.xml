@@ -18,6 +18,12 @@
 			<artifactId>vkMusicGetter</artifactId>
 			<version>0.2.0</version>
 		</dependency>
+		
+		<dependency>
+			<groupId>com.github.nikit.cpp</groupId>
+			<artifactId>desktopMp3Player</artifactId>
+			<version>0.2.0</version>
+		</dependency>
 
 		<dependency>
 			<groupId>commons-io</groupId>
