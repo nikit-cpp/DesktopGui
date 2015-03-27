@@ -10,6 +10,7 @@ import player.State;
 
 import com.github.nikit.cpp.player.PlayList;
 import com.github.nikit.cpp.player.Song;
+import com.google.common.eventbus.AllowConcurrentEvents;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 
@@ -40,6 +41,7 @@ public class PlayerService {
 	
 	boolean mayNextOnFinished = true;
 	
+	@AllowConcurrentEvents
 	@Subscribe
 	public void playDemand(PlayDemandEvent e) {
 		LOGGER.debug("playDemand()");
@@ -51,6 +53,7 @@ public class PlayerService {
 		eventBus.post(new PlayEvent(e.getSong()));
 	}
 
+	@AllowConcurrentEvents
 	@Subscribe
 	public void play(PlayEvent e) {
 		LOGGER.debug("play()");
@@ -63,12 +66,14 @@ public class PlayerService {
 		}
 	}
 	
+	@AllowConcurrentEvents
 	@Subscribe
 	public void playAfterDownloadFinished(DownloadFinished e) {
 		Song song = e.getSong();
 		eventBus.post(new PlayEvent(song));
 	}
 	
+	@AllowConcurrentEvents
 	@Subscribe
 	public void onPlayFinished(PlayFinished e) {
 		LOGGER.debug("onPlayFinished() mayNext="+mayNextOnFinished);
@@ -80,6 +85,7 @@ public class PlayerService {
 		}
 	}
 
+	@AllowConcurrentEvents
 	@Subscribe
 	public void next(NextSong e) {
 		Song nextSong = playList.getNextSong(currentSong);

@@ -11,6 +11,7 @@ import org.apache.log4j.Logger;
 import utils.IOHelper;
 
 import com.github.nikit.cpp.player.Song;
+import com.google.common.eventbus.AllowConcurrentEvents;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 
@@ -25,6 +26,7 @@ public class DownloadService {
 	private EventBus eventBus;
 	private static final String DOT_EXT = ".mp3";
 
+	@AllowConcurrentEvents
 	@Subscribe
 	public void download(DownloadEvent e) throws DownloadServiceException {
 		Song s = e.getSong();

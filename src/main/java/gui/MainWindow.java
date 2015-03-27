@@ -15,6 +15,7 @@ import events.PlayStarted;
 
 import com.github.nikit.cpp.player.PlayList;
 import com.github.nikit.cpp.player.Song;
+import com.google.common.eventbus.AllowConcurrentEvents;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 
@@ -144,6 +145,7 @@ public class MainWindow extends JFrame {
 	    eventBus.register(playerService);
 	}
 	
+	@AllowConcurrentEvents
 	@Subscribe
 	public void onPlayStarted(PlayStarted e) throws DownloadServiceException {
 		final String s = e.getPath();
@@ -157,6 +159,7 @@ public class MainWindow extends JFrame {
 		});
 	}
 	
+	@AllowConcurrentEvents
 	@Subscribe
 	public void onPlayFinished(PlayFinished e){
 		LOGGER.debug("Play finished");
@@ -167,7 +170,7 @@ public class MainWindow extends JFrame {
 		});
 	}
 
-	
+	@AllowConcurrentEvents
 	@Subscribe
 	public void onDownload(DownloadEvent e) throws DownloadServiceException {
 		final String message = "Downloading '" + e.getSong().getUrl() + "'";
