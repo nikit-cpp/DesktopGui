@@ -51,7 +51,6 @@ public class PlayerService {
 			eventBus.post(new DownloadEvent(song));
 		} else {
 			play(song);
-			eventBus.post(new PlayFinished());
 		}
 	}
 
@@ -64,7 +63,6 @@ public class PlayerService {
 			eventBus.post(new DownloadEvent(song));
 		} else {
 			play(song);
-			eventBus.post(new PlayFinished());
 		}
 	}
 	
