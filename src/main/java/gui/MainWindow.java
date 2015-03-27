@@ -7,8 +7,6 @@ import javax.xml.parsers.ParserConfigurationException;
 import org.apache.log4j.Logger;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
-
-import events.PlayDemandEvent;
 import events.PlayEvent;
 import events.PlayFinished;
 import events.PlayStarted;
@@ -94,7 +92,7 @@ public class MainWindow extends JFrame {
 				if (e.getClickCount() == 2) {
 					int index = list.locationToIndex(e.getPoint());
 					Song s = (Song) playListModel.getElementAt(index);
-					eventBus.post(new PlayDemandEvent(s));
+					eventBus.post(new PlayEvent(s));
 
 					LOGGER.debug("Double clicked on item " + index + " " + s);
 

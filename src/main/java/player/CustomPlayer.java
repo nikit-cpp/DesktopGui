@@ -33,7 +33,6 @@ public class CustomPlayer implements player.Player{
 
 	public void prepareFor(String path) {
 		this.path = path;
-		stop();
 	}
 
 	public void pause() {

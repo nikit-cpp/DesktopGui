@@ -24,10 +24,8 @@ public class DownloadService {
 	private Config config;
 	private EventBus eventBus;
 	private static final String DOT_EXT = ".mp3";
-
-	@Subscribe
-	public void download(DownloadEvent e) throws DownloadServiceException {
-		Song s = e.getSong();
+	
+	public void download(Song s) throws DownloadServiceException {
 		try {
 			File dest = null;
 			String filename = s.toString()+DOT_EXT;
@@ -46,7 +44,7 @@ public class DownloadService {
 			LOGGER.error(message, e1);
 			throw new DownloadServiceException(message, e1);
 		}
-	  }
+	}
 
 	public Config getConfig() {
 		return config;
