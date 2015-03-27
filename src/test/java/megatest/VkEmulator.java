@@ -58,8 +58,6 @@ public class VkEmulator {
 
 
 	@SuppressWarnings("serial")
-	// curl https://api.vk.com/method/wall.get.xml?owner_id=-11081630 > ./src/test/resources/wall.get.xml
-	// 
 	public static class HelloServlet extends HttpServlet {
 		
 		private String type = "text/xml";
@@ -75,8 +73,8 @@ public class VkEmulator {
 			response.setContentType(type);
 			response.setStatus(HttpServletResponse.SC_OK);
 			
-			mapRequestWithLocalFile("https://api.vk.com/method/groups.getById.xml?group_ids=rockmetal80", new File("src/test/resources/groups.getById.xml"));
-			mapRequestWithLocalFile("https://api.vk.com/method/wall.get.xml?owner_id=-64183", new File("src/test/resources/wall.get.xml"));
+			mapRequestWithLocalFile("https://api.vk.com/method/groups.getById.xml?group_ids=rockmetal80",	"src/test/resources/groups.getById.xml");
+			mapRequestWithLocalFile("https://api.vk.com/method/wall.get.xml?owner_id=-64183", 				"src/test/resources/wall.get.xml");
 
 			boolean matched = false;
 			for(Mapping m: mapList){
@@ -94,8 +92,8 @@ public class VkEmulator {
 		}
 		
 
-		private void mapRequestWithLocalFile(String realVkUrl, File file) throws IOException{
-			mapList.add(new Mapping(new URL(realVkUrl), file));
+		private void mapRequestWithLocalFile(String realVkUrl, String file) throws IOException{
+			mapList.add(new Mapping(new URL(realVkUrl), new File(file)));
 		}
 		List<Mapping> mapList = new ArrayList<Mapping>();
 	}
