@@ -87,7 +87,7 @@ public class ShowWindow {
 	public void testPlayFirstSong() throws IOException, InterruptedException {
 		LOGGER.debug("Log4J stub for show thread");
 				
-		LOGGER.debug("Press Enter for exit from test");
+		LOGGER.debug("Input Enter here for exit from test");
 		System.in.read();
 		
 		//Thread.currentThread().join();
