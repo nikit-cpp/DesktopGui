@@ -15,6 +15,7 @@ import com.google.common.eventbus.Subscribe;
 import events.DownloadEvent;
 import events.DownloadFinished;
 import events.NextSong;
+import events.PlayDemandEvent;
 import events.PlayEvent;
 
 public class PlayerService {
@@ -25,7 +26,6 @@ public class PlayerService {
 	private Player player;
 	private PlayList playList;
 	private Song currentSong;
-	private DownloadService downloadService;
 
 	private void play(Song song) {
 		try {
@@ -37,27 +37,31 @@ public class PlayerService {
 		}
 	}
 	
-	private void stop() {
-		try {
-			player.stop();
-			currentSong = null;
-		} catch (Exception e) {
-			LOGGER.error("Error!!!", e);
+	boolean mayNext = true;
+	
+	@Subscribe
+	public void playDemand(PlayDemandEvent e) {
+		Song song = e.getSong();
+		File dest = song.getFile();
+		if (dest == null) {
+			eventBus.post(new DownloadEvent(song));
+		} else {
+			play(song);
+			eventBus.post(new PlayFinished());
+			mayNext = false;
 		}
 	}
-	
+
 	@Subscribe
 	public void play(PlayEvent e) {
 		Song song = e.getSong();
 		File dest = song.getFile();
 		if (dest == null) {
-			try {
-				downloadService.download(song);
-			} catch (DownloadServiceException e1) {
-				LOGGER.error("Error!!!", e1);
-			}
+			eventBus.post(new DownloadEvent(song));
+		} else {
+			play(song);
+			eventBus.post(new PlayFinished());
 		}
-		play(song);
 	}
 	
 	@Subscribe
@@ -68,7 +72,10 @@ public class PlayerService {
 	
 	@Subscribe
 	public void onPlayFinished(PlayFinished e) {
-		eventBus.post(new NextSong());
+		if(mayNext)
+			eventBus.post(new NextSong());
+		else
+			mayNext = true;
 	}
 
 	@Subscribe
@@ -101,13 +108,5 @@ public class PlayerService {
 
 	public void setEventBus(EventBus eventBus) {
 		this.eventBus = eventBus;
-	}
-
-	public DownloadService getDownloadService() {
-		return downloadService;
-	}
-
-	public void setDownloadService(DownloadService downloadService) {
-		this.downloadService = downloadService;
 	}
 }

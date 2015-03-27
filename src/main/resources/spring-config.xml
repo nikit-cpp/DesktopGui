@@ -47,9 +47,6 @@
 		<property name="eventBus">
 			<ref bean="eventBus" />
 		</property>
-		<property name="downloadService">
-			<ref bean="downloader" />
-		</property>
 	</bean>
 	
 	<bean id ="customPlayer" class = "player.CustomPlayer" scope = "singleton">
