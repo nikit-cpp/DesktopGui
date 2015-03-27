@@ -40,11 +40,11 @@ import vk.VkPlayListBuilderException;
 public class ShowWindow {
 
 
-	private static Logger LOGGER = Logger.getLogger(ShowWindow.class);
-	private static VkEmulator vk;
-	private FrameFixture window;
-	private MainWindow mainWindow;
-	private EventBus eventBus;
+	protected static Logger LOGGER = Logger.getLogger(ShowWindow.class);
+	protected static VkEmulator vk;
+	protected FrameFixture window;
+	protected MainWindow mainWindow;
+	protected EventBus eventBus;
 
 	
 	

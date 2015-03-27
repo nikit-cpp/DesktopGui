@@ -37,42 +37,12 @@ import static org.fest.swing.testing.FestSwingTestCaseTemplate.*;
 import service.DownloadServiceException;
 import vk.VkPlayListBuilderException;
 
-public class FirstGUITest {
-
-
-	private static Logger LOGGER = Logger.getLogger(FirstGUITest.class);
-	private static VkEmulator vk;
-	private FrameFixture window;
-	private MainWindow mainWindow;
-	private EventBus eventBus;
-
-	
-	
-	@BeforeClass
-	public static void setUpOnce() throws Exception {
-		FailOnThreadViolationRepaintManager.install();
-		vk = new VkEmulator();
-		vk.start();
-	}
-	
-	@AfterClass
-	public static void kill() throws Exception{
-		vk.stop();
-	}
-
+public class FirstGUITest extends ShowWindow {
 	
 
 	@Before
 	public void setUp() throws IOException {
-		mainWindow = GuiActionRunner.execute(new GuiQuery<MainWindow>() {
-            protected MainWindow executeInEDT() throws ParserConfigurationException, VkPlayListBuilderException {
-                MainWindow.main(new String[0]);
-                return MainWindow.getInstance();  
-            }
-        });
-        window = new FrameFixture(mainWindow);
-		eventBus = MainWindow.getEventBus();
-		eventBus.register(this);
+		super.setUp();
 		
 		downloadTriggered = false;
 		playTriggered = false;
@@ -83,10 +53,7 @@ public class FirstGUITest {
 
 	@After
 	public void tearDown() throws InterruptedException {
-		 window.cleanUp();
-		 eventBus.unregister(this);
-		 mainWindow.getPlayerService().getPlayer().stop();
-		 Thread.sleep(200);
+		 super.tearDown();
 	}
 
 	@Test
