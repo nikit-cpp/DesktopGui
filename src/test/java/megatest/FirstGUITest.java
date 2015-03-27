@@ -49,6 +49,7 @@ public class FirstGUITest extends ShowWindow {
 		playFinished = false;
 		nextTriggered = false;
 		downloadTriggeredCount = 0;
+		playTriggeredCount = 0;
 	}
 
 	@After
@@ -134,11 +135,28 @@ public class FirstGUITest extends ShowWindow {
 
 		System.out.println("downloadTriggeredCount="+downloadTriggeredCount);
 	}
+	
+	@Test
+	public void testManuallyRePlay() throws IOException, InterruptedException {
+		LOGGER.debug("Log4J stub for show thread");
+				
+		window.panel("null.contentPane").list().doubleClickItem(0);
+		Thread.sleep(4000);
+		Assert.assertEquals(3, downloadTriggeredCount);
+		playTriggeredCount = 0;
+		System.out.println("downloadTriggeredCount="+downloadTriggeredCount);
+		
+		playTriggered = false;
+		window.panel("null.contentPane").list().doubleClickItem(0);
+		Thread.sleep(4000);
+		Assert.assertEquals(3, playTriggeredCount);
+	}
 
 
 	
 	private boolean downloadTriggered;
 	private int downloadTriggeredCount;
+	private int playTriggeredCount;
 	private boolean playTriggered;
 	private boolean playFinished;
 	private boolean nextTriggered;
@@ -159,6 +177,7 @@ public class FirstGUITest extends ShowWindow {
 		LOGGER.debug(message);
 
 		playTriggered = true;
+		playTriggeredCount++;
 	}
 	
 	@Subscribe
