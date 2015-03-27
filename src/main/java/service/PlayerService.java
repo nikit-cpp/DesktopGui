@@ -6,6 +6,7 @@ import org.apache.log4j.Logger;
 
 import events.PlayFinished;
 import player.Player;
+import player.State;
 
 import com.github.nikit.cpp.player.PlayList;
 import com.github.nikit.cpp.player.Song;
@@ -37,15 +38,17 @@ public class PlayerService {
 		}
 	}
 	
-	boolean mayNext = true;
+	boolean mayNextOnFinished = true;
 	
 	@Subscribe
 	public void playDemand(PlayDemandEvent e) {
 		LOGGER.debug("playDemand()");
 		Song song = e.getSong();
 		File dest = song.getFile();
-		mayNext = false;
-		LOGGER.debug("setting mayNext=" + mayNext);
+		if(player.getState()==State.PLAYING){
+			mayNextOnFinished = false;
+		}
+		LOGGER.debug("setting mayNext=" + mayNextOnFinished);
 
 		if (dest == null) {
 			eventBus.post(new DownloadEvent(song));
@@ -74,12 +77,12 @@ public class PlayerService {
 	
 	@Subscribe
 	public void onPlayFinished(PlayFinished e) {
-		LOGGER.debug("onPlayFinished() mayNext="+mayNext);
-		if(mayNext){
+		LOGGER.debug("onPlayFinished() mayNext="+mayNextOnFinished);
+		if(mayNextOnFinished){
 			eventBus.post(new NextSong());
 		}else{
-			mayNext = true;
-			LOGGER.debug("setting mayNext="+mayNext);
+			mayNextOnFinished = true;
+			LOGGER.debug("setting mayNext="+mayNextOnFinished);
 		}
 	}
 
