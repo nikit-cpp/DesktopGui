@@ -41,6 +41,7 @@ public class PlayerService {
 	
 	@Subscribe
 	public void playDemand(PlayDemandEvent e) {
+		LOGGER.debug("playDemand()");
 		Song song = e.getSong();
 		File dest = song.getFile();
 		if (dest == null) {
@@ -54,6 +55,7 @@ public class PlayerService {
 
 	@Subscribe
 	public void play(PlayEvent e) {
+		LOGGER.debug("play()");
 		Song song = e.getSong();
 		File dest = song.getFile();
 		if (dest == null) {
