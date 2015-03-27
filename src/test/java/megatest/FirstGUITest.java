@@ -155,7 +155,6 @@ public class FirstGUITest {
 	public void testBugPlaySecondSongAfterFirst() throws IOException, InterruptedException {
 		LOGGER.debug("Log4J stub for show thread");
 				
-		//window.scrollPane().verticalScrollBar().scrollBlockDown(60);
 		window.panel("null.contentPane").list().doubleClickItem(0);
 		Thread.sleep(500);
 		window.panel("null.contentPane").list().doubleClickItem(1);
@@ -164,10 +163,9 @@ public class FirstGUITest {
 		downloadTriggered = false;
 		Thread.sleep(500);
 		Assert.assertFalse(downloadTriggered);
-
-		Thread.sleep(5000);
-		System.out.println("downloadTriggeredCount="+downloadTriggeredCount);
 		Assert.assertEquals(2, downloadTriggeredCount);
+
+		System.out.println("downloadTriggeredCount="+downloadTriggeredCount);
 	}
 
 
