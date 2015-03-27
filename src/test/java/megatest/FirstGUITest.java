@@ -128,6 +128,28 @@ public class FirstGUITest {
 		Assert.assertTrue(playFinished);
 	}
 	
+	@Test
+	public void testPlayThirdSongAfterSecondAfterFirst() throws IOException, InterruptedException {
+		LOGGER.debug("Log4J stub for show thread");
+				
+		//window.scrollPane().verticalScrollBar().scrollBlockDown(60);
+		window.panel("null.contentPane").list().doubleClickItem(0);
+		Thread.sleep(500);
+		window.panel("null.contentPane").list().doubleClickItem(1);
+		Thread.sleep(500);
+		Assert.assertTrue(downloadTriggered);
+		Assert.assertTrue(playTriggered);
+		downloadTriggered = false;
+		playTriggered = false;
+		
+		Thread.sleep(2500);
+		Assert.assertTrue(nextTriggered);
+		Assert.assertTrue(downloadTriggered);
+		Assert.assertTrue(playTriggered);
+		Assert.assertTrue(playFinished);
+	}
+
+	
 	
 	@Test
 	public void testBugPlaySecondSongAfterFirst() throws IOException, InterruptedException {
