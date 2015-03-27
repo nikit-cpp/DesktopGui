@@ -29,8 +29,8 @@ public class DownloadService {
 	@AllowConcurrentEvents
 	@Subscribe
 	public void download(DownloadEvent e) throws DownloadServiceException {
-		Song s = e.getSong();
 		try {
+			Song s = e.getSong();
 			File dest = null;
 			String filename = s.toString()+DOT_EXT;
 			filename = IOHelper.toFileSystemSafeName(filename);
@@ -43,10 +43,11 @@ public class DownloadService {
 			
 			LOGGER.debug("Sending PlayEvent ");
 			eventBus.post(new DownloadFinished(s));
-		} catch (IOException e1) {
+		} catch (Exception e1) {
 			String message = "Error on downloading";
 			LOGGER.error(message, e1);
 			throw new DownloadServiceException(message, e1);
+
 		}
 	  }
 
