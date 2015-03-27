@@ -43,18 +43,12 @@ public class PlayerService {
 	@Subscribe
 	public void playDemand(PlayDemandEvent e) {
 		LOGGER.debug("playDemand()");
-		Song song = e.getSong();
-		File dest = song.getFile();
 		if(player.getState()==State.PLAYING){
 			mayNextOnFinished = false;
 		}
-		LOGGER.debug("setting mayNext=" + mayNextOnFinished);
+		LOGGER.debug("playDemand setted mayNext=" + mayNextOnFinished);
 
-		if (dest == null) {
-			eventBus.post(new DownloadEvent(song));
-		} else {
-			play(song);
-		}
+		eventBus.post(new PlayEvent(e.getSong()));
 	}
 
 	@Subscribe
