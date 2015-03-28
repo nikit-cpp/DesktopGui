@@ -46,7 +46,7 @@ public class MainWindow extends JFrame {
 	private static Logger LOGGER = Logger.getLogger(MainWindow.class);
 	private static final long serialVersionUID = 1L;
 	private JList<Song> list;
-	private JPanel contents;
+	private JPanel contentsPanel;
 	private JLabel statusLabel;
 
 
@@ -105,16 +105,16 @@ public class MainWindow extends JFrame {
 
 		//add(pane, BorderLayout.CENTER); // CENTER раскукоживает
 		instance = this;
-		contents = new JPanel();
-		contents.setLayout(new BorderLayout());
+		contentsPanel = new JPanel();
+		contentsPanel.setLayout(new BorderLayout());
 
-		getContentPane().add(contents);
-		contents.add( new JScrollPane(list) );
+		getContentPane().add(contentsPanel);
+		contentsPanel.add( new JScrollPane(list) );
 		
 		// create the status bar panel and shove it down the bottom of the frame
 		JPanel statusPanel = new JPanel();
 		statusPanel.setBorder(new BevelBorder(BevelBorder.LOWERED));
-		add(statusPanel, BorderLayout.SOUTH);
+		getContentPane().add(statusPanel, BorderLayout.SOUTH);
 		statusPanel.setPreferredSize(new Dimension(getWidth(), 16));
 		statusPanel.setLayout(new BoxLayout(statusPanel, BoxLayout.X_AXIS));
 		statusLabel = new JLabel(STOPPED);
