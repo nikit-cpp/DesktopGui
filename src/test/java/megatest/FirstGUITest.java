@@ -2,6 +2,9 @@ package megatest;
 
 import java.awt.EventQueue;
 import java.io.IOException;
+import java.util.concurrent.locks.Condition;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 import javax.xml.parsers.ParserConfigurationException;
 
@@ -70,8 +73,12 @@ public class FirstGUITest extends ShowWindow {
 		Assert.assertTrue(playTriggered);
 	}
 	
+	Condition notEmpty = lock.newCondition();
+	Condition notFull = lock.newCondition();
+	
 	@Test
 	public void testPlaySecondSongAfterFirst() throws IOException, InterruptedException {
+		lock.lock();
 		LOGGER.debug("Log4J stub for show thread");
 				
 		//window.scrollPane().verticalScrollBar().scrollBlockDown(60);
@@ -82,11 +89,16 @@ public class FirstGUITest extends ShowWindow {
 		downloadTriggered = false;
 		playTriggered = false;
 		
-		Thread.sleep(2500);
+		Thread.sleep(1500);
+		while(!nextTriggered){
+			notFull.await();
+		}
 		Assert.assertTrue(nextTriggered);
 		Assert.assertTrue(downloadTriggered);
 		Assert.assertTrue(playTriggered);
 		Assert.assertTrue(playFinished);
+		notEmpty.signal();
+		lock.unlock();
 	}
 	
 	@Test
@@ -185,7 +197,10 @@ public class FirstGUITest extends ShowWindow {
 	@AllowConcurrentEvents
 	@Subscribe
 	public void next(NextSong e){
+		lock.lock();
 		nextTriggered = true;
+		notFull.signal();
+		lock.unlock();
 	}
 	
 	@AllowConcurrentEvents

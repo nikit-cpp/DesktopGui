@@ -2,6 +2,8 @@ package megatest;
 
 import java.awt.EventQueue;
 import java.io.IOException;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 import javax.xml.parsers.ParserConfigurationException;
 
@@ -45,7 +47,7 @@ public class ShowWindow {
 	protected FrameFixture window;
 	protected MainWindow mainWindow;
 	protected EventBus eventBus;
-
+	protected static Lock lock;
 	
 	
 	@BeforeClass
@@ -53,6 +55,7 @@ public class ShowWindow {
 		FailOnThreadViolationRepaintManager.install();
 		vk = new VkEmulator();
 		vk.start();
+		lock = new ReentrantLock();
 	}
 	
 	@AfterClass
