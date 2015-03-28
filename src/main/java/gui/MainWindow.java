@@ -46,12 +46,19 @@ public class MainWindow extends JFrame {
 	private JList<Song> list;
 	private JPanel contentsPanel;
 	private JLabel statusLabel;
+	static MainWindow instance = null;
+	private JButton btnPrev;
+	private JButton btnPlay;
+	private JPanel buttonsPanel;
+	private JButton btnNext;
+	private JButton btnStop;
 
 
-	public MainWindow() throws ParserConfigurationException,
-	VkPlayListBuilderException {
+
+	public MainWindow() throws ParserConfigurationException, VkPlayListBuilderException {
 		initNonGui();
 		eventBus.register(this);
+		instance = this;
 		
 		setTitle("Vk Caching Player");
 		setSize(600, 500);
@@ -101,8 +108,7 @@ public class MainWindow extends JFrame {
 			}
 		});
 
-		//add(pane, BorderLayout.CENTER); // CENTER раскукоживает
-		instance = this;
+		
 		contentsPanel = new JPanel();
 
 		getContentPane().add(contentsPanel);
@@ -146,12 +152,6 @@ public class MainWindow extends JFrame {
 		mainFrame.setVisible( true );
 	}
 	
-	static MainWindow instance = null;
-	private JButton btnPrev;
-	private JButton btnPlay;
-	private JPanel buttonsPanel;
-	private JButton btnNext;
-	private JButton btnStop;
 	public static MainWindow getInstance(){
 		return instance ;
 	}
