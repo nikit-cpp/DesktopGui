@@ -57,6 +57,9 @@ public class PlayerService {
 	@Subscribe
 	public void play(PlayEvent e) {
 		LOGGER.debug("play()");
+		if(player.getState()==State.PLAYING){
+			mayNextOnFinished = false;
+		}
 		Song song = e.getSong();
 		File dest = song.getFile();
 		if (dest == null) {

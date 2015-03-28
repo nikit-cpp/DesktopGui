@@ -8,6 +8,7 @@ import org.apache.log4j.Logger;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
+import events.NextSong;
 import events.PlayDemandEvent;
 import events.PlayEvent;
 import events.PlayFinished;
@@ -35,6 +36,8 @@ import java.awt.event.MouseListener;
 import java.util.*;
 import java.awt.GridLayout;
 import java.awt.FlowLayout;
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
 
 public class MainWindow extends JFrame {
 	
@@ -127,6 +130,11 @@ public class MainWindow extends JFrame {
 		buttonsPanel.add(btnStop);
 		
 		btnNext = new JButton("Next");
+		btnNext.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				eventBus.post(new NextSong());
+			}
+		});
 		buttonsPanel.add(btnNext);
 		
 		// create the status bar panel and shove it down the bottom of the frame
