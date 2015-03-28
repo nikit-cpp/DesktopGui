@@ -5,6 +5,10 @@ package megatest;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -48,18 +52,18 @@ public class VkEmulator {
 		//server.join();
 		LOGGER.debug("Goodbye, America!");
 		LOGGER.debug("VkEmulator started");
+
 	}
+	
+
 
 	@SuppressWarnings("serial")
-	// curl https://api.vk.com/method/wall.get.xml?owner_id=-11081630 > ./src/test/resources/wall.get.xml
-	// 
 	public static class HelloServlet extends HttpServlet {
 		
 		private String type = "text/xml";
 		
 		@Override
 		protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-			
 			String requestUri = request.getRequestURI();
 			String queryString = request.getQueryString();
 			
@@ -68,23 +72,40 @@ public class VkEmulator {
 			
 			response.setContentType(type);
 			response.setStatus(HttpServletResponse.SC_OK);
+			
+			mapRequestWithLocalFile("https://api.vk.com/method/groups.getById.xml?group_ids=rockmetal80",	"src/test/resources/groups.getById.xml");
+			mapRequestWithLocalFile("https://api.vk.com/method/wall.get.xml?owner_id=-64183", 				"src/test/resources/wall.get.xml");
 
-			if (requestUri.equals("/method/groups.getById.xml") && queryString.equals("group_ids=rockmetal80")) {
-				response.getWriter().write(FileUtils.readFileToString(new File(
-						"src/test/resources/groups.getById.xml")));
-				LOGGER.debug("will be groups.getById.xml");
+			boolean matched = false;
+			for(Mapping m: mapList){
+				if (requestUri.equals(m.url.getPath()) && queryString.equals(m.url.getQuery())) {
+					response.getWriter().write(FileUtils.readFileToString(m.file));
+					LOGGER.debug("will be groups.getById.xml");
+					matched = true;
+					break;
+				}
 			}
-			else if(requestUri.equals("/method/wall.get.xml") && queryString.equals("owner_id=-64183")) {
-				response.getWriter().write(FileUtils.readFileToString(new File(
-						"src/test/resources/wall.get.xml")));
-				LOGGER.debug("will be wall.get.xml");
-			}
-
-			else{
+			if(!matched) {
 				response.getWriter().println("some error in Megatest, check log4j's log");
 				LOGGER.debug("unexpected request " + request.getRequestURL() + "?" + request.getQueryString() +", may be error in src/test/resources/spring-config.xml");
 			}
 		}
+		
+
+		private void mapRequestWithLocalFile(String realVkUrl, String file) throws IOException{
+			mapList.add(new Mapping(new URL(realVkUrl), new File(file)));
+		}
+		List<Mapping> mapList = new ArrayList<Mapping>();
+	}
+	
+	public static class Mapping{
+		public Mapping(URL url, File file) {
+			super();
+			this.url = url;
+			this.file = file;
+		}
+		URL url;
+		File file;
 	}
 
 	public void stop() throws Exception {

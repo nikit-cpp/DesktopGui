@@ -7,7 +7,8 @@ import javax.xml.parsers.ParserConfigurationException;
 
 import events.DownloadEvent;
 import events.NextSong;
-import events.AutomaticPlayEvent;
+import events.PlayEvent;
+import events.PlayFinished;
 import gui.MainWindow;
 
 import org.apache.log4j.Logger;
@@ -27,8 +28,6 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.Mockito;
 
-import player.PlayFinished;
-
 import com.github.nikit.cpp.player.Song;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
@@ -38,50 +37,24 @@ import static org.fest.swing.testing.FestSwingTestCaseTemplate.*;
 import service.DownloadServiceException;
 import vk.VkPlayListBuilderException;
 
-public class FirstGUITest {
-
-
-	private static Logger LOGGER = Logger.getLogger(FirstGUITest.class);
-	private static VkEmulator vk;
-	private FrameFixture window;
-	private MainWindow mainWindow;
-	private EventBus eventBus;
-
-	
-	
-	@BeforeClass
-	public static void setUpOnce() throws Exception {
-		FailOnThreadViolationRepaintManager.install();
-		vk = new VkEmulator();
-		vk.start();
-	}
-	
-	@AfterClass
-	public static void kill() throws Exception{
-		vk.stop();
-	}
-
+public class FirstGUITest extends ShowWindow {
 	
 
 	@Before
 	public void setUp() throws IOException {
-		mainWindow = GuiActionRunner.execute(new GuiQuery<MainWindow>() {
-            protected MainWindow executeInEDT() throws ParserConfigurationException, VkPlayListBuilderException {
-                MainWindow.main(new String[0]);
-                return MainWindow.getInstance();  
-            }
-        });
-        window = new FrameFixture(mainWindow);
-		eventBus = MainWindow.getEventBus();
-		eventBus.register(this);
+		super.setUp();
+		
+		downloadTriggered = false;
+		playTriggered = false;
+		playFinished = false;
+		nextTriggered = false;
+		downloadTriggeredCount = 0;
+		playTriggeredCount = 0;
 	}
 
 	@After
 	public void tearDown() throws InterruptedException {
-		 window.cleanUp();
-		 eventBus.unregister(this);
-		 mainWindow.getPlayerService().getPlayer().stop();
-		 Thread.sleep(200);
+		 super.tearDown();
 	}
 
 	@Test
@@ -110,7 +83,28 @@ public class FirstGUITest {
 				
 		//window.scrollPane().verticalScrollBar().scrollBlockDown(60);
 		window.panel("null.contentPane").list().doubleClickItem(0);
+		Thread.sleep(500);
+		Assert.assertTrue(downloadTriggered);
+		Assert.assertTrue(playTriggered);
+		downloadTriggered = false;
+		playTriggered = false;
 		
+		Thread.sleep(2500);
+		Assert.assertTrue(nextTriggered);
+		Assert.assertTrue(downloadTriggered);
+		Assert.assertTrue(playTriggered);
+		Assert.assertTrue(playFinished);
+	}
+	
+	@Test
+	public void testPlayThirdSongAfterSecondAfterFirst() throws IOException, InterruptedException {
+		LOGGER.debug("Log4J stub for show thread");
+				
+		//window.scrollPane().verticalScrollBar().scrollBlockDown(60);
+		window.panel("null.contentPane").list().doubleClickItem(0);
+		Thread.sleep(500);
+		window.panel("null.contentPane").list().doubleClickItem(1);
+		Thread.sleep(500);
 		Assert.assertTrue(downloadTriggered);
 		Assert.assertTrue(playTriggered);
 		downloadTriggered = false;
@@ -124,10 +118,48 @@ public class FirstGUITest {
 	}
 
 	
-	private boolean downloadTriggered = false;
-	private boolean playTriggered = false;
-	private boolean playFinished = false;
-	private boolean nextTriggered = false;
+	
+	@Test
+	public void testBugPlaySecondSongAfterFirst() throws IOException, InterruptedException {
+		LOGGER.debug("Log4J stub for show thread");
+				
+		window.panel("null.contentPane").list().doubleClickItem(0);
+		Thread.sleep(500);
+		window.panel("null.contentPane").list().doubleClickItem(1);
+		Assert.assertTrue(downloadTriggered);
+		Assert.assertTrue(playTriggered);
+		downloadTriggered = false;
+		Thread.sleep(500);
+		Assert.assertFalse(downloadTriggered);
+		Assert.assertEquals(2, downloadTriggeredCount);
+
+		System.out.println("downloadTriggeredCount="+downloadTriggeredCount);
+	}
+	
+	@Test
+	public void testManuallyRePlay() throws IOException, InterruptedException {
+		LOGGER.debug("Log4J stub for show thread");
+				
+		window.panel("null.contentPane").list().doubleClickItem(0);
+		Thread.sleep(4000);
+		Assert.assertEquals(3, downloadTriggeredCount);
+		playTriggeredCount = 0;
+		System.out.println("downloadTriggeredCount="+downloadTriggeredCount);
+		
+		playTriggered = false;
+		window.panel("null.contentPane").list().doubleClickItem(0);
+		Thread.sleep(4000);
+		Assert.assertEquals(3, playTriggeredCount);
+	}
+
+
+	
+	private boolean downloadTriggered;
+	private int downloadTriggeredCount;
+	private int playTriggeredCount;
+	private boolean playTriggered;
+	private boolean playFinished;
+	private boolean nextTriggered;
 	
 	@Subscribe
 	public void onDownload(DownloadEvent e) throws DownloadServiceException {
@@ -139,12 +171,13 @@ public class FirstGUITest {
 	}
 	
 	@Subscribe
-	public void onPlay(AutomaticPlayEvent e) throws DownloadServiceException {
+	public void onPlay(PlayEvent e) throws DownloadServiceException {
 		final Song s = e.getSong();
 		final String message = "Playing '" + s + "'";
 		LOGGER.debug(message);
 
 		playTriggered = true;
+		playTriggeredCount++;
 	}
 	
 	@Subscribe
@@ -156,5 +189,10 @@ public class FirstGUITest {
 	@Subscribe
 	public void next(NextSong e){
 		nextTriggered = true;
+	}
+	
+	@Subscribe
+	public void download(DownloadEvent e) {
+		downloadTriggeredCount++;
 	}
 }

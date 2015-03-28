@@ -11,6 +11,7 @@ import org.apache.log4j.Logger;
 import utils.IOHelper;
 
 import com.github.nikit.cpp.player.Song;
+import com.google.common.eventbus.AllowConcurrentEvents;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 
@@ -25,10 +26,11 @@ public class DownloadService {
 	private EventBus eventBus;
 	private static final String DOT_EXT = ".mp3";
 
+	@AllowConcurrentEvents
 	@Subscribe
 	public void download(DownloadEvent e) throws DownloadServiceException {
-		Song s = e.getSong();
 		try {
+			Song s = e.getSong();
 			File dest = null;
 			String filename = s.toString()+DOT_EXT;
 			filename = IOHelper.toFileSystemSafeName(filename);
@@ -41,10 +43,11 @@ public class DownloadService {
 			
 			LOGGER.debug("Sending PlayEvent ");
 			eventBus.post(new DownloadFinished(s));
-		} catch (IOException e1) {
+		} catch (Exception e1) {
 			String message = "Error on downloading";
 			LOGGER.error(message, e1);
 			throw new DownloadServiceException(message, e1);
+
 		}
 	  }
 

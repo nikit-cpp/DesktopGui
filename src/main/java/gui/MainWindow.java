@@ -8,18 +8,19 @@ import org.apache.log4j.Logger;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-import player.PlayFinished;
-import player.PlayStarted;
+import events.PlayDemandEvent;
+import events.PlayEvent;
+import events.PlayFinished;
+import events.PlayStarted;
 
 import com.github.nikit.cpp.player.PlayList;
 import com.github.nikit.cpp.player.Song;
+import com.google.common.eventbus.AllowConcurrentEvents;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 
 import config.Config;
 import events.DownloadEvent;
-import events.OnDemandPlayEvent;
-import events.AutomaticPlayEvent;
 import service.DownloadService;
 import service.DownloadServiceException;
 import service.PlayerService;
@@ -94,7 +95,7 @@ public class MainWindow extends JFrame {
 				if (e.getClickCount() == 2) {
 					int index = list.locationToIndex(e.getPoint());
 					Song s = (Song) playListModel.getElementAt(index);
-					eventBus.post(new OnDemandPlayEvent(s));
+					eventBus.post(new PlayDemandEvent(s));
 
 					LOGGER.debug("Double clicked on item " + index + " " + s);
 
@@ -144,6 +145,7 @@ public class MainWindow extends JFrame {
 	    eventBus.register(playerService);
 	}
 	
+	@AllowConcurrentEvents
 	@Subscribe
 	public void onPlayStarted(PlayStarted e) throws DownloadServiceException {
 		final String s = e.getPath();
@@ -157,6 +159,7 @@ public class MainWindow extends JFrame {
 		});
 	}
 	
+	@AllowConcurrentEvents
 	@Subscribe
 	public void onPlayFinished(PlayFinished e){
 		LOGGER.debug("Play finished");
@@ -167,7 +170,7 @@ public class MainWindow extends JFrame {
 		});
 	}
 
-	
+	@AllowConcurrentEvents
 	@Subscribe
 	public void onDownload(DownloadEvent e) throws DownloadServiceException {
 		final String message = "Downloading '" + e.getSong().getUrl() + "'";

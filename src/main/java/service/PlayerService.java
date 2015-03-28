@@ -1,28 +1,27 @@
 package service;
 
-import java.awt.EventQueue;
 import java.io.File;
-import java.util.UUID;
 
 import org.apache.log4j.Logger;
 
-import player.PlayFinished;
+import events.PlayFinished;
 import player.Player;
+import player.State;
 
 import com.github.nikit.cpp.player.PlayList;
 import com.github.nikit.cpp.player.Song;
+import com.google.common.eventbus.AllowConcurrentEvents;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 
 import events.DownloadEvent;
 import events.DownloadFinished;
 import events.NextSong;
-import events.OnDemandPlayEvent;
-import events.AutomaticPlayEvent;
+import events.PlayDemandEvent;
+import events.PlayEvent;
 
 public class PlayerService {
-	
-	@SuppressWarnings("unused")
+
 	private static Logger LOGGER = Logger.getLogger(PlayerService.class);
 
 	private EventBus eventBus;
@@ -30,56 +29,72 @@ public class PlayerService {
 	private PlayList playList;
 	private Song currentSong;
 
-	private boolean stoppedByDemand = false;;
-		
 	private void play(Song song) {
-		currentSong = song;
-		player.prepareFor(song.getFile().getAbsolutePath());
-		player.play();
+		try {
+			currentSong = song;
+			player.prepareFor(song.getFile().getAbsolutePath());
+			player.play();
+		} catch (Exception e) {
+			LOGGER.error("Error!!!", e);
+		}
+	}
+	
+	boolean mayNextOnFinished = true;
+	
+	@AllowConcurrentEvents
+	@Subscribe
+	public void playDemand(PlayDemandEvent e) {
+		LOGGER.debug("playDemand()");
+		if(player.getState()==State.PLAYING){
+			mayNextOnFinished = false;
+		}
+		LOGGER.debug("playDemand setted mayNext=" + mayNextOnFinished);
+
+		eventBus.post(new PlayEvent(e.getSong()));
 	}
 
+	@AllowConcurrentEvents
 	@Subscribe
-	synchronized public void automaticPlay(AutomaticPlayEvent e){
+	public void play(PlayEvent e) {
+		LOGGER.debug("play()");
 		Song song = e.getSong();
 		File dest = song.getFile();
-		if(dest == null){
+		if (dest == null) {
 			eventBus.post(new DownloadEvent(song));
 		} else {
 			play(song);
 		}
 	}
 	
+	@AllowConcurrentEvents
 	@Subscribe
 	public void playAfterDownloadFinished(DownloadFinished e) {
 		Song song = e.getSong();
-		eventBus.post(new AutomaticPlayEvent(song));
+		eventBus.post(new PlayEvent(song));
 	}
 	
+	@AllowConcurrentEvents
 	@Subscribe
-	synchronized public void onDemandPlay(OnDemandPlayEvent e){
-		Song song = e.getSong();
-		stoppedByDemand = true;
-		eventBus.post(new AutomaticPlayEvent(song));
-	}
-	
-	@Subscribe
-	public void onPlayFinished(PlayFinished e){
-		LOGGER.debug("Switching to next Song...");
-		if(!stoppedByDemand ){
-			stoppedByDemand = false;
+	public void onPlayFinished(PlayFinished e) {
+		LOGGER.debug("onPlayFinished() mayNext="+mayNextOnFinished);
+		if(mayNextOnFinished){
 			eventBus.post(new NextSong());
-		}
-	}
-	
-	@Subscribe
-	public void next(NextSong e){
-		Song nextSong = playList.getNextSong(currentSong);
-		if(nextSong!=null){
-			eventBus.post(new AutomaticPlayEvent(nextSong));
+		}else{
+			mayNextOnFinished = true;
+			LOGGER.debug("setting mayNext="+mayNextOnFinished);
 		}
 	}
 
-	
+	@AllowConcurrentEvents
+	@Subscribe
+	public void next(NextSong e) {
+		Song nextSong = playList.getNextSong(currentSong);
+		if (nextSong != null) {
+			LOGGER.debug("switching to next");
+			eventBus.post(new PlayEvent(nextSong));
+		}
+	}
+
 	public Player getPlayer() {
 		return player;
 	}
