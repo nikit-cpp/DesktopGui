@@ -61,20 +61,12 @@ public class FirstGUITest extends ShowWindow {
 	public void testPlayFirstSong() throws IOException, InterruptedException {
 		LOGGER.debug("Log4J stub for show thread");
 				
-		//window.scrollPane().verticalScrollBar().scrollBlockDown(60);
 		window.panel("null.contentPane").list().doubleClickItem(0);
 		
 		Thread.sleep(1500);
 		
 		Assert.assertTrue(downloadTriggered);
 		Assert.assertTrue(playTriggered);
-		//window.close();
-		
-		//LOGGER.debug("Press Enter for exit from test");
-		//System.in.read();
-		
-		//Thread.currentThread().join();
-		//LOGGER.debug("I ah here");
 	}
 	
 	@Test

@@ -76,11 +76,12 @@ public class ShowWindow {
 	}
 
 	@After
-	public void tearDown() throws InterruptedException {
-		 window.cleanUp();
-		 eventBus.unregister(this);
+	synchronized public void tearDown() throws InterruptedException {
 		 mainWindow.getPlayerService().getPlayer().stop();
-		 Thread.sleep(200);
+
+		 eventBus.unregister(this);
+		 //Thread.sleep(200);
+		 window.cleanUp();
 	}
 
 	@Test
