@@ -1,23 +1,18 @@
 package service;
 
 import java.io.File;
-
 import org.apache.log4j.Logger;
-
 import events.PlayFinished;
 import player.Player;
 import player.State;
-
 import com.github.nikit.cpp.player.PlayList;
 import com.github.nikit.cpp.player.Song;
 import com.google.common.eventbus.AllowConcurrentEvents;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
-
 import events.DownloadEvent;
 import events.DownloadFinished;
 import events.NextSong;
-import events.PlayDemandEvent;
 import events.PlayEvent;
 
 public class PlayerService {
@@ -43,23 +38,13 @@ public class PlayerService {
 	
 	@AllowConcurrentEvents
 	@Subscribe
-	public void playDemand(PlayDemandEvent e) {
-		LOGGER.debug("playDemand()");
-		if(player.getState()==State.PLAYING){
-			mayNextOnFinished = false;
-		}
-		LOGGER.debug("playDemand setted mayNext=" + mayNextOnFinished);
-
-		eventBus.post(new PlayEvent(e.getSong()));
-	}
-
-	@AllowConcurrentEvents
-	@Subscribe
 	public void play(PlayEvent e) {
 		LOGGER.debug("play()");
 		if(player.getState()==State.PLAYING){
 			mayNextOnFinished = false;
 		}
+		LOGGER.debug("play setted mayNext=" + mayNextOnFinished);
+		
 		Song song = e.getSong();
 		File dest = song.getFile();
 		if (dest == null) {
