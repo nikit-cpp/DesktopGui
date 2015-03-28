@@ -43,10 +43,13 @@ import vk.VkPlayListBuilderException;
 
 public class FirstGUITest extends ShowWindow {
 	
+	private boolean eventsHandled;
 
 	@Before
 	public void setUp() throws IOException {
 		super.setUp();
+		
+		eventsHandled = false;
 		
 		downloadTriggered = false;
 		playTriggered = false;
@@ -63,14 +66,20 @@ public class FirstGUITest extends ShowWindow {
 
 	@Test
 	public void testPlayFirstSong() throws IOException, InterruptedException {
+		lock.lock();
 		LOGGER.debug("Log4J stub for show thread");
 				
 		window.panel("null.contentPane").list().doubleClickItem(0);
 		
 		Thread.sleep(1500);
 		
+		while(!eventsHandled){
+			notFull.await();
+		}
 		Assert.assertTrue(downloadTriggered);
 		Assert.assertTrue(playTriggered);
+		notEmpty.signal();
+		lock.unlock();
 	}
 	
 	Condition notEmpty = lock.newCondition();
@@ -86,11 +95,47 @@ public class FirstGUITest extends ShowWindow {
 		Thread.sleep(500);
 		Assert.assertTrue(downloadTriggered);
 		Assert.assertTrue(playTriggered);
+		notEmpty.signal();
+		lock.unlock();
 		downloadTriggered = false;
 		playTriggered = false;
 		
 		Thread.sleep(1500);
-		while(!nextTriggered){
+		while(!eventsHandled){
+			notFull.await();
+		}
+		Assert.assertTrue(nextTriggered);
+		Assert.assertTrue(downloadTriggered);
+		Assert.assertTrue(playTriggered);
+		Assert.assertTrue(playFinished);
+		notEmpty.signal();
+		lock.unlock();
+		notEmpty.signal();
+		lock.unlock();
+	}
+	
+	@Test
+	public void testPlayThirdSongAfterSecondAfterFirst() throws IOException, InterruptedException {
+		lock.lock();
+		LOGGER.debug("Log4J stub for show thread");
+				
+		//window.scrollPane().verticalScrollBar().scrollBlockDown(60);
+		window.panel("null.contentPane").list().doubleClickItem(0);
+		Thread.sleep(500);
+		window.panel("null.contentPane").list().doubleClickItem(1);
+		Thread.sleep(500);
+		while(!eventsHandled){
+			notFull.await();
+		}
+		Assert.assertTrue(downloadTriggered);
+		Assert.assertTrue(playTriggered);
+		notEmpty.signal();
+		lock.unlock();
+		downloadTriggered = false;
+		playTriggered = false;
+		
+		Thread.sleep(2500);
+		while(!eventsHandled){
 			notFull.await();
 		}
 		Assert.assertTrue(nextTriggered);
@@ -100,61 +145,61 @@ public class FirstGUITest extends ShowWindow {
 		notEmpty.signal();
 		lock.unlock();
 	}
-	
-	@Test
-	public void testPlayThirdSongAfterSecondAfterFirst() throws IOException, InterruptedException {
-		LOGGER.debug("Log4J stub for show thread");
-				
-		//window.scrollPane().verticalScrollBar().scrollBlockDown(60);
-		window.panel("null.contentPane").list().doubleClickItem(0);
-		Thread.sleep(500);
-		window.panel("null.contentPane").list().doubleClickItem(1);
-		Thread.sleep(500);
-		Assert.assertTrue(downloadTriggered);
-		Assert.assertTrue(playTriggered);
-		downloadTriggered = false;
-		playTriggered = false;
-		
-		Thread.sleep(2500);
-		Assert.assertTrue(nextTriggered);
-		Assert.assertTrue(downloadTriggered);
-		Assert.assertTrue(playTriggered);
-		Assert.assertTrue(playFinished);
-	}
 
 	
 	
 	@Test
 	public void testBugPlaySecondSongAfterFirst() throws IOException, InterruptedException {
+		lock.lock();
 		LOGGER.debug("Log4J stub for show thread");
 				
 		window.panel("null.contentPane").list().doubleClickItem(0);
 		Thread.sleep(500);
 		window.panel("null.contentPane").list().doubleClickItem(1);
+		while(!eventsHandled){
+			notFull.await();
+		}
 		Assert.assertTrue(downloadTriggered);
 		Assert.assertTrue(playTriggered);
+		notEmpty.signal();
+		lock.unlock();
 		downloadTriggered = false;
 		Thread.sleep(500);
+		while(!eventsHandled){
+			notFull.await();
+		}
 		Assert.assertFalse(downloadTriggered);
 		Assert.assertEquals(2, downloadTriggeredCount);
-
+		notEmpty.signal();
+		lock.unlock();
 		System.out.println("downloadTriggeredCount="+downloadTriggeredCount);
 	}
 	
 	@Test
 	public void testManuallyRePlay() throws IOException, InterruptedException {
+		lock.lock();
 		LOGGER.debug("Log4J stub for show thread");
 				
 		window.panel("null.contentPane").list().doubleClickItem(0);
 		Thread.sleep(4000);
+		while(!eventsHandled){
+			notFull.await();
+		}
 		Assert.assertEquals(3, downloadTriggeredCount);
+		notEmpty.signal();
+		lock.unlock();
 		playTriggeredCount = 0;
 		System.out.println("downloadTriggeredCount="+downloadTriggeredCount);
 		
 		playTriggered = false;
 		window.panel("null.contentPane").list().doubleClickItem(0);
 		Thread.sleep(4000);
+		while(!eventsHandled){
+			notFull.await();
+		}
 		Assert.assertEquals(3, playTriggeredCount);
+		notEmpty.signal();
+		lock.unlock();
 	}
 
 
@@ -166,46 +211,68 @@ public class FirstGUITest extends ShowWindow {
 	private boolean playFinished;
 	private boolean nextTriggered;
 	
-	@AllowConcurrentEvents
+	//@AllowConcurrentEvents
 	@Subscribe
 	public void onDownload(DownloadEvent e) throws DownloadServiceException {
+		lock.lock();
 		final String s = e.getSong().toString();
 		final String message = "Downloading '" + s + "'";
 		LOGGER.debug(message);
 
 		downloadTriggered = true;
+		
+		eventsHandled = true;
+		notFull.signal();
+		lock.unlock();
 	}
 	
-	@AllowConcurrentEvents
+	//@AllowConcurrentEvents
 	@Subscribe
 	public void onPlay(PlayEvent e) throws DownloadServiceException {
+		lock.lock();
 		final Song s = e.getSong();
 		final String message = "Playing '" + s + "'";
 		LOGGER.debug(message);
 
 		playTriggered = true;
 		playTriggeredCount++;
-	}
-	
-	@AllowConcurrentEvents
-	@Subscribe
-	public void onPlayFinished(PlayFinished e){
-		LOGGER.debug("Play finished");
-		playFinished = true;
-	}
-
-	@AllowConcurrentEvents
-	@Subscribe
-	public void next(NextSong e){
-		lock.lock();
-		nextTriggered = true;
+		
+		eventsHandled = true;
 		notFull.signal();
 		lock.unlock();
 	}
 	
-	@AllowConcurrentEvents
+	//@AllowConcurrentEvents
+	@Subscribe
+	public void onPlayFinished(PlayFinished e){
+		lock.lock();
+		LOGGER.debug("Play finished");
+		playFinished = true;
+		
+		eventsHandled = true;
+		notFull.signal();
+		lock.unlock();
+	}
+
+	//@AllowConcurrentEvents
+	@Subscribe
+	public void next(NextSong e){
+		lock.lock();
+		nextTriggered = true;
+		
+		eventsHandled = true;
+		notFull.signal();
+		lock.unlock();
+	}
+	
+	//@AllowConcurrentEvents
 	@Subscribe
 	public void download(DownloadEvent e) {
+		lock.lock();
 		downloadTriggeredCount++;
+		
+		eventsHandled = true;
+		notFull.signal();
+		lock.unlock();
 	}
 }
