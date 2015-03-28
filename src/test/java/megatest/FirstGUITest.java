@@ -29,6 +29,7 @@ import org.junit.Test;
 import org.mockito.Mockito;
 
 import com.github.nikit.cpp.player.Song;
+import com.google.common.eventbus.AllowConcurrentEvents;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 
@@ -153,6 +154,7 @@ public class FirstGUITest extends ShowWindow {
 	private boolean playFinished;
 	private boolean nextTriggered;
 	
+	@AllowConcurrentEvents
 	@Subscribe
 	public void onDownload(DownloadEvent e) throws DownloadServiceException {
 		final String s = e.getSong().toString();
@@ -162,6 +164,7 @@ public class FirstGUITest extends ShowWindow {
 		downloadTriggered = true;
 	}
 	
+	@AllowConcurrentEvents
 	@Subscribe
 	public void onPlay(PlayEvent e) throws DownloadServiceException {
 		final Song s = e.getSong();
@@ -172,17 +175,20 @@ public class FirstGUITest extends ShowWindow {
 		playTriggeredCount++;
 	}
 	
+	@AllowConcurrentEvents
 	@Subscribe
 	public void onPlayFinished(PlayFinished e){
 		LOGGER.debug("Play finished");
 		playFinished = true;
 	}
 
+	@AllowConcurrentEvents
 	@Subscribe
 	public void next(NextSong e){
 		nextTriggered = true;
 	}
 	
+	@AllowConcurrentEvents
 	@Subscribe
 	public void download(DownloadEvent e) {
 		downloadTriggeredCount++;
