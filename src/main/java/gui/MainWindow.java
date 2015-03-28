@@ -33,6 +33,8 @@ import java.awt.EventQueue;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.*;
+import java.awt.GridLayout;
+import java.awt.FlowLayout;
 
 public class MainWindow extends JFrame {
 	
@@ -106,10 +108,20 @@ public class MainWindow extends JFrame {
 		//add(pane, BorderLayout.CENTER); // CENTER раскукоживает
 		instance = this;
 		contentsPanel = new JPanel();
-		contentsPanel.setLayout(new BorderLayout());
 
 		getContentPane().add(contentsPanel);
-		contentsPanel.add( new JScrollPane(list) );
+		contentsPanel.setLayout(new BorderLayout(0, 0));
+		contentsPanel.add( new JScrollPane(list) , BorderLayout.CENTER);
+		
+		buttonsPanel = new JPanel();
+		contentsPanel.add(buttonsPanel, BorderLayout.SOUTH);
+		buttonsPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 5));
+		
+		btnNewButton = new JButton("New button");
+		buttonsPanel.add(btnNewButton);
+		
+		btnNewButton_1 = new JButton("New button");
+		buttonsPanel.add(btnNewButton_1);
 		
 		// create the status bar panel and shove it down the bottom of the frame
 		JPanel statusPanel = new JPanel();
@@ -128,6 +140,9 @@ public class MainWindow extends JFrame {
 	}
 	
 	static MainWindow instance = null;
+	private JButton btnNewButton;
+	private JButton btnNewButton_1;
+	private JPanel buttonsPanel;
 	public static MainWindow getInstance(){
 		return instance ;
 	}
