@@ -35,10 +35,15 @@ public class DownloadService {
 			String filename = s.toString()+DOT_EXT;
 			filename = IOHelper.toFileSystemSafeName(filename);
 			dest = new File(config.getCacheFolder(), filename);
+			
 			String url = s.getUrl();
-			LOGGER.debug("Downloading "+ url +" to " + dest);
-			FileUtils.copyURLToFile(new URL(url), dest);
-			LOGGER.debug("Downloading complete ");
+			LOGGER.debug("Downloading '"+ url +"' to '" + dest +"'");
+			if(dest.exists()){
+				LOGGER.debug("Downloading skipped because dest file are present.");
+			}else{
+				FileUtils.copyURLToFile(new URL(url), dest);
+				LOGGER.debug("Downloading complete ");
+			}
 			s.setFile(dest);
 			
 			LOGGER.debug("Sending PlayEvent ");
