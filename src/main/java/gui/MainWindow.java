@@ -57,8 +57,8 @@ public class MainWindow extends JFrame {
 		initNonGui();
 		eventBus.register(this);
 		
-		setTitle("List Model Example");
-		setSize(500, 500);
+		setTitle("Vk Caching Player");
+		setSize(600, 500);
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
 
 		
@@ -117,11 +117,17 @@ public class MainWindow extends JFrame {
 		contentsPanel.add(buttonsPanel, BorderLayout.SOUTH);
 		buttonsPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 5));
 		
-		btnNewButton = new JButton("New button");
-		buttonsPanel.add(btnNewButton);
+		btnPrev = new JButton("Prev");
+		buttonsPanel.add(btnPrev);
 		
-		btnNewButton_1 = new JButton("New button");
-		buttonsPanel.add(btnNewButton_1);
+		btnPlay = new JButton("Play");
+		buttonsPanel.add(btnPlay);
+		
+		btnStop = new JButton("Stop");
+		buttonsPanel.add(btnStop);
+		
+		btnNext = new JButton("Next");
+		buttonsPanel.add(btnNext);
 		
 		// create the status bar panel and shove it down the bottom of the frame
 		JPanel statusPanel = new JPanel();
@@ -140,9 +146,11 @@ public class MainWindow extends JFrame {
 	}
 	
 	static MainWindow instance = null;
-	private JButton btnNewButton;
-	private JButton btnNewButton_1;
+	private JButton btnPrev;
+	private JButton btnPlay;
 	private JPanel buttonsPanel;
+	private JButton btnNext;
+	private JButton btnStop;
 	public static MainWindow getInstance(){
 		return instance ;
 	}
