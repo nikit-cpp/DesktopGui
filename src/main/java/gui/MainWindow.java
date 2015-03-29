@@ -293,6 +293,12 @@ class SelectedListCellRenderer extends DefaultListCellRenderer {
         if (index==hilighted && color!=null) {
             c.setBackground(color);
         }
+        if(value instanceof Song){
+        	Song song = (Song) value;
+        	if(song.getFile()==null){
+        		c.setForeground(Color.GRAY);
+        	}
+        }
         return c;
     }
 }
