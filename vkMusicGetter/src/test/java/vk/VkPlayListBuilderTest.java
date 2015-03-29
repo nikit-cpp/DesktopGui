@@ -7,6 +7,7 @@ import javax.xml.parsers.ParserConfigurationException;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 /**
@@ -26,6 +27,7 @@ public class VkPlayListBuilderTest {
 	public void tearDown() throws Exception {
 	}
 
+	@Ignore
 	@Test
 	public void testGetGidFromShortName() throws VkPlayListBuilderException, ParserConfigurationException {
 		String s = "legends_of_rock";
@@ -36,6 +38,7 @@ public class VkPlayListBuilderTest {
 		Assert.assertEquals(11081630, groupId);
 	}
 	
+	@Ignore
 	@Test
 	public void testGetGidFromShortNameAnother() throws VkPlayListBuilderException, ParserConfigurationException {
 		String s = "rockmetal80";
@@ -46,6 +49,7 @@ public class VkPlayListBuilderTest {
 		Assert.assertEquals(64183, groupId);
 	}
 
+	@Ignore
 	@Test
 	public void testGetPlayListsFromGroup() throws VkPlayListBuilderException, ParserConfigurationException {
 		int gid = 11081630;

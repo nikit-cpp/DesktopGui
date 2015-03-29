@@ -3,23 +3,18 @@ package gui;
 import javax.swing.*;
 import javax.swing.border.BevelBorder;
 import javax.xml.parsers.ParserConfigurationException;
-
 import org.apache.log4j.Logger;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
-
-import player.State;
 import events.NextSong;
 import events.PlayEvent;
 import events.PlayFinished;
 import events.PlayStarted;
-
 import com.github.nikit.cpp.player.PlayList;
 import com.github.nikit.cpp.player.Song;
 import com.google.common.eventbus.AllowConcurrentEvents;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
-
 import config.Config;
 import events.DownloadEvent;
 import service.DownloadService;
@@ -27,7 +22,6 @@ import service.DownloadServiceException;
 import service.PlayerService;
 import vk.VkPlayListBuilder;
 import vk.VkPlayListBuilderException;
-
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
@@ -36,14 +30,9 @@ import java.awt.EventQueue;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.*;
-import java.awt.FlowLayout;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
-import java.io.File;
 import java.awt.GridLayout;
-import java.awt.CardLayout;
-import java.awt.GridBagLayout;
-import java.awt.GridBagConstraints;
 
 public class MainWindow extends JFrame {
 	
@@ -92,7 +81,9 @@ public class MainWindow extends JFrame {
 			}
 		}
 		PlayList playList = new PlayList(data);
-		downloadService.updateFilesInPlayList(playList);
+		if(config.getSearchFileOnDisk()){
+			downloadService.updateFilesInPlayList(playList);
+		}
 		playerService.setPlayList(playList);
 		
 		final PlayListListModel playListModel = new PlayListListModel(playList);

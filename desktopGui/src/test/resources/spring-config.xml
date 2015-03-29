@@ -14,6 +14,9 @@
 		<property name="cacheFolder">
 			<value>target</value>
 		</property>
+		<property name="searchFileOnDisk">
+			<value>false</value>
+		</property>
 	</bean>
 	
 	<bean id="executor" class="java.util.concurrent.Executors" 

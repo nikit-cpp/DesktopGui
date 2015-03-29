@@ -15,6 +15,9 @@
 		<property name="cacheFolder">
 			<value>/tmp</value>
 		</property>
+		<property name="searchFileOnDisk">
+			<value>true</value>
+		</property>
 	</bean>
 	
 	<bean id="executor" class="java.util.concurrent.Executors" 
