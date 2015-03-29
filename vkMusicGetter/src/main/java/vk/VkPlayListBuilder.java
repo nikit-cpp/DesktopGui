@@ -73,6 +73,7 @@ public class VkPlayListBuilder {
 
 		LOGGER.debug("\tattchments: " + attachments.getLength());
 		// для каждого аттачмента - песни например, получаем интересующие нас аттрибуты
+		String imageUrl = null;
 		for(int j=0; j<attachments.getLength(); ++j) {
 			Node attItemNode = attachments.item(j);
 			if(attItemNode.getNodeType() == Node.ELEMENT_NODE){
@@ -83,7 +84,6 @@ public class VkPlayListBuilder {
 				LOGGER.debug("\t\ttype : "+ type);
 				
 				Song song = null;
-				String imageUrl = null;
 				
 				switch(type){
 				case "photo":

@@ -1,20 +1,25 @@
 package gui;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.border.BevelBorder;
 import javax.xml.parsers.ParserConfigurationException;
+
 import org.apache.log4j.Logger;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
+
 import events.NextSong;
 import events.PlayEvent;
 import events.PlayFinished;
 import events.PlayStarted;
+
 import com.github.nikit.cpp.player.PlayList;
 import com.github.nikit.cpp.player.Song;
 import com.google.common.eventbus.AllowConcurrentEvents;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
+
 import config.Config;
 import events.DownloadEvent;
 import service.DownloadService;
@@ -22,16 +27,21 @@ import service.DownloadServiceException;
 import service.PlayerService;
 import vk.VkPlayListBuilder;
 import vk.VkPlayListBuilderException;
+
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.EventQueue;
+import java.awt.Graphics;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.io.IOException;
+import java.net.URL;
 import java.util.*;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
+import java.awt.image.BufferedImage;
 import java.awt.GridLayout;
 
 public class MainWindow extends JFrame {
@@ -65,7 +75,7 @@ public class MainWindow extends JFrame {
 	private JSplitPane splitPane;
 	private JScrollPane scrollRightPane;
 	private JScrollPane scrollLeftPane;
-
+	private JLabel imageLabel;
 
 	public MainWindow() throws ParserConfigurationException, VkPlayListBuilderException {
 		initNonGui();
@@ -156,8 +166,9 @@ public class MainWindow extends JFrame {
 				}
 			}
 		});
+		imageLabel = new JLabel();
 		scrollRightPane = new JScrollPane(songsList);
-		scrollLeftPane = new JScrollPane();
+		scrollLeftPane = new JScrollPane(imageLabel);
 
 		splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, scrollLeftPane, scrollRightPane);
 
@@ -242,7 +253,7 @@ public class MainWindow extends JFrame {
 
 	@AllowConcurrentEvents
 	@Subscribe
-	public void onDownload(DownloadEvent e) throws DownloadServiceException {
+	public void onDownload(final DownloadEvent e) throws DownloadServiceException {
 		final String message = "Downloading '" + e.getSong().getUrl() + "'";
 		LOGGER.debug(message);
 		final int index = playerService.getPlayList().getSongId(e.getSong().getId());
@@ -251,6 +262,21 @@ public class MainWindow extends JFrame {
 				statusLabel.setText(message);
 				listRenderer.hilight(index, Color.BLUE);
 				songsList.updateUI();
+				
+
+				BufferedImage img;
+				try {
+					String imageUrl = e.getSong().getImageUrl();
+					LOGGER.debug("Image url='"+imageUrl+"'");
+					if(imageUrl!=null){
+						img = ImageIO.read(new URL(imageUrl));
+						ImageIcon icon = new ImageIcon(img);
+						imageLabel.setIcon(icon);
+						imageLabel.updateUI();
+					}
+				} catch (IOException e) {
+					LOGGER.error("Error on downloading image", e);
+				}
 			}
 		});
 	}
