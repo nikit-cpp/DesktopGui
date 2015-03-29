@@ -58,6 +58,10 @@ public class MainWindow extends JFrame {
 	private JPanel sliderPanel;
 	private JPanel buttonsPanel;
 	private JSlider slider;
+	private JMenuBar menuBar;
+	private JMenu menuFile;
+	private JMenu mnNewMenu_1;
+	private JMenuItem mntmNewMenuItem;
 
 
 	public MainWindow() throws ParserConfigurationException, VkPlayListBuilderException {
@@ -165,6 +169,18 @@ public class MainWindow extends JFrame {
 		statusLabel = new JLabel(STOPPED);
 		statusLabel.setHorizontalAlignment(SwingConstants.LEFT);
 		statusPanel.add(statusLabel);
+		
+		menuBar = new JMenuBar();
+		getContentPane().add(menuBar, BorderLayout.NORTH);
+		
+		menuFile = new JMenu("File");
+		menuBar.add(menuFile);
+		
+		mntmNewMenuItem = new JMenuItem("New menu item");
+		menuFile.add(mntmNewMenuItem);
+		
+		mnNewMenu_1 = new JMenu("New menu");
+		menuBar.add(mnNewMenu_1);
 	}
 	public static void main(String[] args) throws ParserConfigurationException, VkPlayListBuilderException {
 		
