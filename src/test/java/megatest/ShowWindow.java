@@ -83,7 +83,7 @@ public class ShowWindow {
 		 Thread.sleep(200);
 	}
 
-	@Test
+	//@Test
 	public void testPlayFirstSong() throws IOException, InterruptedException {
 		LOGGER.debug("Log4J stub for show thread");
 				

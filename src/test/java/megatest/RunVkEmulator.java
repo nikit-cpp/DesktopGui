@@ -19,7 +19,7 @@ public class RunVkEmulator {
 	public void tearDown() throws Exception {
 	}
 
-	@Test
+	//@Test
 	public void test() throws Exception {
 		VkEmulator emu = new VkEmulator();
 		emu.start();
