@@ -10,6 +10,7 @@ import org.apache.log4j.Logger;
 
 import utils.IOHelper;
 
+import com.github.nikit.cpp.player.PlayList;
 import com.github.nikit.cpp.player.Song;
 import com.google.common.eventbus.AllowConcurrentEvents;
 import com.google.common.eventbus.EventBus;
@@ -25,16 +26,19 @@ public class DownloadService {
 	private Config config;
 	private EventBus eventBus;
 	private static final String DOT_EXT = ".mp3";
+	
+	private File getDestFile(Song song){
+		String filename = song.toString()+DOT_EXT;
+		filename = IOHelper.toFileSystemSafeName(filename);
+		return new File(config.getCacheFolder(), filename);
+	}
 
 	@AllowConcurrentEvents
 	@Subscribe
 	public void download(DownloadEvent e) throws DownloadServiceException {
 		try {
 			Song s = e.getSong();
-			File dest = null;
-			String filename = s.toString()+DOT_EXT;
-			filename = IOHelper.toFileSystemSafeName(filename);
-			dest = new File(config.getCacheFolder(), filename);
+			File dest = getDestFile(s);
 			
 			String url = s.getUrl();
 			LOGGER.debug("Downloading '"+ url +"' to '" + dest +"'");
@@ -72,4 +76,12 @@ public class DownloadService {
 		return eventBus;
 	}
 
+	public void updateFilesInPlayList(PlayList playlist){
+		for(Song song: playlist.getSongs()){
+			File dest = getDestFile(song);
+			if(dest.exists()) {
+				song.setFile(dest);
+			}
+		}
+	}
 }

@@ -49,7 +49,7 @@ public class MainWindow extends JFrame {
 	private static VkPlayListBuilder playlistBuilder;
 	private static EventBus eventBus;
 	private static PlayerService playerService;
-	
+	private static DownloadService downloadService;
 	private static Logger LOGGER = Logger.getLogger(MainWindow.class);
 	private static final long serialVersionUID = 1L;
 	private JList<Song> list;
@@ -85,7 +85,7 @@ public class MainWindow extends JFrame {
 			}
 		}
 		PlayList playList = new PlayList(data);
-
+		downloadService.updateFilesInPlayList(playList);
 		playerService.setPlayList(playList);
 		
 		final PlayListListModel playListModel = new PlayListListModel(playList);
@@ -173,7 +173,7 @@ public class MainWindow extends JFrame {
 		playlistBuilder = (VkPlayListBuilder)context.getBean("vkPlaylistBuilder");
 	    config = (Config)context.getBean("config");
 	    eventBus = (EventBus) context.getBean("eventBus");
-	    DownloadService downloadService = (DownloadService) context.getBean("downloader");
+	    downloadService = (DownloadService) context.getBean("downloader");
 	    playerService = (PlayerService) context.getBean("playerService");
 	    eventBus.register(downloadService);
 	    eventBus.register(playerService);
