@@ -138,6 +138,7 @@ public class MainWindow extends JFrame {
 		
 		sliderPanel = new JPanel();
 		controlPanel.add(sliderPanel);
+		sliderPanel.setLayout(new GridLayout(0, 1, 0, 0));
 		
 		slider = new JSlider();
 		sliderPanel.add(slider);
