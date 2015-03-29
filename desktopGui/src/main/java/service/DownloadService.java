@@ -1,9 +1,14 @@
 package service;
 
 
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
+
+import javax.imageio.ImageIO;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
@@ -49,6 +54,15 @@ public class DownloadService {
 				LOGGER.debug("Downloading complete ");
 			}
 			s.setFile(dest);
+			
+			if(s.getImageUrl()!=null){
+				URL imageUrl = new URL(s.getImageUrl());
+			    BufferedImage originalImage=ImageIO.read(imageUrl);
+			    ByteArrayOutputStream baos=new ByteArrayOutputStream();
+			    ImageIO.write(originalImage, "jpg", baos );
+			    byte[] image = baos.toByteArray();
+			    s.setImage(image);
+			}
 			
 			LOGGER.debug("Sending PlayEvent ");
 			eventBus.post(new DownloadFinished(s));

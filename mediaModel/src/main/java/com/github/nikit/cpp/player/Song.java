@@ -105,4 +105,8 @@ public class Song {
 	public void setImageUrl(String imageUrl) {
 		this.imageUrl = imageUrl;
 	}
+
+	public String getImageUrl() {
+		return imageUrl;
+	}
 }
