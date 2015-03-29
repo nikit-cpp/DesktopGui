@@ -281,16 +281,17 @@ public class MainWindow extends JFrame {
 				listRenderer.hilight(index, Color.GREEN);
 				songsList.updateUI();
 				
-				BufferedImage img;
 				try {
 					if(e.getSong().getImage()!=null){
 						ImageIcon icon;
 
 			            byte[] imageBytes = e.getSong().getImage();
-			            img = ImageIO.read(new ByteArrayInputStream(imageBytes));
+						BufferedImage img = ImageIO.read(new ByteArrayInputStream(imageBytes));
 			            icon = new ImageIcon(img);
 
 						imageLabel.setIcon(icon);
+						imageLabel.updateUI();
+					}else{
 						imageLabel.updateUI();
 					}
 				} catch (IOException e) {
