@@ -3,18 +3,23 @@ package gui;
 import javax.swing.*;
 import javax.swing.border.BevelBorder;
 import javax.xml.parsers.ParserConfigurationException;
+
 import org.apache.log4j.Logger;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
+
+import player.State;
 import events.NextSong;
 import events.PlayEvent;
 import events.PlayFinished;
 import events.PlayStarted;
+
 import com.github.nikit.cpp.player.PlayList;
 import com.github.nikit.cpp.player.Song;
 import com.google.common.eventbus.AllowConcurrentEvents;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
+
 import config.Config;
 import events.DownloadEvent;
 import service.DownloadService;
@@ -22,7 +27,10 @@ import service.DownloadServiceException;
 import service.PlayerService;
 import vk.VkPlayListBuilder;
 import vk.VkPlayListBuilderException;
+
 import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.awt.event.MouseEvent;
@@ -31,6 +39,7 @@ import java.util.*;
 import java.awt.FlowLayout;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
+import java.io.File;
 
 public class MainWindow extends JFrame {
 	
@@ -52,7 +61,7 @@ public class MainWindow extends JFrame {
 	private JPanel buttonsPanel;
 	private JButton btnNext;
 	private JButton btnStop;
-
+	private SelectedListCellRenderer listRenderer;
 
 
 	public MainWindow() throws ParserConfigurationException, VkPlayListBuilderException {
@@ -81,7 +90,8 @@ public class MainWindow extends JFrame {
 		
 		final PlayListListModel playListModel = new PlayListListModel(playList);
 		list = new JList<Song>(playListModel);
-
+		listRenderer = new SelectedListCellRenderer();
+		list.setCellRenderer(listRenderer);
 		list.addMouseListener(new MouseListener() {
 
 			public void mouseReleased(MouseEvent e) {
@@ -206,6 +216,19 @@ public class MainWindow extends JFrame {
 			}
 		});
 	}
+	
+	@AllowConcurrentEvents
+	@Subscribe
+	public void play(final PlayEvent e) {
+		final int index =playerService.getPlayList().getSongId(e.getSong().getId());
+		EventQueue.invokeLater(new Runnable() {
+			public void run() {
+				listRenderer.hilight(index);
+				list.updateUI();
+			}
+		});
+	}
+	
 	public static EventBus getEventBus() {
 		return eventBus;
 	}
@@ -251,4 +274,21 @@ class PlayListListModel extends AbstractListModel<Song> {
 			return data.get(idx);
 		}
 	}
+}
+
+class SelectedListCellRenderer extends DefaultListCellRenderer {
+	private static final long serialVersionUID = 1L;
+	private int hilighted = -1;
+	public void hilight(int index){
+		hilighted = index;
+	}
+	
+    @Override
+    public Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
+        Component c = super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
+        if (index== hilighted) {
+            c.setBackground(Color.RED);
+        }
+        return c;
+    }
 }
