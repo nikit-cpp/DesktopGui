@@ -209,10 +209,12 @@ public class MainWindow extends JFrame {
 	public void onDownload(DownloadEvent e) throws DownloadServiceException {
 		final String message = "Downloading '" + e.getSong().getUrl() + "'";
 		LOGGER.debug(message);
-
+		final int index = playerService.getPlayList().getSongId(e.getSong().getId());
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				statusLabel.setText(message);
+				listRenderer.hilight(index, Color.BLUE);
+				list.updateUI();
 			}
 		});
 	}
@@ -220,10 +222,10 @@ public class MainWindow extends JFrame {
 	@AllowConcurrentEvents
 	@Subscribe
 	public void play(final PlayEvent e) {
-		final int index =playerService.getPlayList().getSongId(e.getSong().getId());
+		final int index = playerService.getPlayList().getSongId(e.getSong().getId());
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
-				listRenderer.hilight(index);
+				listRenderer.hilight(index, Color.GREEN);
 				list.updateUI();
 			}
 		});
@@ -279,15 +281,17 @@ class PlayListListModel extends AbstractListModel<Song> {
 class SelectedListCellRenderer extends DefaultListCellRenderer {
 	private static final long serialVersionUID = 1L;
 	private int hilighted = -1;
-	public void hilight(int index){
-		hilighted = index;
+	private Color color = null;
+	public void hilight(int index, Color color){
+		this.hilighted = index;
+		this.color = color;
 	}
 	
     @Override
     public Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
         Component c = super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
-        if (index== hilighted) {
-            c.setBackground(Color.RED);
+        if (index==hilighted && color!=null) {
+            c.setBackground(color);
         }
         return c;
     }
