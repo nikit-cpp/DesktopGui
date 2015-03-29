@@ -34,13 +34,13 @@
 		<dependency>
 			<groupId>com.github.nikit.cpp</groupId>
 			<artifactId>mediaModel</artifactId>
-			<version>0.0.5</version>
+			<version>0.1.0</version>
 		</dependency>
 		
 		<dependency>
 			<groupId>com.github.nikit.cpp</groupId>
 			<artifactId>vkMusicGetter</artifactId>
-			<version>0.2.2</version>
+			<version>0.3.0</version>
 		</dependency>
 		
 		<dependency>

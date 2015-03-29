@@ -21,7 +21,6 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
-import com.github.nikit.cpp.player.Image;
 import com.github.nikit.cpp.player.PlayList;
 import com.github.nikit.cpp.player.Song;
 
@@ -74,7 +73,6 @@ public class VkPlayListBuilder {
 
 		LOGGER.debug("\tattchments: " + attachments.getLength());
 		// для каждого аттачмента - песни например, получаем интересующие нас аттрибуты
-		Image image = null;
 		for(int j=0; j<attachments.getLength(); ++j) {
 			Node attItemNode = attachments.item(j);
 			if(attItemNode.getNodeType() == Node.ELEMENT_NODE){
@@ -85,17 +83,18 @@ public class VkPlayListBuilder {
 				LOGGER.debug("\t\ttype : "+ type);
 				
 				Song song = null;
+				String imageUrl = null;
 				
 				switch(type){
 				case "photo":
-					image = makeImage(attElement);
+					imageUrl = makeImageUrl(attElement);
 					break;
 				case "audio":
 					song = makeSong(attElement);
 					break;
 				}
-				if(song != null && image != null) {
-					song.setImage(image.getBytes());
+				if(song != null) {
+					song.setImageUrl(imageUrl);
 					list.add(song);
 				}
 				LOGGER.debug("\t\t===");
@@ -135,10 +134,10 @@ public class VkPlayListBuilder {
 		return getPlayListsFromGroup(groupId);
 	}
 	
-	private Image makeImage(Element attElement) {
+	private String makeImageUrl(Element attElement) {
 		String src_big = attElement.getElementsByTagName("src_big").item(0).getTextContent();
 		LOGGER.debug("\t\t\t" + src_big);
-		return new Image(src_big);
+		return src_big;
 	}
 
 	private Song makeSong(Element attElement) {

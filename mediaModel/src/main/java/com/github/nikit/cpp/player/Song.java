@@ -13,7 +13,9 @@ public class Song {
     private UUID id;
     private byte[] image;
     private File file;
+    
     private String url;
+    private String imageUrl;
     
     public Song(){
         id = UUID.randomUUID();
@@ -98,5 +100,9 @@ public class Song {
 		} else if (!id.equals(other.id))
 			return false;
 		return true;
+	}
+
+	public void setImageUrl(String imageUrl) {
+		this.imageUrl = imageUrl;
 	}
 }
