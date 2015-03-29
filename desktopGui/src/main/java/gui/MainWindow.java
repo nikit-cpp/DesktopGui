@@ -1,6 +1,7 @@
 package gui;
 
 import javax.imageio.ImageIO;
+import javax.imageio.stream.ImageOutputStream;
 import javax.swing.*;
 import javax.swing.border.BevelBorder;
 import javax.xml.parsers.ParserConfigurationException;
@@ -36,7 +37,10 @@ import java.awt.EventQueue;
 import java.awt.Graphics;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
 import java.util.*;
 import java.awt.event.ActionListener;
@@ -264,19 +268,6 @@ public class MainWindow extends JFrame {
 				songsList.updateUI();
 				
 
-				BufferedImage img;
-				try {
-					String imageUrl = e.getSong().getImageUrl();
-					LOGGER.debug("Image url='"+imageUrl+"'");
-					if(imageUrl!=null){
-						img = ImageIO.read(new URL(imageUrl));
-						ImageIcon icon = new ImageIcon(img);
-						imageLabel.setIcon(icon);
-						imageLabel.updateUI();
-					}
-				} catch (IOException e) {
-					LOGGER.error("Error on downloading image", e);
-				}
 			}
 		});
 	}
@@ -289,6 +280,23 @@ public class MainWindow extends JFrame {
 			public void run() {
 				listRenderer.hilight(index, Color.GREEN);
 				songsList.updateUI();
+				
+				BufferedImage img;
+				try {
+					if(e.getSong().getImage()!=null){
+						ImageIcon icon;
+
+			            byte[] imageBytes = e.getSong().getImage();
+			            img = ImageIO.read(new ByteArrayInputStream(imageBytes));
+			            icon = new ImageIcon(img);
+
+						imageLabel.setIcon(icon);
+						imageLabel.updateUI();
+					}
+				} catch (IOException e) {
+					LOGGER.error("Error on downloading image", e);
+				}
+
 			}
 		});
 	}

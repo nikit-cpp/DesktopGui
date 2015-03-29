@@ -62,6 +62,7 @@ public class DownloadService {
 			    ImageIO.write(originalImage, "jpg", baos );
 			    byte[] image = baos.toByteArray();
 			    s.setImage(image);
+			    LOGGER.debug("setting image" + image);
 			}
 			
 			LOGGER.debug("Sending PlayEvent ");
