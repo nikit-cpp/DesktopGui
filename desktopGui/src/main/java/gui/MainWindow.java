@@ -62,6 +62,9 @@ public class MainWindow extends JFrame {
 	private JMenu menuFile;
 	private JMenu mnNewMenu_1;
 	private JMenuItem mntmNewMenuItem;
+	private JSplitPane splitPane;
+	private JScrollPane scrollRightPane;
+	private JScrollPane scrollLeftPane;
 
 
 	public MainWindow() throws ParserConfigurationException, VkPlayListBuilderException {
@@ -91,41 +94,13 @@ public class MainWindow extends JFrame {
 		playerService.setPlayList(playList);
 		
 		final PlayListListModel playListModel = new PlayListListModel(playList);
-		songsList = new JList<Song>(playListModel);
 		listRenderer = new SelectedListCellRenderer();
-		songsList.setCellRenderer(listRenderer);
-		songsList.addMouseListener(new MouseListener() {
-
-			public void mouseReleased(MouseEvent e) {
-			}
-
-			public void mousePressed(MouseEvent e) {
-			}
-
-			public void mouseExited(MouseEvent e) {
-			}
-
-			public void mouseEntered(MouseEvent e) {
-			}
-
-			public void mouseClicked(MouseEvent e) {
-				if (e.getClickCount() == 2) {
-					int index = songsList.locationToIndex(e.getPoint());
-					Song s = (Song) playListModel.getElementAt(index);
-					eventBus.post(new PlayEvent(s));
-
-					LOGGER.debug("Double clicked on item " + index + " " + s);
-
-				}
-			}
-		});
 
 		
 		contentsPanel = new JPanel();
 
 		getContentPane().add(contentsPanel);
 		contentsPanel.setLayout(new BorderLayout(0, 0));
-		contentsPanel.add( new JScrollPane(songsList) , BorderLayout.CENTER);
 		
 		controlPanel = new JPanel();
 		contentsPanel.add(controlPanel, BorderLayout.SOUTH);
@@ -153,6 +128,41 @@ public class MainWindow extends JFrame {
 		
 		btnNext = new JButton("Next");
 		buttonsPanel.add(btnNext);
+				
+		songsList = new JList<Song>(playListModel);
+		songsList.setCellRenderer(listRenderer);
+		songsList.addMouseListener(new MouseListener() {
+
+			public void mouseReleased(MouseEvent e) {
+			}
+
+			public void mousePressed(MouseEvent e) {
+			}
+
+			public void mouseExited(MouseEvent e) {
+			}
+
+			public void mouseEntered(MouseEvent e) {
+			}
+
+			public void mouseClicked(MouseEvent e) {
+				if (e.getClickCount() == 2) {
+					int index = songsList.locationToIndex(e.getPoint());
+					Song s = (Song) playListModel.getElementAt(index);
+					eventBus.post(new PlayEvent(s));
+
+					LOGGER.debug("Double clicked on item " + index + " " + s);
+
+				}
+			}
+		});
+		scrollRightPane = new JScrollPane(songsList);
+		scrollLeftPane = new JScrollPane();
+
+		splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, scrollLeftPane, scrollRightPane);
+
+		contentsPanel.add(splitPane, BorderLayout.CENTER);
+				
 		btnNext.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				eventBus.post(new NextSong());

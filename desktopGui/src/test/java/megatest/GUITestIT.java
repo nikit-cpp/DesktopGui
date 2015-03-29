@@ -37,7 +37,7 @@ import static org.fest.swing.testing.FestSwingTestCaseTemplate.*;
 import service.DownloadServiceException;
 import vk.VkPlayListBuilderException;
 
-public class FirstGUITest extends ShowWindow {
+public class GUITestIT extends ShowWindow {
 	
 
 	@Before
