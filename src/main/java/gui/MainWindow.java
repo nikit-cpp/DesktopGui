@@ -136,6 +136,13 @@ public class MainWindow extends JFrame {
 		contentsPanel.add(controlPanel, BorderLayout.SOUTH);
 		controlPanel.setLayout(new GridLayout(0, 1, 0, 0));
 		
+		sliderPanel = new JPanel();
+		controlPanel.add(sliderPanel);
+		
+		slider = new JSlider();
+		sliderPanel.add(slider);
+
+		
 		buttonsPanel = new JPanel();
 		controlPanel.add(buttonsPanel);
 		
@@ -156,11 +163,6 @@ public class MainWindow extends JFrame {
 			}
 		});
 		
-		sliderPanel = new JPanel();
-		controlPanel.add(sliderPanel);
-		
-		slider = new JSlider();
-		sliderPanel.add(slider);
 		
 		// create the status bar panel and shove it down the bottom of the frame
 		JPanel statusPanel = new JPanel();
