@@ -40,6 +40,10 @@ import java.awt.FlowLayout;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import java.io.File;
+import java.awt.GridLayout;
+import java.awt.CardLayout;
+import java.awt.GridBagLayout;
+import java.awt.GridBagConstraints;
 
 public class MainWindow extends JFrame {
 	
@@ -52,16 +56,19 @@ public class MainWindow extends JFrame {
 	private static DownloadService downloadService;
 	private static Logger LOGGER = Logger.getLogger(MainWindow.class);
 	private static final long serialVersionUID = 1L;
-	private JList<Song> list;
+	private JList<Song> songsList;
 	private JPanel contentsPanel;
 	private JLabel statusLabel;
 	static MainWindow instance = null;
 	private JButton btnPrev;
 	private JButton btnPlay;
-	private JPanel buttonsPanel;
+	private JPanel controlPanel;
 	private JButton btnNext;
 	private JButton btnStop;
 	private SelectedListCellRenderer listRenderer;
+	private JPanel sliderPanel;
+	private JPanel buttonsPanel;
+	private JSlider slider;
 
 
 	public MainWindow() throws ParserConfigurationException, VkPlayListBuilderException {
@@ -89,10 +96,10 @@ public class MainWindow extends JFrame {
 		playerService.setPlayList(playList);
 		
 		final PlayListListModel playListModel = new PlayListListModel(playList);
-		list = new JList<Song>(playListModel);
+		songsList = new JList<Song>(playListModel);
 		listRenderer = new SelectedListCellRenderer();
-		list.setCellRenderer(listRenderer);
-		list.addMouseListener(new MouseListener() {
+		songsList.setCellRenderer(listRenderer);
+		songsList.addMouseListener(new MouseListener() {
 
 			public void mouseReleased(MouseEvent e) {
 			}
@@ -108,7 +115,7 @@ public class MainWindow extends JFrame {
 
 			public void mouseClicked(MouseEvent e) {
 				if (e.getClickCount() == 2) {
-					int index = list.locationToIndex(e.getPoint());
+					int index = songsList.locationToIndex(e.getPoint());
 					Song s = (Song) playListModel.getElementAt(index);
 					eventBus.post(new PlayEvent(s));
 
@@ -123,11 +130,14 @@ public class MainWindow extends JFrame {
 
 		getContentPane().add(contentsPanel);
 		contentsPanel.setLayout(new BorderLayout(0, 0));
-		contentsPanel.add( new JScrollPane(list) , BorderLayout.CENTER);
+		contentsPanel.add( new JScrollPane(songsList) , BorderLayout.CENTER);
+		
+		controlPanel = new JPanel();
+		contentsPanel.add(controlPanel, BorderLayout.SOUTH);
+		controlPanel.setLayout(new GridLayout(0, 1, 0, 0));
 		
 		buttonsPanel = new JPanel();
-		contentsPanel.add(buttonsPanel, BorderLayout.SOUTH);
-		buttonsPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 5));
+		controlPanel.add(buttonsPanel);
 		
 		btnPrev = new JButton("Prev");
 		buttonsPanel.add(btnPrev);
@@ -139,18 +149,24 @@ public class MainWindow extends JFrame {
 		buttonsPanel.add(btnStop);
 		
 		btnNext = new JButton("Next");
+		buttonsPanel.add(btnNext);
 		btnNext.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				eventBus.post(new NextSong());
 			}
 		});
-		buttonsPanel.add(btnNext);
+		
+		sliderPanel = new JPanel();
+		controlPanel.add(sliderPanel);
+		
+		slider = new JSlider();
+		sliderPanel.add(slider);
 		
 		// create the status bar panel and shove it down the bottom of the frame
 		JPanel statusPanel = new JPanel();
 		statusPanel.setBorder(new BevelBorder(BevelBorder.LOWERED));
 		getContentPane().add(statusPanel, BorderLayout.SOUTH);
-		statusPanel.setPreferredSize(new Dimension(getWidth(), 16));
+		statusPanel.setPreferredSize(new Dimension(600, 16));
 		statusPanel.setLayout(new BoxLayout(statusPanel, BoxLayout.X_AXIS));
 		statusLabel = new JLabel(STOPPED);
 		statusLabel.setHorizontalAlignment(SwingConstants.LEFT);
@@ -214,7 +230,7 @@ public class MainWindow extends JFrame {
 			public void run() {
 				statusLabel.setText(message);
 				listRenderer.hilight(index, Color.BLUE);
-				list.updateUI();
+				songsList.updateUI();
 			}
 		});
 	}
@@ -226,7 +242,7 @@ public class MainWindow extends JFrame {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				listRenderer.hilight(index, Color.GREEN);
-				list.updateUI();
+				songsList.updateUI();
 			}
 		});
 	}
