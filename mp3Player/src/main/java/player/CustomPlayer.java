@@ -40,7 +40,7 @@ public class CustomPlayer implements player.Player{
 		total = 0;
 		stopped = 0;
 		canResume = false;
-		state = State.STOPPED;
+		setState(State.STOPPED);
 	}
 	
 	public CustomPlayer(EventBus eventBus) {
@@ -54,7 +54,7 @@ public class CustomPlayer implements player.Player{
 		canResume = false;
 		this.eventBus = eventBus;
 		eventBus.register(this);
-		state = State.STOPPED;
+		setState(State.STOPPED);
 		startStatusThread();
 	}
 
@@ -76,7 +76,7 @@ public class CustomPlayer implements player.Player{
 			player = null;
 			if (valid)
 				canResume = true;
-			state=State.STOPPED;
+			setState(State.STOPPED);
 			LOGGER.debug("Paused");
 		} catch (Exception e) {
 
@@ -121,12 +121,12 @@ public class CustomPlayer implements player.Player{
 					try {
 						LOGGER.debug("Playing " + path);
 						post(new PlayStarted(path));
-						state=State.PLAYING;
+						setState(State.PLAYING);
 						LOGGER.debug("player in child thread=" + player + ", may be waiting if null");
 						if (player==null)
 							wait();
 						player.play();
-						state=State.STOPPED;
+						setState(State.STOPPED);
 						post(new PlayStopped());
 					} catch (Exception e) {
 						LOGGER.error("Error playing mp3 file", e);
@@ -150,7 +150,7 @@ public class CustomPlayer implements player.Player{
 				try {
 					LOGGER.debug("Starting statusThread");
 					while(true){
-						if(state == State.PLAYING){
+						if(getState() == State.PLAYING){
 							int available = FIS.available();
 							LOGGER.debug("available: " + available);
 							post(new PlayedProgress(available));
@@ -175,8 +175,12 @@ public class CustomPlayer implements player.Player{
 			eventBus.post(o);
 	}
 
-	public State getState() {
+	synchronized public State getState() {
 		return state;
+	}
+
+	synchronized private void setState(State state) {
+		this.state = state;
 	}
 
 }
