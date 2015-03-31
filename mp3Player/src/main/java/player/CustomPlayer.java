@@ -152,7 +152,7 @@ public class CustomPlayer implements player.Player{
 					while(true){
 						if(getState() == State.PLAYING){
 							int available = FIS.available();
-							LOGGER.debug("available: " + available);
+							//LOGGER.debug("available: " + available);
 							post(new PlayedProgress(available));
 							Thread.sleep(statusThreadSleep);
 						}

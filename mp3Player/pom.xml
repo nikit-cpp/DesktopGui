@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.github.nikit.cpp</groupId>
 	<artifactId>mp3Player</artifactId>
-	<version>0.2.3</version>
+	<version>0.2.4</version>
 	
 	<parent>
 		<groupId>com.github.nikit.cpp</groupId>
