@@ -133,13 +133,20 @@ public class CustomPlayer implements player.Player{
 				
 				public synchronized void run() {
 					try {
+						boolean loop = true;
 						LOGGER.debug("Starting statusThread");
-						while(true){
-							if(state == State.PLAYING){
+						while(loop){
+							switch(state){
+							
+							case PLAYING: 
 								int available = FIS.available();
 								LOGGER.debug("available: " + available);
 								post(new PlayedProgress(available));
 								Thread.sleep(statusThreadSleep);
+								break;
+							case STOPPED:
+								loop = false;
+								break;
 							}
 						}
 					} catch (Exception e) {
