@@ -277,6 +277,8 @@ public class MainWindow extends JFrame {
 		});
 	}
 	
+	// TODO перебросить весь функционал в onPlaying(). ибо единичные события
+	// могут перепутаться, а onPlaying() вызывается каждые 200 мс  
 	@AllowConcurrentEvents
 	@Subscribe
 	public void play(final PlayEvent e) {
