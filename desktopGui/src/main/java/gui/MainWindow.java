@@ -12,8 +12,9 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import events.NextSong;
 import events.PlayEvent;
-import events.PlayFinished;
+import events.PlayStopped;
 import events.PlayStarted;
+import events.PlayedProgress;
 
 import com.github.nikit.cpp.player.PlayList;
 import com.github.nikit.cpp.player.Song;
@@ -232,7 +233,7 @@ public class MainWindow extends JFrame {
 	
 	@AllowConcurrentEvents
 	@Subscribe
-	public void onPlayStarted(PlayStarted e) throws DownloadServiceException {
+	public void onPlayStarted(final PlayStarted e) throws DownloadServiceException {
 		final String s = e.getPath();
 		final String message = "Playing '" + s + "'";
 		LOGGER.debug(message);
@@ -240,13 +241,17 @@ public class MainWindow extends JFrame {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				statusLabel.setText(message);
+				
+				/*int songSize = e.getSongSize();
+				LOGGER.debug("setting slider maximum to " + songSize);
+				slider.setMaximum(songSize);*/
 			}
 		});
 	}
 	
 	@AllowConcurrentEvents
 	@Subscribe
-	public void onPlayFinished(PlayFinished e){
+	public void onPlayFinished(PlayStopped e){
 		LOGGER.debug("Play finished");
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
@@ -298,6 +303,21 @@ public class MainWindow extends JFrame {
 					LOGGER.error("Error on downloading image", e);
 				}
 
+			}
+		});
+	}
+	
+	
+	
+	@AllowConcurrentEvents
+	@Subscribe
+	public void onPlaying(final PlayedProgress playedProgress){
+		SwingUtilities.invokeLater(new Runnable() {
+			
+			@Override
+			public void run() {
+				slider.setValue(playedProgress.getAvailable());
+				slider.setMaximum(playerService.getSongMaxSize());
 			}
 		});
 	}

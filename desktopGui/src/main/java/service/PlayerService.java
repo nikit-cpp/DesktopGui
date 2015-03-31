@@ -1,19 +1,26 @@
 package service;
 
 import java.io.File;
+
+import javax.swing.SwingUtilities;
+
 import org.apache.log4j.Logger;
-import events.PlayFinished;
+
+import events.PlayStopped;
 import player.Player;
 import player.State;
+
 import com.github.nikit.cpp.player.PlayList;
 import com.github.nikit.cpp.player.Song;
 import com.google.common.eventbus.AllowConcurrentEvents;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
+
 import events.DownloadEvent;
 import events.DownloadFinished;
 import events.NextSong;
 import events.PlayEvent;
+import events.PlayedProgress;
 
 public class PlayerService {
 
@@ -23,6 +30,8 @@ public class PlayerService {
 	private Player player;
 	private PlayList playList;
 	private Song currentSong;
+	private int songMaxSize;
+	private boolean songmaxSizeSetted = false;
 
 	private void play(Song song) {
 		try {
@@ -56,6 +65,16 @@ public class PlayerService {
 	
 	@AllowConcurrentEvents
 	@Subscribe
+	public void onPlayed(final PlayedProgress playedProgress){
+		if(!songmaxSizeSetted){
+			songmaxSizeSetted = true;
+			songMaxSize = playedProgress.getAvailable();
+		}
+	}
+
+	
+	@AllowConcurrentEvents
+	@Subscribe
 	public void playAfterDownloadFinished(DownloadFinished e) {
 		Song song = e.getSong();
 		eventBus.post(new PlayEvent(song));
@@ -63,7 +82,9 @@ public class PlayerService {
 	
 	@AllowConcurrentEvents
 	@Subscribe
-	public void onPlayFinished(PlayFinished e) {
+	public void onPlayFinished(PlayStopped e) {
+		songmaxSizeSetted = false;
+		songMaxSize = 0;
 		LOGGER.debug("onPlayFinished() mayNext="+mayNextOnFinished);
 		if(mayNextOnFinished){
 			eventBus.post(new NextSong());
@@ -105,5 +126,9 @@ public class PlayerService {
 
 	public void setEventBus(EventBus eventBus) {
 		this.eventBus = eventBus;
+	}
+
+	public int getSongMaxSize() {
+		return songMaxSize;
 	}
 }

@@ -8,7 +8,7 @@ import javax.xml.parsers.ParserConfigurationException;
 import events.DownloadEvent;
 import events.NextSong;
 import events.PlayEvent;
-import events.PlayFinished;
+import events.PlayStopped;
 import gui.MainWindow;
 
 import org.apache.log4j.Logger;

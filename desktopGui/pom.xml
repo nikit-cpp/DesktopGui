@@ -43,8 +43,8 @@
 
 		<dependency>
 			<groupId>com.github.nikit.cpp</groupId>
-			<artifactId>desktopMp3Player</artifactId>
-			<version>0.2.2</version>
+			<artifactId>mp3Player</artifactId>
+			<version>0.2.3</version>
 		</dependency>
 
 		<dependency>

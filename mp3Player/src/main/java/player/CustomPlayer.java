@@ -7,9 +7,9 @@ import org.apache.log4j.Logger;
 
 import com.google.common.eventbus.EventBus;
 
-import events.PlayFinished;
-import events.PlayStarted;
 import events.PlayStopped;
+import events.PlayStarted;
+import events.PlayedProgress;
 import javazoom.jl.player.Player;
 
 public class CustomPlayer implements player.Player{
@@ -24,6 +24,7 @@ public class CustomPlayer implements player.Player{
 	private boolean valid;
 	private EventBus eventBus;
 	private State state;
+	public static final int statusThreadSleep = 200;
 
 	public CustomPlayer() {
 		player = null;
@@ -84,8 +85,7 @@ public class CustomPlayer implements player.Player{
 			BIS = null;
 			player = null;
 			canResume = false;
-			post(new PlayStopped());
-			state=State.STOPPED;
+			//state=State.STOPPED;
 			LOGGER.debug("Stopped");
 		} catch (Exception e) {
 
@@ -110,7 +110,7 @@ public class CustomPlayer implements player.Player{
 			BIS = new BufferedInputStream(FIS);
 			player = new Player(BIS);
 			LOGGER.debug("player in parent thread=" + player);
-			new Thread(new Runnable() {
+			Thread playThread = new Thread(new Runnable() {
 				public synchronized void run() {
 					try {
 						LOGGER.debug("Playing " + path);
@@ -121,13 +121,33 @@ public class CustomPlayer implements player.Player{
 							wait();
 						player.play();
 						state=State.STOPPED;
-						post(new PlayFinished());
+						post(new PlayStopped());
 					} catch (Exception e) {
-						LOGGER.error("Another error playing mp3 file", e);
+						LOGGER.error("Error playing mp3 file", e);
 						valid = false;
 					}
 				}
-			}).start();
+			}, "playerThread");
+			
+			Thread statusThread = new Thread(new Runnable() {
+				
+				public synchronized void run() {
+					try {
+						LOGGER.debug("Starting statusThread");
+						while(/*state==State.PLAYING*/ true){
+							int available = FIS.available();
+							LOGGER.debug("available: " + available);
+							post(new PlayedProgress(available));
+							Thread.sleep(statusThreadSleep);
+						}
+					} catch (Exception e) {
+						LOGGER.error("Error playing on statusThread", e);
+					}
+				}
+			}, "statusThread");
+			
+			playThread.start();
+			statusThread.start();
 		} catch (Exception e) {
 			LOGGER.error("Error playing mp3 file", e);
 			valid = false;
