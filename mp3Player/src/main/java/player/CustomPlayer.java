@@ -12,6 +12,11 @@ import events.PlayStarted;
 import events.PlayedProgress;
 import javazoom.jl.player.Player;
 
+/**
+ * Must be singletone
+ * @author nik
+ *
+ */
 public class CustomPlayer implements player.Player{
 	private static final Logger LOGGER = Logger.getLogger(CustomPlayer.class);
 	private Player player;
@@ -50,6 +55,7 @@ public class CustomPlayer implements player.Player{
 		this.eventBus = eventBus;
 		eventBus.register(this);
 		state = State.STOPPED;
+		startStatusThread();
 	}
 
 	public boolean canResume() {
@@ -128,40 +134,36 @@ public class CustomPlayer implements player.Player{
 					}
 				}
 			}, "playerThread");
-			
-			Thread statusThread = new Thread(new Runnable() {
-				
-				public synchronized void run() {
-					try {
-						boolean loop = true;
-						LOGGER.debug("Starting statusThread");
-						while(loop){
-							switch(state){
-							
-							case PLAYING: 
-								int available = FIS.available();
-								LOGGER.debug("available: " + available);
-								post(new PlayedProgress(available));
-								Thread.sleep(statusThreadSleep);
-								break;
-							case STOPPED:
-								loop = false;
-								break;
-							}
-						}
-					} catch (Exception e) {
-						LOGGER.error("Error playing on statusThread", e);
-					}
-				}
-			}, "statusThread");
-			
 			playThread.start();
-			statusThread.start();
 		} catch (Exception e) {
 			LOGGER.error("Error playing mp3 file", e);
 			valid = false;
 		}
 		return valid;
+	}
+	
+	// assume wht CustomPlayer is singletone
+	private void startStatusThread(){
+		Thread statusThread = new Thread(new Runnable() {
+			
+			public synchronized void run() {
+				try {
+					LOGGER.debug("Starting statusThread");
+					while(true){
+						if(state == State.PLAYING){
+							int available = FIS.available();
+							LOGGER.debug("available: " + available);
+							post(new PlayedProgress(available));
+							Thread.sleep(statusThreadSleep);
+						}
+					}
+				} catch (Exception e) {
+					LOGGER.error("Error playing on statusThread", e);
+				}
+			}
+		}, "statusThread");
+		statusThread.start();
+
 	}
 
 	public void play() {
