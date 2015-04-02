@@ -81,12 +81,13 @@ public class MainWindow extends JFrame {
 	private JScrollPane scrollRightPane;
 	private JScrollPane scrollLeftPane;
 	private JLabel imageLabel;
+	private List<HilightItem> hilightedItems;
 
 	public MainWindow() throws ParserConfigurationException, VkPlayListBuilderException {
 		initNonGui();
 		eventBus.register(this);
 		instance = this;
-		
+		hilightedItems = new ArrayList<HilightItem>();
 		setTitle("Vk Caching Player");
 		setSize(600, 500);
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
@@ -269,7 +270,8 @@ public class MainWindow extends JFrame {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				statusLabel.setText(message);
-				listRenderer.hilight(index, Color.BLUE);
+				hilightedItems.add(new HilightItem(index, Color.BLUE));
+				listRenderer.setHilighted(hilightedItems);
 				songsList.updateUI();
 				
 
@@ -289,7 +291,8 @@ public class MainWindow extends JFrame {
 				slider.setValue(playedProgress.getAvailable());
 				slider.setMaximum(playerService.getSongMaxSize());
 				
-				listRenderer.hilight(index, Color.GREEN);
+				hilightedItems.add(new HilightItem(index, Color.GREEN));
+				listRenderer.setHilighted(hilightedItems);
 				songsList.updateUI();
 				
 				try {
@@ -361,18 +364,23 @@ class PlayListListModel extends AbstractListModel<Song> {
 
 class SelectedListCellRenderer extends DefaultListCellRenderer {
 	private static final long serialVersionUID = 1L;
-	private int hilighted = -1;
-	private Color color = null;
-	public void hilight(int index, Color color){
-		this.hilighted = index;
-		this.color = color;
+
+	private List<HilightItem> items;
+	public void setHilighted(List<HilightItem> items){
+		this.items = items;
 	}
 	
     @Override
     public Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
         Component c = super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
-        if (index==hilighted && color!=null) {
-            c.setBackground(color);
+        if(items!=null){
+	        for(HilightItem i: items){
+	        	int hilighted = i.getHilighted();
+	        	Color color = i.getColor();
+		        if (index==hilighted && color!=null) {
+		            c.setBackground(color);
+		        }
+	        }
         }
         if(value instanceof Song){
         	Song song = (Song) value;
@@ -382,4 +390,21 @@ class SelectedListCellRenderer extends DefaultListCellRenderer {
         }
         return c;
     }
+}
+
+class HilightItem{
+	public HilightItem(int hilighted, Color color) {
+		super();
+		this.hilighted = hilighted;
+		this.color = color;
+	}
+	private int hilighted = -1;
+	private Color color = null;
+	public int getHilighted() {
+		return hilighted;
+	}
+	public Color getColor() {
+		return color;
+	}
+
 }
