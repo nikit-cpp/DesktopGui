@@ -10,8 +10,7 @@
     <modules>
         <module>desktopGui</module>
         <module>mediaModel</module>
-        <module>mp3Player</module>
-	<module>vkMusicGetter</module>
+		<module>vkMusicGetter</module>
     </modules>
     
     <properties>

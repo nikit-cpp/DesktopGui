@@ -121,7 +121,7 @@ public class CustomPlayer implements player.Player{
 
 						player.play();
 						state=State.STOPPED;
-						post(new PlayStopped());
+						post(new PlayStopped(playedSong));
 					} catch (Exception e) {
 						LOGGER.error("Error playing mp3 file", e);
 						valid = false;

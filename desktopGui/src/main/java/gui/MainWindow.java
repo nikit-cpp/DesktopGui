@@ -252,8 +252,8 @@ public class MainWindow extends JFrame {
 	
 	@AllowConcurrentEvents
 	@Subscribe
-	public void onPlayFinished(PlayStopped e){
-		LOGGER.debug("Play finished");
+	public void onPlayStopped(PlayStopped e){
+		LOGGER.debug("Play stopped");
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				statusLabel.setText(STOPPED);
