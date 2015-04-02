@@ -44,7 +44,7 @@
 		<dependency>
 			<groupId>com.github.nikit.cpp</groupId>
 			<artifactId>mp3Player</artifactId>
-			<version>0.2.4</version>
+			<version>0.2.5</version>
 		</dependency>
 
 		<dependency>

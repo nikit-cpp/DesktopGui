@@ -19,16 +19,16 @@ import javazoom.jl.player.Player;
  */
 public class CustomPlayer implements player.Player{
 	private static final Logger LOGGER = Logger.getLogger(CustomPlayer.class);
-	private Player player;
-	private FileInputStream FIS;
-	private BufferedInputStream BIS;
-	private boolean canResume;
+	private volatile Player player;
+	private volatile FileInputStream FIS;
+	private volatile BufferedInputStream BIS;
+	private volatile boolean canResume;
 	private String path;
-	private int total;
-	private int stopped;
-	private boolean valid;
-	private EventBus eventBus;
-	private State state;
+	private volatile int total;
+	private volatile int stopped;
+	private volatile boolean valid;
+	private volatile EventBus eventBus;
+	private volatile State state;
 	public static final int statusThreadSleep = 200;
 
 	public CustomPlayer() {
@@ -40,7 +40,7 @@ public class CustomPlayer implements player.Player{
 		total = 0;
 		stopped = 0;
 		canResume = false;
-		setState(State.STOPPED);
+		state=State.STOPPED;
 	}
 	
 	public CustomPlayer(EventBus eventBus) {
@@ -54,7 +54,7 @@ public class CustomPlayer implements player.Player{
 		canResume = false;
 		this.eventBus = eventBus;
 		eventBus.register(this);
-		setState(State.STOPPED);
+		state=State.STOPPED;
 		startStatusThread();
 	}
 
@@ -76,7 +76,7 @@ public class CustomPlayer implements player.Player{
 			player = null;
 			if (valid)
 				canResume = true;
-			setState(State.STOPPED);
+			state=State.STOPPED;
 			LOGGER.debug("Paused");
 		} catch (Exception e) {
 
@@ -121,12 +121,11 @@ public class CustomPlayer implements player.Player{
 					try {
 						LOGGER.debug("Playing " + path);
 						post(new PlayStarted(path));
-						setState(State.PLAYING);
-						LOGGER.debug("player in child thread=" + player + ", may be waiting if null");
-						if (player==null)
-							wait();
+						state=State.PLAYING;
+						LOGGER.debug("player in child thread=" + player + "");
+
 						player.play();
-						setState(State.STOPPED);
+						state=State.STOPPED;
 						post(new PlayStopped());
 					} catch (Exception e) {
 						LOGGER.error("Error playing mp3 file", e);
@@ -150,7 +149,7 @@ public class CustomPlayer implements player.Player{
 				try {
 					LOGGER.debug("Starting statusThread");
 					while(true){
-						if(getState() == State.PLAYING){
+						if(state == State.PLAYING){
 							int available = FIS.available();
 							//LOGGER.debug("available: " + available);
 							post(new PlayedProgress(available));
@@ -179,8 +178,8 @@ public class CustomPlayer implements player.Player{
 		return state;
 	}
 
-	synchronized private void setState(State state) {
+	/*synchronized private void setState(State state) {
 		this.state = state;
-	}
+	}*/
 
 }
