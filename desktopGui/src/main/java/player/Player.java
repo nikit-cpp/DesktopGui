@@ -1,9 +1,10 @@
 package player;
 
+import com.github.nikit.cpp.player.Song;
+
 public interface Player {
-	void play();
+	void play(Song song);
 	void pause();
 	void stop();
-	void prepareFor(String path);
 	State getState();
 }

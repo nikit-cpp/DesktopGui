@@ -234,7 +234,7 @@ public class MainWindow extends JFrame {
 	@AllowConcurrentEvents
 	@Subscribe
 	public void onPlayStarted(final PlayStarted e) throws DownloadServiceException {
-		final String s = e.getPath();
+		final String s = e.getSong().getFile().getAbsolutePath();
 		final String message = "Playing '" + s + "'";
 		LOGGER.debug(message);
 
@@ -276,50 +276,38 @@ public class MainWindow extends JFrame {
 			}
 		});
 	}
-	
-	// TODO перебросить весь функционал в onPlaying(). ибо единичные события
-	// могут перепутаться, а onPlaying() вызывается каждые 200 мс  
-	@AllowConcurrentEvents
-	@Subscribe
-	public void play(final PlayEvent e) {
-		final int index = playerService.getPlayList().getSongId(e.getSong().getId());
-		EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				listRenderer.hilight(index, Color.GREEN);
-				songsList.updateUI();
-				
-				try {
-					if(e.getSong().getImage()!=null){
-						ImageIcon icon;
-
-			            byte[] imageBytes = e.getSong().getImage();
-						BufferedImage img = ImageIO.read(new ByteArrayInputStream(imageBytes));
-			            icon = new ImageIcon(img);
-
-						imageLabel.setIcon(icon);
-						imageLabel.updateUI();
-					}else{
-						imageLabel.updateUI();
-					}
-				} catch (IOException e) {
-					LOGGER.error("Error on downloading image", e);
-				}
-
-			}
-		});
-	}
-	
-	
+		
 	
 	@AllowConcurrentEvents
 	@Subscribe
 	public void onPlaying(final PlayedProgress playedProgress){
 		SwingUtilities.invokeLater(new Runnable() {
-			
+			final int index = playerService.getPlayList().getSongId(playedProgress.getSong().getId());
+
 			@Override
 			public void run() {
 				slider.setValue(playedProgress.getAvailable());
 				slider.setMaximum(playerService.getSongMaxSize());
+				
+				listRenderer.hilight(index, Color.GREEN);
+				songsList.updateUI();
+				
+				try {
+					if(playedProgress.getSong().getImage()!=null){
+						ImageIcon icon;
+
+			            byte[] imageBytes = playedProgress.getSong().getImage();
+						BufferedImage img = ImageIO.read(new ByteArrayInputStream(imageBytes));
+			            icon = new ImageIcon(img);
+
+						imageLabel.setIcon(icon);
+						imageLabel.updateUI();
+					}
+					
+				} catch (Exception e) {
+					LOGGER.error("Error on downloading image", e);
+				}
+				imageLabel.updateUI();
 			}
 		});
 	}

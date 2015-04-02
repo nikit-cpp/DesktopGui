@@ -5,8 +5,8 @@ public class CustomPlayerRunner {
 
 	public static void main(String[] args) throws InterruptedException {
 		CustomPlayer player = new CustomPlayer();
-		player.prepareFor("/media/files596/Мои документы/Моя музыка/music/Accept - Can`t stand the Night.mp3");
-		player.play();
+		player.stop();
+		player.play(CustomPlayer.UNEXISTED_POSITION);
 		
 		System.out.println("hu");
 		

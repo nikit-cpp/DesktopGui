@@ -5,6 +5,7 @@ import java.io.FileInputStream;
 
 import org.apache.log4j.Logger;
 
+import com.github.nikit.cpp.player.Song;
 import com.google.common.eventbus.EventBus;
 
 import events.PlayStopped;
@@ -23,20 +24,20 @@ public class CustomPlayer implements player.Player{
 	private volatile FileInputStream FIS;
 	private volatile BufferedInputStream BIS;
 	private volatile boolean canResume;
-	private String path;
 	private volatile int total;
 	private volatile int stopped;
 	private volatile boolean valid;
 	private volatile EventBus eventBus;
 	private volatile State state;
+	private volatile Song playedSong;
 	public static final int statusThreadSleep = 200;
+	public static final int UNEXISTED_POSITION = -1; 
 
 	public CustomPlayer() {
 		player = null;
 		FIS = null;
 		valid = false;
 		BIS = null;
-		path = null;
 		total = 0;
 		stopped = 0;
 		canResume = false;
@@ -48,7 +49,6 @@ public class CustomPlayer implements player.Player{
 		FIS = null;
 		valid = false;
 		BIS = null;
-		path = null;
 		total = 0;
 		stopped = 0;
 		canResume = false;
@@ -60,11 +60,6 @@ public class CustomPlayer implements player.Player{
 
 	public boolean canResume() {
 		return canResume;
-	}
-
-	public void prepareFor(String path) {
-		this.path = path;
-		stop();
 	}
 
 	public void pause() {
@@ -91,7 +86,7 @@ public class CustomPlayer implements player.Player{
 			BIS = null;
 			player = null;
 			canResume = false;
-			//state=State.STOPPED;
+			playedSong = null;
 			LOGGER.debug("Stopped");
 		} catch (Exception e) {
 
@@ -109,9 +104,9 @@ public class CustomPlayer implements player.Player{
 		valid = true;
 		canResume = false;
 		try {
-			FIS = new FileInputStream(path);
+			FIS = new FileInputStream(playedSong.getFile().getAbsolutePath());
 			total = FIS.available();
-			if (pos > -1)
+			if (pos > UNEXISTED_POSITION)
 				FIS.skip(pos);
 			BIS = new BufferedInputStream(FIS);
 			player = new Player(BIS);
@@ -119,8 +114,8 @@ public class CustomPlayer implements player.Player{
 			Thread playThread = new Thread(new Runnable() {
 				public synchronized void run() {
 					try {
-						LOGGER.debug("Playing " + path);
-						post(new PlayStarted(path));
+						LOGGER.debug("Playing " + playedSong);
+						post(new PlayStarted(playedSong));
 						state=State.PLAYING;
 						LOGGER.debug("player in child thread=" + player + "");
 
@@ -152,7 +147,7 @@ public class CustomPlayer implements player.Player{
 						if(state == State.PLAYING){
 							int available = FIS.available();
 							//LOGGER.debug("available: " + available);
-							post(new PlayedProgress(available));
+							post(new PlayedProgress(available, playedSong));
 							Thread.sleep(statusThreadSleep);
 						}
 					}
@@ -165,8 +160,9 @@ public class CustomPlayer implements player.Player{
 
 	}
 
-	public void play() {
-		play(-1);
+	public void play(Song song) {
+		playedSong = song;
+		play(UNEXISTED_POSITION);
 	}
 	
 	private void post(Object o) {
@@ -177,9 +173,5 @@ public class CustomPlayer implements player.Player{
 	synchronized public State getState() {
 		return state;
 	}
-
-	/*synchronized private void setState(State state) {
-		this.state = state;
-	}*/
 
 }

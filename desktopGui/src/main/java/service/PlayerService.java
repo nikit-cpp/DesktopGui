@@ -36,8 +36,8 @@ public class PlayerService {
 	private void play(Song song) {
 		try {
 			currentSong = song;
-			player.prepareFor(song.getFile().getAbsolutePath());
-			player.play();
+			player.stop();
+			player.play(currentSong);
 		} catch (Exception e) {
 			LOGGER.error("Error!!!", e);
 		}
