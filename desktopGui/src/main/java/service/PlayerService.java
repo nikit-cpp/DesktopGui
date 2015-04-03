@@ -86,7 +86,7 @@ public class PlayerService {
 	@Subscribe
 	public void onPlayFinished(PlayStopped e) {
 		songmaxSizeSetted = false;
-		songMaxSize = 0;
+		//songMaxSize = 0;
 		LOGGER.debug("onPlayFinished() mayNext="+mayNextOnFinished);
 		if(mayNextOnFinished){
 			eventBus.post(new NextSong());
