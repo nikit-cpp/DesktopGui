@@ -459,7 +459,7 @@ class Hilighter{
 	private Set<Integer> playing = new HashSet<Integer>();
 
 	public void resetPlaying() {
-		playing.clear();
+		items.clear();
 	}
 	
 	public void addPlaying(int index) {
