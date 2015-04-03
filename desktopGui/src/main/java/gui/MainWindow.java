@@ -277,6 +277,8 @@ public class MainWindow extends JFrame {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				statusLabel.setText(STOPPED);
+				btnPlay.setText(PLAY);
+				slider.setValue(0);
 			}
 		});
 	}
