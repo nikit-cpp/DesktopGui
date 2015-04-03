@@ -82,6 +82,7 @@ public class MainWindow extends JFrame {
 	private JScrollPane scrollLeftPane;
 	private JLabel imageLabel;
 	private List<HilightItem> hilightedItems;
+	private volatile boolean IsPaused = false; 
 
 	public MainWindow() throws ParserConfigurationException, VkPlayListBuilderException {
 		initNonGui();
@@ -284,7 +285,8 @@ public class MainWindow extends JFrame {
 	@Subscribe
 	public void onPlaying(final PlayedProgress playedProgress){
 		SwingUtilities.invokeLater(new Runnable() {
-			final int index = playerService.getPlayList().getSongId(playedProgress.getSong().getId());
+			final Song song = playedProgress.getSong();
+			final int index = playerService.getPlayList().getSongId(song.getId());
 
 			@Override
 			public void run() {
@@ -294,6 +296,7 @@ public class MainWindow extends JFrame {
 				hilightedItems.add(new HilightItem(index, Color.GREEN));
 				listRenderer.setHilighted(hilightedItems);
 				songsList.updateUI();
+				statusLabel.setText("Playing " + song.getFile());
 				
 				try {
 					if(playedProgress.getSong().getImage()!=null){

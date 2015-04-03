@@ -30,7 +30,7 @@ public class CustomPlayer implements player.Player{
 	private volatile EventBus eventBus;
 	private volatile State state;
 	private volatile Song playedSong;
-	public static final int statusThreadSleep = 200;
+	public static final int statusThreadSleep = 800;
 	public static final int UNEXISTED_POSITION = -1; 
 
 	public CustomPlayer() {
