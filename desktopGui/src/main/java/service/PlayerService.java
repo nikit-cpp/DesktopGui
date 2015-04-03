@@ -18,7 +18,7 @@ import com.google.common.eventbus.Subscribe;
 import events.DownloadEvent;
 import events.DownloadFinished;
 import events.NextSong;
-import events.PauseEvent;
+import events.PlayPauseEvent;
 import events.PlayEvent;
 import events.PlayedProgress;
 
@@ -32,6 +32,7 @@ public class PlayerService {
 	private Song currentSong;
 	private int songMaxSize;
 	private boolean songmaxSizeSetted = false;
+	private boolean mayNextOnFinished = true;
 	private volatile AtomicBoolean isPaused = new AtomicBoolean(false);
 
 
@@ -45,9 +46,7 @@ public class PlayerService {
 			LOGGER.error("Error!!!", e);
 		}
 	}
-	
-	boolean mayNextOnFinished = true;
-	
+		
 	@AllowConcurrentEvents
 	@Subscribe
 	public void play(PlayEvent e) {
@@ -109,10 +108,14 @@ public class PlayerService {
 	
 	@AllowConcurrentEvents
 	@Subscribe
-	public void onPause(PauseEvent e){
-		mayNextOnFinished = false;
-		isPaused.set(true);
-		player.pause();
+	public void onPause(PlayPauseEvent e){
+		if(isPaused.equals(false)){
+			mayNextOnFinished = false;
+			isPaused.set(true);
+			player.pause();
+		}else{
+			player.resume();
+		}
 	}
 
 

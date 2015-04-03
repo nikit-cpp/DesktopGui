@@ -11,7 +11,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import events.NextSong;
-import events.PauseEvent;
+import events.PlayPauseEvent;
 import events.PlayEvent;
 import events.PlayStopped;
 import events.PlayStarted;
@@ -144,7 +144,7 @@ public class MainWindow extends JFrame {
 		btnPlay = new JButton("Play");
 		btnPlay.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				eventBus.post(new PauseEvent());
+				eventBus.post(new PlayPauseEvent());
 			}
 		});
 		buttonsPanel.add(btnPlay);
@@ -326,7 +326,7 @@ public class MainWindow extends JFrame {
 	
 	@AllowConcurrentEvents
 	@Subscribe
-	public void onPaused(PauseEvent e){
+	public void onPaused(PlayPauseEvent e){
 		playerService.getPaused().set(true);
 		SwingUtilities.invokeLater(new Runnable() {
 			

@@ -7,4 +7,5 @@ public interface Player {
 	void pause();
 	void stop();
 	State getState();
+	void resume();
 }
