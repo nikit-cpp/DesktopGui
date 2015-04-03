@@ -327,12 +327,14 @@ public class MainWindow extends JFrame {
 	@AllowConcurrentEvents
 	@Subscribe
 	public void onPaused(PlayPauseEvent e){
-		playerService.getPaused().set(true);
 		SwingUtilities.invokeLater(new Runnable() {
 			
 			@Override
 			public void run() {
-				btnPlay.setText(PLAY);
+				if(playerService.getPaused()==true)
+					btnPlay.setText(PLAY);
+				else
+					btnPlay.setText(PAUSE);
 			}
 		});
 		

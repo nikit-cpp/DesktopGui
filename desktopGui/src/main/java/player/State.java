@@ -1,5 +1,5 @@
 package player;
 
 public enum State {
-	PLAYING, STOPPED
+	PLAYING, STOPPED, PAUSED
 }

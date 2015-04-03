@@ -71,7 +71,7 @@ public class CustomPlayer implements player.Player{
 			player = null;
 			if (valid)
 				canResume = true;
-			state=State.STOPPED;
+			state=State.PAUSED;
 			LOGGER.debug("Paused");
 		} catch (Exception e) {
 

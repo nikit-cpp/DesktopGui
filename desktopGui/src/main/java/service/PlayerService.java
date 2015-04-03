@@ -33,7 +33,7 @@ public class PlayerService {
 	private int songMaxSize;
 	private boolean songmaxSizeSetted = false;
 	private boolean mayNextOnFinished = true;
-	private volatile AtomicBoolean isPaused = new AtomicBoolean(false);
+	private volatile boolean isPaused = false;
 
 
 	private void play(Song song) {
@@ -41,7 +41,7 @@ public class PlayerService {
 			currentSong = song;
 			player.stop();
 			player.play(currentSong);
-			isPaused.set(false);
+			isPaused=false;
 		} catch (Exception e) {
 			LOGGER.error("Error!!!", e);
 		}
@@ -109,9 +109,9 @@ public class PlayerService {
 	@AllowConcurrentEvents
 	@Subscribe
 	public void onPause(PlayPauseEvent e){
-		if(isPaused.equals(false)){
+		if(isPaused==false){
 			mayNextOnFinished = false;
-			isPaused.set(true);
+			isPaused=true;
 			player.pause();
 		}else{
 			player.resume();
@@ -147,7 +147,7 @@ public class PlayerService {
 		return songMaxSize;
 	}
 
-	public AtomicBoolean getPaused() {
+	public boolean getPaused() {
 		return isPaused;
 	}
 }
