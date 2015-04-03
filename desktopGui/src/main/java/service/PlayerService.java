@@ -1,8 +1,7 @@
 package service;
 
 import java.io.File;
-
-import javax.swing.SwingUtilities;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.apache.log4j.Logger;
 
@@ -19,6 +18,7 @@ import com.google.common.eventbus.Subscribe;
 import events.DownloadEvent;
 import events.DownloadFinished;
 import events.NextSong;
+import events.PauseEvent;
 import events.PlayEvent;
 import events.PlayedProgress;
 
@@ -32,12 +32,15 @@ public class PlayerService {
 	private Song currentSong;
 	private int songMaxSize;
 	private boolean songmaxSizeSetted = false;
+	private volatile AtomicBoolean isPaused = new AtomicBoolean(false);
+
 
 	private void play(Song song) {
 		try {
 			currentSong = song;
 			player.stop();
 			player.play(currentSong);
+			isPaused.set(false);
 		} catch (Exception e) {
 			LOGGER.error("Error!!!", e);
 		}
@@ -103,6 +106,14 @@ public class PlayerService {
 			eventBus.post(new PlayEvent(nextSong));
 		}
 	}
+	
+	@AllowConcurrentEvents
+	@Subscribe
+	public void onPause(PauseEvent e){
+		isPaused.set(true);
+		player.pause();
+	}
+
 
 	public Player getPlayer() {
 		return player;
@@ -130,5 +141,9 @@ public class PlayerService {
 
 	public int getSongMaxSize() {
 		return songMaxSize;
+	}
+
+	public AtomicBoolean getPaused() {
+		return isPaused;
 	}
 }

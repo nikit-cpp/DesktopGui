@@ -11,6 +11,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import events.NextSong;
+import events.PauseEvent;
 import events.PlayEvent;
 import events.PlayStopped;
 import events.PlayStarted;
@@ -44,6 +45,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import java.awt.image.BufferedImage;
@@ -82,7 +84,9 @@ public class MainWindow extends JFrame {
 	private JScrollPane scrollLeftPane;
 	private JLabel imageLabel;
 	private List<HilightItem> hilightedItems;
-	private volatile boolean IsPaused = false; 
+	
+	private static final String PLAY = "Play";
+	private static final String PAUSE = "Pause";
 
 	public MainWindow() throws ParserConfigurationException, VkPlayListBuilderException {
 		initNonGui();
@@ -138,6 +142,11 @@ public class MainWindow extends JFrame {
 		buttonsPanel.add(btnPrev);
 		
 		btnPlay = new JButton("Play");
+		btnPlay.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				eventBus.post(new PauseEvent());
+			}
+		});
 		buttonsPanel.add(btnPlay);
 		
 		btnStop = new JButton("Stop");
@@ -242,11 +251,8 @@ public class MainWindow extends JFrame {
 
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
+				btnPlay.setText(PAUSE);
 				statusLabel.setText(message);
-				
-				/*int songSize = e.getSongSize();
-				LOGGER.debug("setting slider maximum to " + songSize);
-				slider.setMaximum(songSize);*/
 			}
 		});
 	}
@@ -316,6 +322,20 @@ public class MainWindow extends JFrame {
 				imageLabel.updateUI();
 			}
 		});
+	}
+	
+	@AllowConcurrentEvents
+	@Subscribe
+	public void onPaused(PauseEvent e){
+		playerService.getPaused().set(true);
+		SwingUtilities.invokeLater(new Runnable() {
+			
+			@Override
+			public void run() {
+				btnPlay.setText(PLAY);
+			}
+		});
+		
 	}
 	
 	public static EventBus getEventBus() {
