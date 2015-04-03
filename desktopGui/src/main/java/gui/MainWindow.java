@@ -132,6 +132,7 @@ public class MainWindow extends JFrame {
 		sliderPanel.setLayout(new GridLayout(0, 1, 0, 0));
 		
 		slider = new JSlider();
+		slider.setValue(0);
 		sliderPanel.add(slider);
 
 		
@@ -296,8 +297,9 @@ public class MainWindow extends JFrame {
 
 			@Override
 			public void run() {
-				slider.setValue(playedProgress.getAvailable());
-				slider.setMaximum(playerService.getSongMaxSize());
+				int songLengh = playerService.getSongMaxSize();
+				slider.setValue(songLengh - playedProgress.getAvailable());
+				slider.setMaximum(songLengh);
 				
 				hilightedItems.add(new HilightItem(index, Color.GREEN));
 				listRenderer.setHilighted(hilightedItems);
