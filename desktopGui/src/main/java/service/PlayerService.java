@@ -114,6 +114,8 @@ public class PlayerService {
 			isPaused=true;
 			player.pause();
 		}else{
+			isPaused=false;
+			songmaxSizeSetted = true;
 			player.resume();
 		}
 	}
