@@ -110,6 +110,7 @@ public class PlayerService {
 	@AllowConcurrentEvents
 	@Subscribe
 	public void onPause(PauseEvent e){
+		mayNextOnFinished = false;
 		isPaused.set(true);
 		player.pause();
 	}
