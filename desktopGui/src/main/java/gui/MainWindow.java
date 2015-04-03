@@ -85,7 +85,7 @@ public class MainWindow extends JFrame {
 	private JScrollPane scrollRightPane;
 	private JScrollPane scrollLeftPane;
 	private JLabel imageLabel;
-	private List<HilightItem> hilightedItems;
+	private Hilighter hilighter;
 	
 	private static final String PLAY = "Play";
 	private static final String PAUSE = "Pause";
@@ -94,7 +94,7 @@ public class MainWindow extends JFrame {
 		initNonGui();
 		eventBus.register(this);
 		instance = this;
-		hilightedItems = new ArrayList<HilightItem>();
+		hilighter = new Hilighter();
 		setTitle("Vk Caching Player");
 		setSize(600, 500);
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
@@ -276,6 +276,8 @@ public class MainWindow extends JFrame {
 		LOGGER.debug("Play stopped");
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
+				hilighter.resetPlaying();
+				listRenderer.setHilighted(hilighter.getHilighted());
 				statusLabel.setText(STOPPED);
 				btnPlay.setText(PLAY);
 				slider.setValue(0);
@@ -292,8 +294,8 @@ public class MainWindow extends JFrame {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				statusLabel.setText(message);
-				hilightedItems.add(new HilightItem(index, Color.BLUE));
-				listRenderer.setHilighted(hilightedItems);
+				hilighter.addHilightDownload(index);
+				listRenderer.setHilighted(hilighter.getHilighted());
 				songsList.updateUI();
 				
 
@@ -315,8 +317,8 @@ public class MainWindow extends JFrame {
 				slider.setValue(songLengh - playedProgress.getAvailable());
 				slider.setMaximum(songLengh);
 				
-				hilightedItems.add(new HilightItem(index, Color.GREEN));
-				listRenderer.setHilighted(hilightedItems);
+				hilighter.addPlaying(index);
+				listRenderer.setHilighted(hilighter.getHilighted());
 				songsList.updateUI();
 				statusLabel.setText("Playing " + song.getFile());
 				
@@ -448,4 +450,30 @@ class HilightItem{
 		return color;
 	}
 
+}
+
+class Hilighter{
+	private List<HilightItem> items = new ArrayList<HilightItem>();
+	private Set<Integer> playing = new HashSet<Integer>();
+
+	public void resetPlaying() {
+		playing.clear();
+	}
+	
+	public void addPlaying(int index) {
+		items.add(new HilightItem(index, Color.GREEN));
+		playing.add(index);
+	}
+
+	public List<HilightItem> getHilighted() {
+		return items;
+	}
+
+	public void addHilightDownload(int index) {
+		items.add(new HilightItem(index, Color.BLUE));
+	}
+
+	public void resetDownloaded() {
+		System.err.println("Fixme!");
+	}
 }
