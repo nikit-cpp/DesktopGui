@@ -12,10 +12,11 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import events.NextSong;
 import events.PlayPauseEvent;
-import events.PlayEvent;
+import events.PlayIntent;
+import events.StopIntent;
 import events.PlayStopped;
 import events.PlayStarted;
-import events.PlayedProgress;
+import events.ProgressEvent;
 import events.PrevSong;
 
 import com.github.nikit.cpp.player.PlayList;
@@ -157,6 +158,11 @@ public class MainWindow extends JFrame {
 		buttonsPanel.add(btnPlay);
 		
 		btnStop = new JButton("Stop");
+		btnStop.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				eventBus.post(new StopIntent());
+			}
+		});
 		buttonsPanel.add(btnStop);
 		
 		btnNext = new JButton("Next");
@@ -182,7 +188,7 @@ public class MainWindow extends JFrame {
 				if (e.getClickCount() == 2) {
 					int index = songsList.locationToIndex(e.getPoint());
 					Song s = (Song) playListModel.getElementAt(index);
-					eventBus.post(new PlayEvent(s));
+					eventBus.post(new PlayIntent(s));
 
 					LOGGER.debug("Double clicked on item " + index + " " + s);
 
@@ -296,7 +302,7 @@ public class MainWindow extends JFrame {
 	
 	@AllowConcurrentEvents
 	@Subscribe
-	public void onPlaying(final PlayedProgress playedProgress){
+	public void onPlaying(final ProgressEvent playedProgress){
 		SwingUtilities.invokeLater(new Runnable() {
 			final Song song = playedProgress.getSong();
 			final int index = playerService.getPlayList().getSongId(song.getId());

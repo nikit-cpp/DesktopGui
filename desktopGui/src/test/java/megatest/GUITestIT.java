@@ -7,7 +7,7 @@ import javax.xml.parsers.ParserConfigurationException;
 
 import events.DownloadEvent;
 import events.NextSong;
-import events.PlayEvent;
+import events.PlayIntent;
 import events.PlayStopped;
 import gui.MainWindow;
 
@@ -171,7 +171,7 @@ public class GUITestIT extends ShowWindow {
 	}
 	
 	@Subscribe
-	public void onPlay(PlayEvent e) throws DownloadServiceException {
+	public void onPlay(PlayIntent e) throws DownloadServiceException {
 		final Song s = e.getSong();
 		final String message = "Playing '" + s + "'";
 		LOGGER.debug(message);

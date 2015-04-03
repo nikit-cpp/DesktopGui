@@ -18,9 +18,10 @@ import events.DownloadEvent;
 import events.DownloadFinished;
 import events.NextSong;
 import events.PlayPauseEvent;
-import events.PlayEvent;
-import events.PlayedProgress;
+import events.PlayIntent;
+import events.ProgressEvent;
 import events.PrevSong;
+import events.StopIntent;
 
 public class PlayerService {
 
@@ -38,7 +39,7 @@ public class PlayerService {
 		
 	@AllowConcurrentEvents
 	@Subscribe
-	public void play(PlayEvent e) {
+	public void play(PlayIntent e) {
 		LOGGER.debug("play()");
 		if(player.getState()==State.PLAYING){
 			mayNextOnFinished = false;
@@ -67,7 +68,7 @@ public class PlayerService {
 	
 	@AllowConcurrentEvents
 	@Subscribe
-	public void onPlayingProgress(final PlayedProgress playedProgress){
+	public void onPlayingProgress(final ProgressEvent playedProgress){
 		if(!songmaxSizeSetted){
 			songmaxSizeSetted = true;
 			songMaxSize = playedProgress.getAvailable();
@@ -79,7 +80,7 @@ public class PlayerService {
 	@Subscribe
 	public void playAfterDownloadFinished(DownloadFinished e) {
 		Song song = e.getSong();
-		eventBus.post(new PlayEvent(song));
+		eventBus.post(new PlayIntent(song));
 	}
 	
 	@AllowConcurrentEvents
@@ -101,7 +102,7 @@ public class PlayerService {
 		Song nextSong = playList.getNextSong(currentSong);
 		if (nextSong != null) {
 			LOGGER.debug("switching to next");
-			eventBus.post(new PlayEvent(nextSong));
+			eventBus.post(new PlayIntent(nextSong));
 		}
 	}
 	
@@ -125,10 +126,16 @@ public class PlayerService {
 		Song prevSong = playList.getPrevSong(currentSong);
 		if (prevSong != null) {
 			LOGGER.debug("switching to prev");
-			eventBus.post(new PlayEvent(prevSong));
+			eventBus.post(new PlayIntent(prevSong));
 		}
 	}
 
+	@AllowConcurrentEvents
+	@Subscribe
+	public void onStop(StopIntent e){
+		mayNextOnFinished = false;
+		player.stop();
+	}
 
 
 	public Player getPlayer() {

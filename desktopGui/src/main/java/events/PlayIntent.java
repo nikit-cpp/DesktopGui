@@ -2,9 +2,9 @@ package events;
 
 import com.github.nikit.cpp.player.Song;
 
-public class PlayEvent {
+public class PlayIntent {
 	private Song song;
-	public PlayEvent(Song song) {
+	public PlayIntent(Song song) {
 		this.song = song;
 	}
 	public Song getSong() {

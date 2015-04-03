@@ -7,7 +7,7 @@ import javax.xml.parsers.ParserConfigurationException;
 
 import events.DownloadEvent;
 import events.NextSong;
-import events.PlayEvent;
+import events.PlayIntent;
 import events.PlayStopped;
 import gui.MainWindow;
 

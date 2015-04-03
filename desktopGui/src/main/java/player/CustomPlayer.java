@@ -10,7 +10,7 @@ import com.google.common.eventbus.EventBus;
 
 import events.PlayStopped;
 import events.PlayStarted;
-import events.PlayedProgress;
+import events.ProgressEvent;
 import javazoom.jl.player.Player;
 
 /**
@@ -147,7 +147,7 @@ public class CustomPlayer implements player.Player{
 						if(state == State.PLAYING){
 							int available = FIS.available();
 							//LOGGER.debug("available: " + available);
-							post(new PlayedProgress(available, playedSong));
+							post(new ProgressEvent(available, playedSong));
 							Thread.sleep(statusThreadSleep);
 						}
 					}

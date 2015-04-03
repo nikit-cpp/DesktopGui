@@ -2,10 +2,10 @@ package events;
 
 import com.github.nikit.cpp.player.Song;
 
-public class PlayedProgress {
+public class ProgressEvent {
 	private int available;
 	private Song song;
-	public PlayedProgress(int available, Song song) {
+	public ProgressEvent(int available, Song song) {
 		this.song = song;
 		this.available = available;
 	}
