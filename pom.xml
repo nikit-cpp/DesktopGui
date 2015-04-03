@@ -1,67 +1,52 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-	<modelVersion>4.0.0</modelVersion>
-	<groupId>com.github.nikit.cpp</groupId>
-	<artifactId>DesktopGui</artifactId>
-	<version>666-not-used</version>
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>com.github.nikit.cpp</groupId>
+    <artifactId>VkCachingPlayer</artifactId>
+    <version>666-not-used</version>
 
-	<properties>
-		<project.build.sourceEncoding>UTF8</project.build.sourceEncoding>
-		<maven.compiler.source>1.7</maven.compiler.source>
-		<maven.compiler.target>1.7</maven.compiler.target>
-		<spring.version>4.1.1.RELEASE</spring.version>
-	</properties>
+    <packaging>pom</packaging>
 
-	<dependencies>
-		<dependency>
-			<groupId>com.github.nikit.cpp</groupId>
-			<artifactId>vkMusicGetter</artifactId>
-			<version>0.2.0</version>
-		</dependency>
+    <modules>
+        <module>desktopGui</module>
+        <module>mediaModel</module>
+		<module>vkMusicGetter</module>
+    </modules>
+    
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+        <maven.compiler.source>1.7</maven.compiler.source>
+        <maven.compiler.target>1.7</maven.compiler.target>
+	<spring.version>4.1.1.RELEASE</spring.version>
+    </properties>
 
-		<dependency>
-			<groupId>com.github.nikit.cpp</groupId>
-			<artifactId>desktopMp3Player</artifactId>
-			<version>0.2.2</version>
-		</dependency>
 
-		<dependency>
-			<groupId>commons-io</groupId>
-			<artifactId>commons-io</artifactId>
-			<version>2.4</version>
-		</dependency>
-
-		<!-- https://code.google.com/p/soundlibs/ -->
-		<dependency>
-			<groupId>com.googlecode.soundlibs</groupId>
-			<artifactId>jlayer</artifactId>
-			<version>1.0.1-1</version>
-		</dependency>
-
-		<!-- Spring dependencies -->
-		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-core</artifactId>
-			<version>${spring.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-context</artifactId>
-			<version>${spring.version}</version>
-		</dependency>
-		<!-- для того чтобы спринг видел конфиги log4j эта зависимость должна присутствовать -->
-		<dependency>
-			<groupId>log4j</groupId>
-			<artifactId>log4j</artifactId>
-			<version>1.2.17</version>
-		</dependency>
-
+    <dependencyManagement>
+        <dependencies>
 		<dependency>
 			<groupId>com.google.guava</groupId>
 			<artifactId>guava</artifactId>
 			<version>18.0</version>
 		</dependency>
-
+		
+		<dependency>
+			<groupId>com.github.nikit.cpp</groupId>
+			<artifactId>mediaModel</artifactId>
+			<version>0.1.0</version>
+		</dependency>
+		
+		<dependency>
+			<groupId>com.github.nikit.cpp</groupId>
+			<artifactId>vkMusicGetter</artifactId>
+			<version>0.3.0</version>
+		</dependency>
+		
+		<dependency>
+			<groupId>log4j</groupId>
+			<artifactId>log4j</artifactId>
+			<version>1.2.17</version>
+		</dependency>
 
 		<dependency>
 			<groupId>junit</groupId>
@@ -70,94 +55,58 @@
 			<scope>test</scope>
 		</dependency>
 
-		<dependency>
-			<groupId>org.eclipse.jetty</groupId>
-			<artifactId>jetty-server</artifactId>
-			<version>9.3.0.M2</version>
-			<scope>test</scope>
-		</dependency>
+	  </dependencies>
+    </dependencyManagement>
 
-		<dependency>
-			<groupId>org.eclipse.jetty</groupId>
-			<artifactId>jetty-servlet</artifactId>
-			<version>9.3.0.M2</version>
-			<scope>test</scope>
-		</dependency>
+    
+    <repositories>
+	    <repository>
+		    <id>central</id>
+		    <url>http://repo1.maven.org/maven2</url>
+		    <releases>
+			    <enabled>true</enabled>
+		    </releases>
+		    <snapshots>
+			    <enabled>true</enabled>
+		    </snapshots>
+	    </repository>
+	    <repository>
+		    <id>my-repo</id>
+		    <name>my own repo</name>
+		    <url>http://mvn.16mb.com/repository/</url>
+	    </repository>
+    </repositories>
 
-		<dependency>
-			<groupId>org.easytesting</groupId>
-			<artifactId>fest-swing-junit-4.5</artifactId>
-			<version>1.2.1</version>
-			<scope>test</scope>
-		</dependency>
+    <scm>
+	    <connection>scm:git:https://github.com/nikit-cpp/DesktopGui.git</connection>
+	    <tag>DesktopGui-0.2.0</tag>
+    </scm>
 
-		<dependency>
-			<groupId>org.mockito</groupId>
-			<artifactId>mockito-all</artifactId>
-			<version>1.10.19</version>
-			<scope>test</scope>
-		</dependency>
-	</dependencies>
+    <distributionManagement>
+	    <repository>
+		    <id>ftp-repository</id>
+		    <url>ftp://mvn.16mb.com/releases</url>
+	    </repository>
+    </distributionManagement>
 
-	<repositories>
-		<repository>
-			<id>central</id>
-			<url>http://repo1.maven.org/maven2</url>
-			<releases>
-				<enabled>true</enabled>
-			</releases>
-			<snapshots>
-				<enabled>true</enabled>
-			</snapshots>
-		</repository>
-		<repository>
-			<id>my-repo</id>
-			<name>my own repo</name>
-			<url>http://mvn.16mb.com/repository/</url>
-		</repository>
-	</repositories>
+    <build>
+	    <extensions>
+		    <!-- Enabling the use of FTP -->
+		    <extension>
+			    <groupId>org.apache.maven.wagon</groupId>
+			    <artifactId>wagon-ftp</artifactId>
+			    <version>1.0-beta-6</version>
+		    </extension>
+	    </extensions>
+	    <plugins>
+		    <plugin>
+			    <artifactId>maven-deploy-plugin</artifactId>
+			    <version>2.8.2</version>
+			    <configuration>
+			    </configuration>
+		    </plugin>
+	    </plugins>
+    </build>
 
-	<scm>
-		<connection>scm:git:https://github.com/nikit-cpp/DesktopGui.git</connection>
-		<tag>DesktopGui-0.2.0</tag>
-	</scm>
-
-	<distributionManagement>
-		<repository>
-			<id>ftp-repository</id>
-			<url>ftp://mvn.16mb.com/releases</url>
-		</repository>
-	</distributionManagement>
-
-	<build>
-		<extensions>
-			<!-- Enabling the use of FTP -->
-			<extension>
-				<groupId>org.apache.maven.wagon</groupId>
-				<artifactId>wagon-ftp</artifactId>
-				<version>1.0-beta-6</version>
-			</extension>
-		</extensions>
-		<plugins>
-			<plugin>
-				<artifactId>maven-deploy-plugin</artifactId>
-				<version>2.8.2</version>
-				<configuration>
-				</configuration>
-			</plugin>
-			<plugin>
-				<groupId>org.codehaus.mojo</groupId>
-				<artifactId>versions-maven-plugin</artifactId>
-				<version>2.1</version>
-			</plugin>
-			<plugin>
-				<artifactId>maven-scm-plugin</artifactId>
-				<version>1.8.1</version>
-				<configuration>
-					<tag>${project.artifactId}-${project.version}</tag>
-				</configuration>
-			</plugin>
-		</plugins>
-	</build>
 
 </project>
