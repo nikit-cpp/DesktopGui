@@ -134,6 +134,7 @@ public class PlayerService {
 	@Subscribe
 	public void onStop(StopIntent e){
 		mayNextOnFinished = false;
+		songmaxSizeSetted = false;
 		player.stop();
 	}
 
