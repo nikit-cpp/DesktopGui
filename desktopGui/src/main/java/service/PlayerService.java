@@ -124,7 +124,7 @@ public class PlayerService {
 	public void prev(PrevSong e) {
 		Song prevSong = playList.getPrevSong(currentSong);
 		if (prevSong != null) {
-			LOGGER.debug("switching to next");
+			LOGGER.debug("switching to prev");
 			eventBus.post(new PlayEvent(prevSong));
 		}
 	}
