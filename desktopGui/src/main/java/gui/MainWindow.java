@@ -278,6 +278,7 @@ public class MainWindow extends JFrame {
 			public void run() {
 				hilighter.resetPlaying();
 				listRenderer.setHilighted(hilighter.getHilighted());
+				songsList.updateUI();
 				statusLabel.setText(STOPPED);
 				btnPlay.setText(PLAY);
 				slider.setValue(0);
@@ -294,6 +295,7 @@ public class MainWindow extends JFrame {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				statusLabel.setText(message);
+				
 				hilighter.addHilightDownload(index);
 				listRenderer.setHilighted(hilighter.getHilighted());
 				songsList.updateUI();
