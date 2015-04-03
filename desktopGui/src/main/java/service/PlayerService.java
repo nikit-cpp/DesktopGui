@@ -1,7 +1,6 @@
 package service;
 
 import java.io.File;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.apache.log4j.Logger;
 
@@ -21,6 +20,7 @@ import events.NextSong;
 import events.PlayPauseEvent;
 import events.PlayEvent;
 import events.PlayedProgress;
+import events.PrevSong;
 
 public class PlayerService {
 
@@ -35,17 +35,6 @@ public class PlayerService {
 	private boolean mayNextOnFinished = true;
 	private volatile boolean isPaused = false;
 
-
-	private void play(Song song) {
-		try {
-			currentSong = song;
-			player.stop();
-			player.play(currentSong);
-			isPaused=false;
-		} catch (Exception e) {
-			LOGGER.error("Error!!!", e);
-		}
-	}
 		
 	@AllowConcurrentEvents
 	@Subscribe
@@ -65,9 +54,20 @@ public class PlayerService {
 		}
 	}
 	
+	private void play(Song song) {
+		try {
+			currentSong = song;
+			player.stop();
+			player.play(currentSong);
+			isPaused=false;
+		} catch (Exception e) {
+			LOGGER.error("Error!!!", e);
+		}
+	}
+	
 	@AllowConcurrentEvents
 	@Subscribe
-	public void onPlayed(final PlayedProgress playedProgress){
+	public void onPlayingProgress(final PlayedProgress playedProgress){
 		if(!songmaxSizeSetted){
 			songmaxSizeSetted = true;
 			songMaxSize = playedProgress.getAvailable();
@@ -118,6 +118,17 @@ public class PlayerService {
 			player.resume();
 		}
 	}
+	
+	@AllowConcurrentEvents
+	@Subscribe
+	public void prev(PrevSong e) {
+		Song prevSong = playList.getPrevSong(currentSong);
+		if (prevSong != null) {
+			LOGGER.debug("switching to next");
+			eventBus.post(new PlayEvent(prevSong));
+		}
+	}
+
 
 
 	public Player getPlayer() {

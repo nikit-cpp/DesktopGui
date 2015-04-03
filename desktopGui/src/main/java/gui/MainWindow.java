@@ -16,6 +16,7 @@ import events.PlayEvent;
 import events.PlayStopped;
 import events.PlayStarted;
 import events.PlayedProgress;
+import events.PrevSong;
 
 import com.github.nikit.cpp.player.PlayList;
 import com.github.nikit.cpp.player.Song;
@@ -140,6 +141,11 @@ public class MainWindow extends JFrame {
 		controlPanel.add(buttonsPanel);
 		
 		btnPrev = new JButton("Prev");
+		btnPrev.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				eventBus.post(new PrevSong());
+			}
+		});
 		buttonsPanel.add(btnPrev);
 		
 		btnPlay = new JButton("Play");
