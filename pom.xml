@@ -79,7 +79,6 @@
 
     <scm>
 	    <connection>scm:git:https://github.com/nikit-cpp/DesktopGui.git</connection>
-	    <tag>DesktopGui-0.2.0</tag>
     </scm>
 
     <distributionManagement>

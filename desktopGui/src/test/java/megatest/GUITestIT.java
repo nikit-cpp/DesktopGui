@@ -26,7 +26,6 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
-import org.mockito.Mockito;
 
 import com.github.nikit.cpp.player.Song;
 import com.google.common.eventbus.EventBus;
