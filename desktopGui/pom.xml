@@ -2,7 +2,7 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.github.nikit.cpp</groupId>
-	<artifactId>DesktopGui</artifactId>
+	<artifactId>desktopGui</artifactId>
 	<version>0.3.0</version>
 
 	<parent>
@@ -16,6 +16,8 @@
 		<maven.compiler.source>1.7</maven.compiler.source>
 		<maven.compiler.target>1.7</maven.compiler.target>
 		<spring.version>4.1.1.RELEASE</spring.version>
+		<finalJarName>KeyboardService</finalJarName>
+		<mainClass>service.KeyboardService</mainClass>
 	</properties>
 
 	<dependencies>
@@ -63,25 +65,12 @@
 			<version>${spring.version}</version>
 		</dependency>
 		
-				<dependency>
-			<groupId>com.melloware</groupId>
-			<artifactId>jintellitype</artifactId>
-			<version>1.3.7</version>
-		</dependency>
-		<dependency>
-			<groupId>jxgrabkey</groupId>
-			<artifactId>jxgrabkey</artifactId>
-			<version>1.0</version>
-		</dependency>
-		
-		
 		<dependency>
 			<groupId>com.sikulix</groupId>
-	<artifactId>sikulix2api</artifactId>
-	<version>2.0.0-SNAPSHOT</version>
-		
-		</dependency>
-		
+			<artifactId>sikulix2api</artifactId>
+			<version>2.0.5</version>
+			<type>jar</type>
+		</dependency>		
 		
 		<dependency>
 			<groupId>org.eclipse.jetty</groupId>
@@ -120,6 +109,47 @@
 					</execution>
 				</executions>
 			</plugin>
+			
+						<plugin>
+				<artifactId>maven-assembly-plugin</artifactId>
+				<version>2.5</version>
+				<executions>
+					<execution>
+						<id>make-assembly</id>
+						<phase>package</phase>
+						<goals>
+							<goal>single</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<descriptorRefs>
+						<descriptorRef>jar-with-dependencies</descriptorRef>
+					</descriptorRefs>
+					<archive>
+						<manifest>
+							<mainClass>${mainClass}</mainClass>
+						</manifest>
+					</archive>
+					<finalName>${finalJarName}</finalName>
+					<appendAssemblyId>false</appendAssemblyId>
+				</configuration>
+			</plugin>
+			<!-- Запрещаем работу maven-jar-plugin, т. к. он создаёт левые jar http://stackoverflow.com/questions/2188746/what-is-the-best-way-to-avoid-maven-jar -->
+			<plugin>
+				<artifactId>maven-jar-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>default-jar</id>
+						<phase>none</phase>
+						<configuration>
+							<finalName>unwanted</finalName>
+							<classifier>unwanted</classifier>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			
 		</plugins>
 	</build>
 
