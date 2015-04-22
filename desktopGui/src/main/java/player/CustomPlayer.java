@@ -2,6 +2,8 @@ package player;
 
 import java.io.BufferedInputStream;
 import java.io.FileInputStream;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import org.apache.log4j.Logger;
 
@@ -46,6 +48,33 @@ public class CustomPlayer implements player.Player{
 			eventBus.register(this);
 		}
 		state=State.STOPPED;
+		
+		
+		
+		
+		ExecutorService es = Executors.newSingleThreadExecutor();
+		es.submit(new Runnable() {
+				public synchronized void run() {
+					try {
+						LOGGER.debug("Playing " + playedSong);
+						post(new PlayStarted(playedSong));
+						state=State.PLAYING;
+						LOGGER.debug("player in child thread=" + player + "");
+
+						player.play();
+						state=State.STOPPED;
+						post(new PlayStopped(playedSong));
+					} catch (Exception e) {
+						LOGGER.error("Error playing mp3 file", e);
+						valid = false;
+					}
+				}
+		}
+		);
+		
+		
+		
+		
 		startStatusThread();
 	}
 
