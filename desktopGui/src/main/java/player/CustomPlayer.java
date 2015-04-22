@@ -21,8 +21,8 @@ import javazoom.jl.player.Player;
 public class CustomPlayer implements player.Player{
 	private static final Logger LOGGER = Logger.getLogger(CustomPlayer.class);
 	private volatile Player player;
-	private volatile FileInputStream FIS;
-	private volatile BufferedInputStream BIS;
+	private volatile FileInputStream fis;
+	private volatile BufferedInputStream bis;
 	private volatile boolean canResume;
 	private volatile int total;
 	private volatile int stopped;
@@ -33,27 +33,18 @@ public class CustomPlayer implements player.Player{
 	public static final int statusThreadSleep = 800;
 	public static final int UNEXISTED_POSITION = -1; 
 
-	public CustomPlayer() {
-		player = null;
-		FIS = null;
-		valid = false;
-		BIS = null;
-		total = 0;
-		stopped = 0;
-		canResume = false;
-		state=State.STOPPED;
-	}
-	
 	public CustomPlayer(EventBus eventBus) {
 		player = null;
-		FIS = null;
+		fis = null;
 		valid = false;
-		BIS = null;
+		bis = null;
 		total = 0;
 		stopped = 0;
 		canResume = false;
-		this.eventBus = eventBus;
-		eventBus.register(this);
+		if(eventBus!=null){
+			this.eventBus = eventBus;
+			eventBus.register(this);
+		}
 		state=State.STOPPED;
 		startStatusThread();
 	}
@@ -64,17 +55,17 @@ public class CustomPlayer implements player.Player{
 
 	public void pause() {
 		try {
-			stopped = FIS.available();
+			stopped = fis.available();
 			player.close();
-			FIS = null;
-			BIS = null;
+			fis = null;
+			bis = null;
 			player = null;
 			if (valid)
 				canResume = true;
 			state=State.PAUSED;
 			LOGGER.debug("Paused");
 		} catch (Exception e) {
-
+			LOGGER.error("Error on pause", e);
 		}
 	}
 	
@@ -82,14 +73,14 @@ public class CustomPlayer implements player.Player{
 		try {
 			if(player!=null)
 				player.close();
-			FIS = null;
-			BIS = null;
+			fis = null;
+			bis = null;
 			player = null;
 			canResume = false;
 			playedSong = null;
 			LOGGER.debug("Stopped");
 		} catch (Exception e) {
-
+			LOGGER.error("Error on stop", e);
 		}
 	}
 
@@ -100,16 +91,16 @@ public class CustomPlayer implements player.Player{
 			canResume = false;
 	}
 
-	synchronized public boolean play(int pos) {
+	synchronized private boolean play(int pos) {
 		valid = true;
 		canResume = false;
 		try {
-			FIS = new FileInputStream(playedSong.getFile().getAbsolutePath());
-			total = FIS.available();
+			fis = new FileInputStream(playedSong.getFile().getAbsolutePath());
+			total = fis.available();
 			if (pos > UNEXISTED_POSITION)
-				FIS.skip(pos);
-			BIS = new BufferedInputStream(FIS);
-			player = new Player(BIS);
+				fis.skip(pos);
+			bis = new BufferedInputStream(fis);
+			player = new Player(bis);
 			LOGGER.debug("player in parent thread=" + player);
 			Thread playThread = new Thread(new Runnable() {
 				public synchronized void run() {
@@ -145,7 +136,7 @@ public class CustomPlayer implements player.Player{
 					LOGGER.debug("Starting statusThread");
 					while(true){
 						if(state == State.PLAYING){
-							int available = FIS.available();
+							int available = fis.available();
 							//LOGGER.debug("available: " + available);
 							post(new ProgressEvent(available, playedSong));
 							Thread.sleep(statusThreadSleep);
