@@ -43,7 +43,7 @@ public class ShowWindow {
 	protected static VkEmulator vk;
 	protected FrameFixture window;
 	protected MainWindow mainWindow;
-	protected EventBus eventBus;
+	//protected EventBus eventBus;
 
 	
 	
@@ -70,14 +70,14 @@ public class ShowWindow {
             }
         });
         window = new FrameFixture(mainWindow);
-		eventBus = MainWindow.getEventBus();
-		eventBus.register(this);
+		//eventBus = MainWindow.getEventBus();
+		//eventBus.register(this);
 	}
 
 	@After
 	public void tearDown() throws InterruptedException {
 		 window.cleanUp();
-		 eventBus.unregister(this);
+		 //eventBus.unregister(this);
 		 mainWindow.getPlayerService().getPlayer().stop();
 		 Thread.sleep(200);
 	}

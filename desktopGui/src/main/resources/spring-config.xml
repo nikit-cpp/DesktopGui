@@ -39,9 +39,11 @@
 		</property>
 	</bean>
 	
+	
 	<bean id ="vkPlaylistBuilder" class = "vk.VkPlayListBuilder" scope = "singleton" >
 	    <constructor-arg value="https://api.vk.com"/>
 	</bean>
+	
 	
 	<bean id ="playerService" class = "service.PlayerService" scope = "singleton" >
 	    <property name="player">

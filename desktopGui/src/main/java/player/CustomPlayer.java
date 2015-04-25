@@ -51,7 +51,7 @@ public class CustomPlayer implements player.Player{
 		
 		
 		
-		
+		/*
 		ExecutorService es = Executors.newSingleThreadExecutor();
 		es.submit(new Runnable() {
 				public synchronized void run() {
@@ -71,7 +71,7 @@ public class CustomPlayer implements player.Player{
 				}
 		}
 		);
-		
+		*/
 		
 		
 		

@@ -59,7 +59,6 @@ public class MainWindow extends JFrame {
 	private static final String STOPPED = "Stopped";
 	private static Config config;
 	private static VkPlayListBuilder playlistBuilder;
-	private static EventBus eventBus;
 	private static PlayerService playerService;
 	private static DownloadService downloadService;
 	private static Logger LOGGER = Logger.getLogger(MainWindow.class);
@@ -92,7 +91,6 @@ public class MainWindow extends JFrame {
 
 	public MainWindow() throws ParserConfigurationException, VkPlayListBuilderException {
 		initNonGui();
-		eventBus.register(this);
 		instance = this;
 		hilighter = new Hilighter();
 		setTitle("Vk Caching Player");
@@ -100,7 +98,7 @@ public class MainWindow extends JFrame {
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
 
 		
-		Collection<PlayList> cpl = new ArrayList<PlayList>();
+		/*Collection<PlayList> cpl = new ArrayList<PlayList>();
 		for (String groupName : config.getGroupNames()){
 			cpl.addAll(playlistBuilder.getPlayListsFromGroup(groupName));
 		}
@@ -109,16 +107,7 @@ public class MainWindow extends JFrame {
 			for (Song s : pl.getSongs()) {
 				data.add(s);
 			}
-		}
-		PlayList playList = new PlayList(data);
-		if(config.getSearchFileOnDisk()){
-			downloadService.updateFilesInPlayList(playList);
-		}
-		playerService.setPlayList(playList);
-		
-		final PlayListListModel playListModel = new PlayListListModel(playList);
-		listRenderer = new SelectedListCellRenderer();
-
+		}*/
 		
 		contentsPanel = new JPanel();
 
@@ -144,7 +133,7 @@ public class MainWindow extends JFrame {
 		btnPrev = new JButton("Prev");
 		btnPrev.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				eventBus.post(new PrevSong());
+				//eventBus.post(new PrevSong());
 			}
 		});
 		buttonsPanel.add(btnPrev);
@@ -152,7 +141,7 @@ public class MainWindow extends JFrame {
 		btnPlay = new JButton("Play");
 		btnPlay.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				eventBus.post(new PlayPauseEvent());
+				//eventBus.post(new PlayPauseEvent());
 			}
 		});
 		buttonsPanel.add(btnPlay);
@@ -160,7 +149,7 @@ public class MainWindow extends JFrame {
 		btnStop = new JButton("Stop");
 		btnStop.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				eventBus.post(new StopIntent());
+				//eventBus.post(new StopIntent());
 			}
 		});
 		buttonsPanel.add(btnStop);
@@ -168,33 +157,6 @@ public class MainWindow extends JFrame {
 		btnNext = new JButton("Next");
 		buttonsPanel.add(btnNext);
 				
-		songsList = new JList<Song>(playListModel);
-		songsList.setCellRenderer(listRenderer);
-		songsList.addMouseListener(new MouseListener() {
-
-			public void mouseReleased(MouseEvent e) {
-			}
-
-			public void mousePressed(MouseEvent e) {
-			}
-
-			public void mouseExited(MouseEvent e) {
-			}
-
-			public void mouseEntered(MouseEvent e) {
-			}
-
-			public void mouseClicked(MouseEvent e) {
-				if (e.getClickCount() == 2) {
-					int index = songsList.locationToIndex(e.getPoint());
-					Song s = (Song) playListModel.getElementAt(index);
-					eventBus.post(new PlayIntent(s));
-
-					LOGGER.debug("Double clicked on item " + index + " " + s);
-
-				}
-			}
-		});
 		imageLabel = new JLabel();
 		scrollRightPane = new JScrollPane(songsList);
 		scrollLeftPane = new JScrollPane(imageLabel);
@@ -205,7 +167,7 @@ public class MainWindow extends JFrame {
 				
 		btnNext.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				eventBus.post(new NextSong());
+				//eventBus.post(new NextSong());
 			}
 		});
 		
@@ -246,13 +208,13 @@ public class MainWindow extends JFrame {
 		// Non-GUI work
 		ApplicationContext context = new ClassPathXmlApplicationContext(SPRING_CONFIG);
 
-		playlistBuilder = (VkPlayListBuilder)context.getBean("vkPlaylistBuilder");
+		//playlistBuilder = (VkPlayListBuilder)context.getBean("vkPlaylistBuilder");
 	    config = (Config)context.getBean("config");
-	    eventBus = (EventBus) context.getBean("eventBus");
+	    //eventBus = (EventBus) context.getBean("eventBus");
 	    downloadService = (DownloadService) context.getBean("downloader");
 	    playerService = (PlayerService) context.getBean("playerService");
-	    eventBus.register(downloadService);
-	    eventBus.register(playerService);
+	    //eventBus.register(downloadService);
+	    //eventBus.register(playerService);
 	}
 	
 	@AllowConcurrentEvents
@@ -360,9 +322,6 @@ public class MainWindow extends JFrame {
 		
 	}
 	
-	public static EventBus getEventBus() {
-		return eventBus;
-	}
 	public static PlayerService getPlayerService() {
 		return playerService;
 	}
