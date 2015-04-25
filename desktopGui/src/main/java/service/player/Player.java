@@ -1,4 +1,4 @@
-package player;
+package service.player;
 
 import com.github.nikit.cpp.player.Song;
 

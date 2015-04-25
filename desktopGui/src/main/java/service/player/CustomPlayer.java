@@ -1,4 +1,4 @@
-package player;
+package service.player;
 
 import java.io.BufferedInputStream;
 import java.io.FileInputStream;
@@ -20,7 +20,7 @@ import javazoom.jl.player.Player;
  * @author nik
  *
  */
-public class CustomPlayer implements player.Player{
+public class CustomPlayer implements service.player.Player{
 	private static final Logger LOGGER = Logger.getLogger(CustomPlayer.class);
 	private volatile Player player;
 	private volatile FileInputStream fis;

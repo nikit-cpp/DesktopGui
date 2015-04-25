@@ -5,8 +5,8 @@ import java.io.File;
 import org.apache.log4j.Logger;
 
 import events.PlayStopped;
-import player.Player;
-import player.State;
+import service.player.Player;
+import service.player.State;
 
 import com.github.nikit.cpp.player.PlayList;
 import com.github.nikit.cpp.player.Song;

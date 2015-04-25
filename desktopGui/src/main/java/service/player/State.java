@@ -1,4 +1,4 @@
-package player;
+package service.player;
 
 public enum State {
 	PLAYING, STOPPED, PAUSED

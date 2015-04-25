@@ -1,4 +1,4 @@
-package player;
+package service.player;
 
 import java.io.File;
 
