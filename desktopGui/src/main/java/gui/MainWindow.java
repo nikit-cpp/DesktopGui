@@ -158,10 +158,14 @@ public class MainWindow extends JFrame {
 		buttonsPanel.add(btnNext);
 				
 		imageLabel = new JLabel();
+		imageLabel.setText("image");
 		scrollRightPane = new JScrollPane(songsList);
 		scrollLeftPane = new JScrollPane(imageLabel);
 
 		splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, scrollLeftPane, scrollRightPane);
+		//splitPane.setResizeWeight(0.2);
+		splitPane.setResizeWeight(0.3);
+		//splitPane.setDividerLocation(0);
 
 		contentsPanel.add(splitPane, BorderLayout.CENTER);
 				
